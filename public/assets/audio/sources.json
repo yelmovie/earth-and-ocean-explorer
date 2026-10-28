@@ -1,0 +1,17 @@
+{
+  "creator": "Kenney",
+  "source": "https://kenney.nl/assets/interface-sounds",
+  "license": "CC0 1.0",
+  "files": {
+    "click": "click_003",
+    "scan": "select_003",
+    "camera": "switch_004",
+    "drop": "drop_002",
+    "hint": "question_001",
+    "success": "confirmation_002",
+    "retry": "pluck_001",
+    "reward": "maximize_003",
+    "heat": "glass_001"
+  },
+  "processing": "OGG to MP3, loudnorm I=-20 TP=-2 LRA=7"
+}

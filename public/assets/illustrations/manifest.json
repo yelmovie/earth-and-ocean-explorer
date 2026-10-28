@@ -1,0 +1,92 @@
+{
+  "buri": {
+    "file": "illustrations/buri.webp",
+    "width": 482,
+    "height": 736,
+    "bytes": 79170,
+    "original": "assets/generated/20261028/buri.png",
+    "sourceCrop": [
+      295,
+      26,
+      1052,
+      1196
+    ],
+    "sha256": "f7c31a1a23106c205a451d279d5a1849ef4c669462ef76fd63948061c0c7e164",
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "jjang": {
+    "file": "illustrations/jjang.webp",
+    "width": 656,
+    "height": 425,
+    "bytes": 70898,
+    "original": "assets/generated/20261028/jjang.png",
+    "sourceCrop": [
+      118,
+      162,
+      1414,
+      990
+    ],
+    "sha256": "0c0dc55119538d3fd1952b5b2411db154ee1cd311760c9761916fd9f42c41e5a",
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "crab": {
+    "file": "illustrations/crab.webp",
+    "width": 656,
+    "height": 461,
+    "bytes": 120496,
+    "original": "assets/generated/20261028/crab.png",
+    "sourceCrop": [
+      62,
+      13,
+      1493,
+      1009
+    ],
+    "sha256": "2262408ea4061be8a8ba64d3bbf6d1e81a00623baa8a4fb13c5370da9ce59546",
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "skipper": {
+    "file": "illustrations/skipper.webp",
+    "width": 656,
+    "height": 312,
+    "bytes": 77980,
+    "original": "assets/generated/20261028/skipper.png",
+    "sourceCrop": [
+      53,
+      171,
+      1516,
+      848
+    ],
+    "sha256": "b1207f7d082f6aeb225f48f7e26e0d883af810f59f252037ec81fbb41bd60f4d",
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "reed": {
+    "file": "illustrations/reed.webp",
+    "width": 458,
+    "height": 736,
+    "bytes": 184420,
+    "original": "assets/generated/20261028/reed.png",
+    "sourceCrop": [
+      80,
+      16,
+      1006,
+      1523
+    ],
+    "sha256": "6b0405ab5543dc4c0f044a73b5782513b0fc60ff675f91dc05e2185a59e7a365",
+    "alphaRange": [
+      0,
+      255
+    ]
+  }
+}

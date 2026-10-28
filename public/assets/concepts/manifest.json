@@ -1,0 +1,9 @@
+{
+  "duration": 9,
+  "fps": 24,
+  "width": 1280,
+  "height": 720,
+  "chapters": 5,
+  "audio": false,
+  "generator": "scripts/render-concepts.mjs"
+}

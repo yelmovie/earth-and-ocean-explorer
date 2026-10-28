@@ -1,0 +1,31 @@
+{
+  "tool": "built-in image_gen",
+  "date": "2026-10-28",
+  "prompts": [
+    {
+      "id": "buri",
+      "prompt": "Use case: stylized-concept. Production asset for a polished Korean elementary science exploration game. One isolated subject only, full subject centered with generous safe margin. Sophisticated hand-painted 2D storybook game illustration, refined warm contour lines, subtle dimensional watercolor/gouache shading, crisp readable silhouette at small sizes. Friendly but not babyish. No letters, labels, numbers, speech bubbles, border, floor, cast shadow, checkerboard or watermark. True transparent background. Reference image supplies character identity only; do not reproduce the sheet. Create only BURI, the white spoonbill bird explorer in the top row. White plumage, swept cream forelock, long dark charcoal spoon-shaped bill, expressive brown eyes, teal blue neckerchief, tan field vest with pockets, olive backpack, charcoal bird legs and feet. Full body in a relaxed upright walking-ready pose, three-quarter view facing RIGHT, wings relaxed at sides, both feet fully visible with ground contact aligned horizontally. Readable confident curious expression. Opaque clean feather silhouette, no wispy fringe. Do not include other characters or tools.",
+      "reference": true
+    },
+    {
+      "id": "jjang",
+      "prompt": "Use case: stylized-concept. Production asset for a polished Korean elementary science exploration game. One isolated subject only, full subject centered with generous safe margin. Sophisticated hand-painted 2D storybook game illustration, refined warm contour lines, subtle dimensional watercolor/gouache shading, crisp readable silhouette at small sizes. Friendly but not babyish. No letters, labels, numbers, speech bubbles, border, floor, cast shadow, checkerboard or watermark. True transparent background. Reference image supplies character identity only; do not reproduce the sheet. Create only JJANG, the brown mudskipper explorer in the bottom row. Warm brown mudskipper body with teal blue spots on back and fins, two expressive eyes raised on top of head, cheerful slight open smile, pale cream belly, teal blue neckerchief, olive field vest and small olive backpack. Full body in a grounded three-quarter pose facing slightly LEFT, supported on natural pectoral fins, tail fully visible, friendly adventurous expression. It must remain a mudskipper fish with fins, not a frog or lizard. No extra characters or props.",
+      "reference": true
+    },
+    {
+      "id": "crab",
+      "prompt": "Use case: scientific-educational. Production asset for a polished Korean elementary science exploration game. One isolated subject only, full subject centered with generous safe margin. Sophisticated hand-painted 2D storybook game illustration, refined warm contour lines, subtle dimensional watercolor/gouache shading, crisp readable silhouette at small sizes. Friendly but not babyish. No letters, labels, numbers, speech bubbles, border, floor, cast shadow, checkerboard or watermark. True transparent background. One natural intertidal shore crab for a Korean mudflat field guide. Rust-brown oval carapace, anatomically plausible two front claws and four pairs of walking legs, small raised eyes. Three-quarter slightly overhead view, all appendages spread readably without overlap. Natural animal, no human face, clothes or accessories. Both pincers and articulated legs must be clearly visible to support learning. No decorative scene, rocks or mud around it.",
+      "reference": false
+    },
+    {
+      "id": "skipper",
+      "prompt": "Use case: scientific-educational. Production asset for a polished Korean elementary science exploration game. One isolated subject only, full subject centered with generous safe margin. Sophisticated hand-painted 2D storybook game illustration, refined warm contour lines, subtle dimensional watercolor/gouache shading, crisp readable silhouette at small sizes. Friendly but not babyish. No letters, labels, numbers, speech bubbles, border, floor, cast shadow, checkerboard or watermark. True transparent background. One natural mudskipper fish, Korean tidal-flat field guide illustration. Elongated olive-brown body with subtle blue speckles, two prominent eyes raised above head, closed natural mouth, pectoral fins supporting the front body, visible dorsal fin and tapering fish tail. Side three-quarter view with head facing LEFT, full body and both main supporting fins visible, anatomically coherent fish without mammal arms or frog legs. No cartoon face, clothes or accessories, no ground patch.",
+      "reference": false
+    },
+    {
+      "id": "reed",
+      "prompt": "Use case: scientific-educational. Production asset for a polished Korean elementary science exploration game. One isolated subject only, full subject centered with generous safe margin. Sophisticated hand-painted 2D storybook game illustration, refined warm contour lines, subtle dimensional watercolor/gouache shading, crisp readable silhouette at small sizes. Friendly but not babyish. No letters, labels, numbers, speech bubbles, border, floor, cast shadow, checkerboard or watermark. True transparent background. One coherent small clump of common reed, Phragmites, Korean tidal-flat field guide botanical illustration. Three or four upright slender jointed green-gold stems, long narrow pointed lanceolate leaves, airy feathery tan plume panicles at their tips, a short visible root/rhizome system at bottom. Entire plant including tips and roots visible. Accurate feathery reed flowers, not cylindrical cattail spikes. Natural botanical gouache with refined detail. No container, soil patch, insects or extra specimens.",
+      "reference": false
+    }
+  ]
+}

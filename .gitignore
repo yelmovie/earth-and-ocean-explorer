@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.cache/
+assets/generated/
+.env*
+*.log
+artifacts/
+_unused/
+graphify-out/
+references/archives/
+references/extracted/
+__pycache__/
+*.py[cod]

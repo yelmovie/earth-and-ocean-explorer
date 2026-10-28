@@ -1,0 +1,319 @@
+/* Shared learning layout: readable at arm's length and on a classroom board.
+   This final layer replaces scattered per-route density overrides. */
+@font-face{font-family:BluePlanetDisplay;src:url('/assets/fonts/BluePlanetDisplay-Regular.woff2') format('woff2');font-display:swap}
+@font-face{font-family:BluePlanetBody;src:url('/assets/fonts/BluePlanetBody-Regular.woff2') format('woff2');font-weight:400 600;font-display:swap}
+@font-face{font-family:BluePlanetBody;src:url('/assets/fonts/BluePlanetBody-Bold.woff2') format('woff2');font-weight:700 900;font-display:swap}
+:root{--font-heading:BluePlanetDisplay,'Malgun Gothic',sans-serif;--font-body:BluePlanetBody,'Malgun Gothic',sans-serif;--reading-size:clamp(20px,1.45vw,30px);--label-size:clamp(17px,1.2vw,24px);--panel-gap:clamp(12px,1.35vw,24px);--panel-pad:clamp(16px,1.5vw,28px);--font-body-size:var(--reading-size);--font-title-size:clamp(28px,2.4vw,44px);font-family:var(--font-body)}
+body,button,input,select{font-family:var(--font-body)}
+:is(#app,body) .app:not(.route-home):not(.route-hub):not(.route-ending){background:linear-gradient(#f4f3e959,#f8f6ed80),var(--scene) center/cover fixed}
+h1,h2,.primary,.step-tabs button,.modal-head h2{font-family:var(--font-heading);font-weight:400;letter-spacing:0}
+button,input,select,summary{touch-action:manipulation}
+button{border-width:2px;box-shadow:0 3px 0 #173f4b20}
+button.primary{box-shadow:0 4px 0 #064b4d;font-size:var(--reading-size)}
+button:active:not(:disabled){box-shadow:none;transform:translateY(2px)}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:4px solid var(--color-focus);outline-offset:3px}
+:is(#app,body) .topbar{height:70px;background:#fffdf5d9;backdrop-filter:none}
+:is(#app,body) .learning,:is(#app,body) .report-page,:is(#app,body) .link-page{max-width:1760px;padding:16px clamp(20px,3vw,56px) 20px}
+:is(#app,body) .page-heading{align-items:center;gap:16px;margin-bottom:14px}
+:is(#app,body) .page-heading h1{font-size:var(--font-title-size);margin:0;line-height:1.25}
+:is(#app,body) .page-heading .eyebrow{font-size:var(--label-size);letter-spacing:.02em;margin-bottom:4px}
+:is(#app,body) .page-heading p:not(.eyebrow){font-size:var(--reading-size);line-height:1.4;margin-top:6px}
+:is(#app,body) .step-tabs{gap:6px;flex-shrink:0}
+:is(#app,body) .step-tabs button{font-size:var(--label-size);padding:10px 12px;min-height:48px}
+:is(#app,body) .activity{min-height:0;gap:var(--panel-gap);grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start}
+:is(#app,body) .work-panel,:is(#app,body) .challenge-card{padding:var(--panel-pad);background:#fffdf5f5;min-width:0;border:2px solid #c7d8ce;box-shadow:0 6px 20px #173f4b14}
+:is(#app,body) .work-panel h2{font-size:clamp(24px,1.9vw,36px);margin:6px 0 12px;line-height:1.3}
+:is(#app,body) .work-panel h3{font-size:var(--reading-size);margin:14px 0 10px}
+:is(#app,body) .work-panel>p,:is(#app,body) .choice,:is(#app,body) .select-label,body select,:is(#app,body) .inset,:is(#app,body) .site,:is(#app,body) .segment button,:is(#app,body) .timeline,:is(#app,body) .record-slot,:is(#app,body) .challenge-option,:is(#app,body) .challenge-item,:is(#app,body) .challenge-bin,:is(#app,body) .challenge-feedback{font-size:var(--reading-size);line-height:1.4}
+:is(#app,body) .work-panel>p{margin:8px 0 12px}
+:is(#app,body) .panel-label,:is(#app,body) .tag,:is(#app,body) .mini-progress,:is(#app,body) .status-chips,:is(#app,body) .photo-slots,:is(#app,body) .photo-card>b{font-size:var(--label-size);line-height:1.35;letter-spacing:0}
+:is(#app,body) .choice{padding:12px;min-height:56px}
+:is(#app,body) .choices{gap:10px}
+:is(#app,body) .work-panel>.primary{margin-top:12px;min-height:52px;font-size:var(--reading-size)}
+:is(#app,body) .site-grid{gap:8px;margin:10px 0;grid-template-columns:repeat(2,minmax(0,1fr))}
+:is(#app,body) .site{padding:8px 10px}
+:is(#app,body) .inset{padding:12px;min-height:0}
+:is(#app,body) .inset p{margin:4px 0 0}
+:is(#app,body) .mini-progress{margin-top:12px}
+:is(#app,body) .mini-progress>div{height:8px;margin-top:6px}
+:is(#app,body) .observation-panel{padding:16px;min-height:0}
+body #globe{min-height:210px;height:clamp(210px,31vh,400px);flex:none}
+:is(#app,body) .globe-controls{gap:8px;flex-wrap:wrap}
+:is(#app,body) .globe-controls button{font-size:var(--label-size);min-height:48px;padding:8px 12px}
+:is(#app,body) .globe-caption{font-size:var(--label-size);margin:8px 0 0}
+:is(#app,body) .mission-footer{position:relative!important;bottom:auto;margin-top:14px;padding:10px 12px!important;gap:12px;flex-wrap:wrap;border:1px solid #b9cfc2;border-radius:16px!important;background:#fffdf5ed;box-shadow:none!important}
+:is(#app,body) .guide-mini{flex:1;min-width:220px}
+:is(#app,body) .guide-mini .character{display:none}
+:is(#app,body) .guide-mini b{display:none}
+:is(#app,body) .guide-mini p,body #hint{font-size:var(--label-size);line-height:1.45}
+:is(#app,body) .mission-footer>.primary{min-height:56px;padding:10px 20px;margin-left:auto}
+:is(#app,body) .field-note{border:0;border-top:1px solid var(--line);margin-top:12px;font-size:var(--label-size);color:var(--muted)}
+:is(#app,body) .field-note summary{cursor:pointer;padding:10px 0;min-height:48px;font-weight:700}
+:is(#app,body) .field-note p{padding-bottom:12px;line-height:1.5}
+:is(#app,body) .sample-tray{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.sample-token{touch-action:none;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:76px;padding:12px;font-size:var(--reading-size);cursor:grab}
+.sample-token span{font-size:var(--label-size);color:var(--muted)}
+.sample-bins{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sample-bins button{display:flex;flex-direction:column;gap:8px;justify-content:center;min-height:110px;background:#e6f3e0;border:2px dashed #79a98d;font-size:var(--reading-size)}
+.sample-bins button:last-child{background:#e3f3f3;border-color:#71a6b3}
+.sample-bins span{font-size:var(--label-size)}
+.manipulation-tip{font-size:var(--label-size)!important;color:var(--muted);margin:8px 0!important}
+:is(#app,body) .earth-ratio{height:95px;margin:12px 0}
+:is(#app,body) .earth-ratio span{font-size:var(--label-size);padding:10px}
+.range-field{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:var(--label-size);font-weight:700}
+.range-field input{grid-column:1/-1;width:100%;min-height:48px;margin:0;accent-color:var(--teal)}
+.range-field output{color:var(--teal);font-variant-numeric:tabular-nums}
+:is(#app,body) .experiment-fields{gap:12px;margin-top:16px}
+:is(#app,body) .beaker-pair{margin:16px 0 10px;gap:20px}
+:is(#app,body) .beaker{height:clamp(135px,21vh,230px);width:min(170px,100%)}
+:is(#app,body) .beaker-mark{font-size:var(--label-size)}
+:is(#app,body) .beaker-item h3{font-size:var(--reading-size);margin:0 0 10px}
+:is(#app,body) .beaker-item .hotplate{max-width:190px;width:100%}
+.is-heating .water{animation:evaporate 2.4s ease-in forwards}
+.is-heating .hotplate{background:#e1a14c;box-shadow:0 0 20px #efbd6e80}
+.is-heating .beaker:after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 70%,#f4ffffaa 0 4px,transparent 5px),radial-gradient(circle at 65% 80%,#f4ffffaa 0 6px,transparent 7px);animation:steam 900ms linear infinite}
+@keyframes evaporate{to{height:0}}
+@keyframes steam{to{transform:translateY(-70px);opacity:.2}}
+:is(#app,body) .coast-view,:is(#app,body) .mudflat-view{height:clamp(330px,47vh,590px);min-height:0;touch-action:none}
+:is(#app,body) .pan-control{left:16px;right:16px;bottom:12px;padding:8px 12px}
+:is(#app,body) .pan-control label{font-size:var(--label-size)}
+:is(#app,body) .pan-control input{height:48px}
+:is(#app,body) .hotspot,:is(#app,body) .trace{min-width:54px;min-height:54px}
+:is(#app,body) .trace small{font-size:var(--label-size);line-height:1.3;max-width:190px;background:#fff9e8ee;padding:4px 8px;border-radius:8px}
+:is(#app,body) .scene-tag{font-size:var(--label-size);top:12px;left:12px;padding:8px 12px}
+.photo-captured:after{content:'';position:absolute;inset:0;background:#fff;pointer-events:none;animation:camera-flash 350ms both}
+@keyframes camera-flash{from{opacity:.65}to{opacity:0}}
+:is(#app,body) .album-grid{gap:12px}
+:is(#app,body) .photo-card{padding:10px}
+:is(#app,body) .photo-image{height:clamp(115px,18vh,205px);min-height:0}
+:is(#app,body) .photo-card .select-label{font-size:var(--label-size);gap:4px}
+:is(#app,body) .photo-card select{font-size:var(--label-size);min-height:48px;padding:8px 24px 8px 8px}
+:is(#app,body) .pin-help{font-size:var(--label-size)}
+:is(#app,body) .tide-scene{width:100%;max-height:350px;display:block}
+:is(#app,body) .timeline{margin-top:8px}
+:is(#app,body) .timeline input{min-height:48px}
+:is(#app,body) .record-slot{padding:12px;margin:10px 0;gap:8px}
+:is(#app,body) .record-slot button{font-size:var(--label-size)}
+.timelapse-button{display:block;margin:8px auto;font-size:var(--label-size);min-height:48px}
+.tide-wipe{position:relative;overflow:hidden;isolation:isolate;border-radius:14px}
+.tide-wipe-before,.tide-wipe-after{width:100%}
+.tide-wipe-after{position:absolute;inset:0;clip-path:inset(0 0 0 var(--wipe))}
+.wipe-line{position:absolute;top:0;bottom:0;left:var(--wipe);width:4px;background:var(--paper);box-shadow:0 0 0 2px var(--teal);transform:translateX(-2px)}
+.wipe-label{position:absolute;top:10px;background:#fffdf5ec;padding:6px 10px;border-radius:8px;font-size:var(--label-size);font-weight:700}
+.label-a{left:10px}.label-b{right:10px}
+.compare-slider{display:block;margin:10px 0;font-size:var(--label-size);font-weight:700}
+.compare-slider input{display:block;width:100%;min-height:48px;margin:0;accent-color:var(--teal)}
+.survey-lens{position:absolute;width:112px;height:112px;min-width:112px;min-height:112px;padding:0;transform:translate(-50%,-50%);border:6px solid #efd39c;border-radius:50%;background-size:260%;box-shadow:0 0 0 3px var(--ink),0 6px 20px #173f4b55;z-index:2;touch-action:none;cursor:grab}
+.survey-lens:after{content:'';position:absolute;width:18px;height:48px;right:0;bottom:-32px;transform:rotate(-35deg);border-radius:8px;background:var(--ink);pointer-events:none}
+.survey-lens:hover:not(:disabled),.survey-lens:active:not(:disabled){transform:translate(-50%,-50%)}
+.survey-lens.has-trace{border-color:#a9d5a1;box-shadow:0 0 0 4px #36775f}
+:is(#app,body) .specimen{height:145px;margin:12px 0}
+:is(#app,body) .creature-cards{gap:10px;margin:12px 0}
+:is(#app,body) .creature-cards article{padding:10px}
+:is(#app,body) .creature-cards p{font-size:var(--label-size);line-height:1.35}
+:is(#app,body) .challenge-progress{margin:0 0 12px;gap:8px}
+:is(#app,body) .challenge-progress button{min-height:48px;font-size:var(--label-size);padding:8px 10px}
+:is(#app,body) .challenge-progress button span{font-size:var(--label-size)}
+:is(#app,body) .challenge-layout{gap:var(--panel-gap);align-items:start;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+:is(#app,body) .challenge-board{min-height:0}
+:is(#app,body) .challenge-board-heading{margin-bottom:12px}
+:is(#app,body) .challenge-board-heading>span:last-child{font-size:var(--label-size)}
+:is(#app,body) .challenge-art{height:clamp(160px,27vh,320px)}
+:is(#app,body) .challenge-observation summary,:is(#app,body) .challenge-observation details p{font-size:var(--label-size);line-height:1.45}
+:is(#app,body) .challenge-observation details{margin-top:12px}
+:is(#app,body) .challenge-option{min-height:60px;padding:12px}
+:is(#app,body) .challenge-options{gap:10px}
+:is(#app,body) .challenge-feedback{margin-top:12px;padding:10px 12px}
+:is(#app,body) .challenge-actions{position:static;gap:10px;padding:10px 0 4px;margin-top:10px}
+:is(#app,body) .challenge-actions button{min-height:52px;font-size:var(--reading-size)}
+:is(#app,body) .challenge-sort-area{gap:12px}
+:is(#app,body) .challenge-sort-area .challenge-items,:is(#app,body) .challenge-bins{gap:8px}
+:is(#app,body) .challenge-item{touch-action:none;user-select:none;padding:10px 12px;min-height:64px}
+:is(#app,body) .challenge-item small,:is(#app,body) .challenge-bin span{font-size:var(--label-size);line-height:1.3}
+:is(#app,body) .challenge-bin{border-style:dashed;min-height:94px}
+:is(#app,body) .challenge-instruction{font-size:var(--label-size);margin:4px 0 12px}
+:is(#app,body) .challenge-sequence{min-height:110px;padding:12px;background:#edf4e6;border:2px dashed #8ab099;border-radius:14px;margin-bottom:12px}
+:is(#app,body) .challenge-sequence:empty:before{content:'여기에 순서대로 놓아 줘';font-size:var(--label-size);color:var(--muted)}
+:is(#app,body) .challenge-sequence>div{font-size:var(--label-size)}
+:is(#app,body) .challenge-page-count{font-size:var(--label-size);margin:0}
+:is(#app,body) .challenge-page .mission-footer>p:last-child:not(.challenge-page-count){display:none}
+.drag-ghost{position:fixed;z-index:25;pointer-events:none;transform:translate(-50%,-65%);max-width:340px;padding:16px 24px;border:3px solid var(--teal);border-radius:16px;background:var(--paper);box-shadow:0 12px 30px #173f4b44;font-size:var(--reading-size);font-weight:700}
+:is(#app,body) .is-dragging{opacity:.4}
+:is(#app,body) .is-drop-target{background:#d5ebcd!important;border-color:var(--teal)!important;box-shadow:0 0 0 4px #79a98d55}
+.companion-tools{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.moa-hint{position:relative}
+.moa-hint>summary{display:flex;align-items:center;gap:8px;cursor:pointer;list-style:none;min-height:54px;font-size:var(--label-size);font-weight:700;padding:0 12px 0 0;border-radius:12px;color:var(--teal)}
+.moa-hint>summary::-webkit-details-marker{display:none}
+.moa-hint img{height:64px;width:52px;object-fit:contain;align-self:flex-end}
+.moa-hint[open]>summary{background:#e4efdc}
+.moa-bubble{position:absolute;bottom:calc(100% + 12px);left:0;width:min(430px,80vw);background:var(--paper);border:3px solid #79a98d;padding:18px;border-radius:18px;box-shadow:0 10px 28px #173f4b30;z-index:5;font-size:var(--reading-size);line-height:1.45;text-align:left}
+.moa-bubble b{font-family:var(--font-heading);font-weight:400;color:var(--teal)}
+.moa-bubble p{margin-top:8px;line-height:1.45}
+.concept-replay{min-height:48px;font-size:var(--label-size);padding:8px 12px}
+:is(#app,body) .hub-companion img{height:46px;width:38px;object-fit:contain;vertical-align:middle}
+/* All dialogs use the same balanced central frame; only their body scrolls. */
+body dialog.settings-modal{position:fixed;inset:0;margin:auto;width:min(900px,calc(100vw - 40px));height:auto;max-height:calc(100dvh - 40px);padding:0;border:3px solid #79a798;overflow:hidden;border-radius:24px;box-shadow:0 20px 80px #103e5066;text-align:left}
+body dialog.settings-modal[open]{display:flex;flex-direction:column}
+body dialog.settings-modal::backdrop{background:#123f4b99;backdrop-filter:none}
+:is(#app,body) .settings-modal .modal-head{padding:16px 24px;gap:16px;flex-shrink:0}
+:is(#app,body) .settings-modal .modal-head h2{font-size:clamp(28px,2.1vw,40px);line-height:1.25}
+:is(#app,body) .settings-modal .modal-head .eyebrow{font-size:var(--label-size)}
+:is(#app,body) .settings-modal .settings-body{padding:0 24px 20px;overflow-y:auto;min-height:0;flex:1 1 auto}
+:is(#app,body) .settings-modal .settings-body p,:is(#app,body) .settings-modal .settings-body li,:is(#app,body) .settings-modal .settings-body summary,:is(#app,body) .settings-modal .sound-row,:is(#app,body) .settings-modal .volume-label,:is(#app,body) .settings-app-line span{font-size:var(--reading-size);line-height:1.5}
+:is(#app,body) .settings-modal .settings-body summary{padding:12px 16px;min-height:54px}
+:is(#app,body) .settings-details-content{padding:16px}
+:is(#app,body) .settings-modal .settings-body details details summary,:is(#app,body) .settings-modal .settings-:is(#app,body) .legal-copy,:is(#app,body) .settings-modal .settings-app-line b{font-size:var(--label-size)}
+:is(#app,body) .settings-modal .settings-body>section{padding:16px 0}
+:is(#app,body) .settings-modal .sound-row{min-height:60px}
+:is(#app,body) .settings-replays{grid-template-columns:1fr 1fr;gap:10px}
+:is(#app,body) .settings-replays .settings-locked{grid-column:1/-1;font-size:var(--label-size)!important}
+:is(#app,body) .settings-replays button,:is(#app,body) .modal-footer button{font-size:var(--reading-size);min-height:52px}
+:is(#app,body) .settings-modal .modal-footer{padding:14px 24px;gap:16px;flex-shrink:0}
+:is(#app,body) .modal-footer span{font-size:var(--label-size);line-height:1.4}
+:is(#app,body) .concept-dialog.settings-modal,:is(#app,body) .concept-dialog.settings-modal.reward-dialog{width:min(1040px,calc(100vw - 40px));text-align:left}
+.concept-body{min-height:0;overflow-y:auto}
+.concept-player{position:relative;isolation:isolate;background:#e2efdf}
+.concept-player video,.concept-poster{display:block;width:100%;max-height:min(56dvh,570px);object-fit:contain;aspect-ratio:16/9}
+.concept-player [hidden]{display:none}
+.concept-caption{position:absolute;left:3%;right:3%;bottom:7%;padding:10px 20px;background:#fffdf5f2;border:2px solid #c2d6c0;border-radius:14px;text-align:center;font-size:clamp(24px,2.2vw,38px);font-weight:800;line-height:1.4;color:var(--ink)}
+.concept-timeline{position:absolute;bottom:0;left:0;width:100%;height:6px;background:#cad9c7}
+.concept-timeline i{display:block;width:0;height:100%;background:var(--teal);transition:width .2s linear}
+.concept-controls{display:flex;align-items:center;gap:10px;padding:10px 20px;background:#f5f7ec}
+.concept-controls button{font-size:var(--label-size);padding:8px 16px;min-height:48px}
+.concept-controls span{margin-left:auto;font-size:var(--label-size);color:var(--muted)}
+:is(#app,body) .report-page .evidence-grid{gap:16px}
+:is(#app,body) .evidence-card h2,:is(#app,body) .link-board h2{font-size:clamp(24px,1.8vw,34px)}
+:is(#app,body) .evidence-card p,:is(#app,body) .evidence-choice small{font-size:var(--label-size);line-height:1.4}
+:is(#app,body) .report-bottom p,:is(#app,body) .link-board h3{font-size:var(--reading-size)}
+@media(min-width:1600px){:is(#app,body) .topbar{height:82px}:is(#app,body) .learning,:is(#app,body) .report-page,:is(#app,body) .link-page{padding-top:24px}:is(#app,body) .activity{gap:24px}:is(#app,body) .work-panel,:is(#app,body) .challenge-card{padding:26px}:is(#app,body) .page-heading{margin-bottom:20px}:is(#app,body) .guide-mini p{font-size:24px}:is(#app,body) .mission-footer{margin-top:20px}}
+@media(min-width:801px) and (max-height:760px){:is(#app,body) .topbar{height:60px}:is(#app,body) .learning{padding-top:12px}:is(#app,body) .page-heading{margin-bottom:10px}:is(#app,body) .work-panel,:is(#app,body) .challenge-card{padding:14px}body #globe{height:230px;min-height:200px}:is(#app,body) .coast-view,:is(#app,body) .mudflat-view{height:340px}:is(#app,body) .challenge-art{height:170px}:is(#app,body) .mission-footer{margin-top:10px}.moa-hint img{height:52px}.concept-player video,.concept-poster{max-height:48dvh}:is(#app,body) .settings-modal .modal-head{padding:12px 20px}}
+@media(max-width:1100px) and (min-width:801px){:is(#app,body) .page-heading{align-items:start}:is(#app,body) .step-tabs{display:grid;grid-template-columns:1fr 1fr}:is(#app,body) .step-tabs button{padding:6px 10px}:is(#app,body) .activity{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}:is(#app,body) .guide-mini{display:none}:is(#app,body) .challenge-layout{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}:is(#app,body) .challenge-sort-area{grid-template-columns:1fr}:is(#app,body) .challenge-bins{grid-template-columns:1fr 1fr;display:grid}:is(#app,body) .challenge-progress button span{display:none}:is(#app,body) .site-grid{grid-template-columns:1fr 1fr}:is(#app,body) .site{font-size:18px}:is(#app,body) .album-grid{gap:8px}}
+@media(max-width:800px){:root{--reading-size:20px;--label-size:17px}:is(#app,body) .learning,:is(#app,body) .report-page,:is(#app,body) .link-page{padding:16px}:is(#app,body) .activity,:is(#app,body) .challenge-layout{grid-template-columns:1fr}:is(#app,body) .page-heading{align-items:start;flex-direction:column}:is(#app,body) .step-tabs{width:100%;display:grid;grid-template-columns:repeat(4,1fr)}:is(#app,body) .step-tabs button{font-size:17px;padding:8px 4px}:is(#app,body) .guide-mini{display:none}:is(#app,body) .mission-footer{position:sticky!important;bottom:0;z-index:4;padding:8px!important}:is(#app,body) .mission-footer>.primary{width:100%;margin:0}:is(#app,body) .companion-tools{flex:1}:is(#app,body) .challenge-progress button span{display:none}.moa-hint img{height:48px}.moa-hint>summary{min-height:48px}.moa-bubble{left:0;max-width:calc(100vw - 52px)}:is(#app,body) .coast-view,:is(#app,body) .mudflat-view{height:360px}:is(#app,body) .settings-replays{grid-template-columns:1fr}body dialog.settings-modal{max-height:calc(100dvh - 24px);width:calc(100vw - 24px)}:is(#app,body) .settings-modal .modal-head,:is(#app,body) .settings-modal .modal-footer{padding:14px 16px}:is(#app,body) .settings-modal .settings-body{padding:0 16px 16px}.concept-controls{padding:10px}.concept-controls span{display:none}.concept-caption{font-size:22px;left:2%;right:2%;padding:8px;bottom:7%}.concept-player video,.concept-poster{max-height:45dvh}:is(#app,body) .concept-dialog .modal-footer{align-items:stretch;flex-direction:column;gap:10px}:is(#app,body) .concept-dialog .modal-footer span{display:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.is-heating .water{height:0!important}.concept-timeline i{transition:none}.photo-captured:after{display:none}}
+@media print{.companion-tools,.concept-replay,.moa-hint{display:none!important}}
+
+:is(#app,body) .topbar .icon-button{color:var(--ink);background:var(--paper);border-color:var(--line)}
+:is(#app,body) .route-s1a .work-panel>h2,:is(#app,body) .route-s1a .work-panel>p{display:none}
+:is(#app,body) .route-s1a .site-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+:is(#app,body) .route-s1a .site{font-size:var(--reading-size);padding:8px;min-height:56px}
+:is(#app,body) .route-s1a #globe{min-height:200px;height:clamp(200px,31vh,355px)}
+
+/* Remove repeated instructions; give the activity the recovered space. */
+:is(#app,body) .admin-label{position:absolute;z-index:4;top:20px;left:50%;transform:translateX(-50%);padding:4px 12px;border-radius:8px;font-size:14px;background:#fff0bf;border:1px solid #dab969}
+:is(#app,body) .app:has(.admin-label) .learning>.practice-banner{display:none}
+:is(#app,body) .guide-mini{display:none}
+:is(#app,body) .mission-footer{justify-content:space-between}
+:is(#app,body) .beaker-item{width:42%}
+:is(#app,body) .beaker{width:145px;max-width:100%;margin:auto}
+:is(#app,body) .beaker-pair{padding:8px 10px 4px!important}
+:is(#app,body) .beaker-mark{white-space:nowrap;left:50%;transform:translateX(-50%);width:max-content;max-width:100%;font-size:var(--label-size)}
+:is(#app,body) .prediction-recall{font-size:var(--label-size)!important;line-height:1.3!important;margin:8px 0!important}
+:is(#app,body) .status-chips span{padding:4px 8px}
+:is(#app,body) .photo-card .select-title{display:none}
+:is(#app,body) .photo-card>b{margin:6px 0}
+:is(#app,body) .tide-wipe .tide-scene{height:240px;max-height:240px;min-height:0}
+:is(#app,body) .challenge-sort-area{display:flex;flex-direction:column}
+:is(#app,body) .challenge-sort-area .challenge-items{display:grid;grid-template-columns:1fr 1fr;width:100%}
+:is(#app,body) .challenge-bins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+:is(#app,body) .challenge-item small{color:var(--muted)}
+:is(#app,body) .challenge-bin{min-height:74px;padding:10px}
+:is(#app,body) .challenge-sequence>div{padding:8px 12px}
+@media(min-width:801px) and (max-width:1599px){:is(#app,body) .photo-image{height:105px}:is(#app,body) .beaker{height:145px}:is(#app,body) .work-panel .beaker-pair{margin:10px 0}:is(#app,body) .challenge-layout{grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr)}:is(#app,body) .challenge-progress button span{display:none}:is(#app,body) .challenge-item{font-size:19px;min-height:70px;padding:10px}:is(#app,body) .challenge-item small{font-size:17px}:is(#app,body) .challenge-feedback{font-size:18px;line-height:1.4}:is(#app,body) .challenge-observation>.tag{margin-bottom:10px}:is(#app,body) .challenge-earth{padding:8px}:is(#app,body) .challenge-earth svg{height:175px}:is(#app,body) .challenge-page .page-heading{gap:12px}:is(#app,body) .mission-footer{min-height:76px}}
+@media(min-width:801px) and (max-height:760px){:is(#app,body) .tide-wipe .tide-scene{height:210px;max-height:210px}:is(#app,body) .beaker{height:125px}:is(#app,body) .field-note summary{padding:8px 0}:is(#app,body) .challenge-card{padding:12px}:is(#app,body) .challenge-item{min-height:64px;padding:8px}:is(#app,body) .challenge-instruction{margin-bottom:8px}:is(#app,body) .challenge-actions button{min-height:48px}:is(#app,body) .challenge-feedback{padding:8px}:is(#app,body) .mission-footer{min-height:68px}:is(#app,body) .challenge-page .mission-footer{margin-top:8px}}
+
+:is(#app,body) .challenge-board-heading{display:none}
+:is(#app,body) .challenge-sort-area:has(.challenge-bin:nth-child(3)){display:grid;grid-template-columns:1fr 1fr}
+:is(#app,body) .challenge-sort-area:has(.challenge-bin:nth-child(3)) .challenge-items,:is(#app,body) .challenge-sort-area:has(.challenge-bin:nth-child(3)) .challenge-bins{grid-template-columns:1fr}
+:is(#app,body) .challenge-page .mission-footer .primary{margin-left:auto}
+:is(#app,body) .tide-work .tide-scene{max-height:260px;margin:8px 0}
+:is(#app,body) .timeline input{margin:0}
+:is(#app,body) .creature-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+:is(#app,body) .creature-cards article{display:flex;flex-direction:column;align-items:start;gap:8px;min-width:0;padding:10px}
+:is(#app,body) .creature-cards .creature-icon{width:70px;height:60px;min-width:0}
+:is(#app,body) .creature-cards p{margin:6px 0 0}
+:is(#app,body) .creature-cards article b{font-size:var(--reading-size)}
+@media(max-height:760px) and (min-width:801px){:is(#app,body) .tide-work .tide-scene{max-height:220px}:is(#app,body) .challenge-page .page-heading p{font-size:19px}:is(#app,body) .challenge-sequence{min-height:74px}}
+
+.coast-observation{min-width:0}
+:is(#app,body) .coast-observation>.pan-control{position:static;display:block;transform:none;margin:8px 0 0;padding:8px 16px;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:none}
+:is(#app,body) .coast-observation>.pan-control label{display:flex;align-items:center;gap:16px;white-space:nowrap}
+:is(#app,body) .coast-observation>.pan-control input{width:100%;min-width:0;margin:0}
+@media(min-width:801px) and (max-width:1599px){:is(#app,body) .coast-observation .coast-view{height:330px}}
+
+:is(#app,body) .challenge-board:has(.challenge-sequence)>.challenge-items{grid-template-columns:1fr 1fr}
+:is(#app,body) .challenge-sequence:not(:empty){grid-template-columns:1fr 1fr}
+:is(#app,body) .challenge-item:not(.assigned) small{display:none}
+@media(min-width:801px) and (max-width:1599px){:is(#app,body) .challenge-tide-pair svg{height:150px;min-height:0}:is(#app,body) .challenge-tide-pair{gap:10px}:is(#app,body) .challenge-item{min-height:60px}}
+
+:is(#app,body) .challenge-bin{flex-direction:row;align-items:center;justify-content:space-between;min-height:60px;gap:8px}
+:is(#app,body) .challenge-bin span{white-space:nowrap}
+:is(#app,body) .challenge-tide-pair{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+:is(#app,body) .challenge-tide-pair svg{height:auto;min-height:0;max-height:190px;aspect-ratio:26/15}
+:is(#app,body) .route-s5a .specimen{height:110px}
+@media(min-width:801px) and (max-width:1599px){.moa-hint img{height:52px}:is(#app,body) .mission-footer{min-height:72px;padding:8px 12px!important}:is(#app,body) .page-heading .eyebrow{line-height:1.25}}
+@media(max-width:800px){:is(#app,body) .admin-label{position:static;transform:none;text-align:center;border-radius:0;font-size:13px}}
+
+:is(#app,body) .challenge-progress{display:flex;width:max-content;gap:8px}
+:is(#app,body) .challenge-progress button{position:relative;flex:0 0 48px;min-width:48px;width:48px;max-width:48px;padding:8px;justify-content:center}
+:is(#app,body) .challenge-progress button span{display:inline;position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+:is(#app,body) .ratio-grid p,:is(#app,body) .challenge-tide-pair figcaption,:is(#app,body) .challenge-earth>span,:is(#app,body) .challenge-residue small,:is(#app,body) .challenge-residue>div>span{font-size:var(--label-size);line-height:1.4}
+:is(#app,body) .mini-progress b{font-size:inherit}
+:is(#app,body) .home-message p{font-size:var(--reading-size);line-height:1.5}
+:is(#app,body) .home-message h2{font-size:clamp(28px,2.1vw,40px);line-height:1.3}
+
+/* The next action stays in view even when a long answer needs a short scroll. */
+@media(min-width:801px){:is(#app,body) .learning .mission-footer{position:sticky!important;bottom:8px;z-index:4;background:#fffdf5fa;box-shadow:0 4px 18px #173f4b20!important}}
+
+:is(#app,body) dialog.settings-modal{height:fit-content}
+
+/* Individual generated art uses its natural proportions in every shared view. */
+.character{background:none}
+.home-friends .jjang{width:225px;height:170px;object-position:center bottom}
+.home-friends .friend-bubble{top:-42px;left:0}
+.story-friends .character.jjang,.ending-friends .character.jjang{width:150px;height:110px}
+.specimen-image{display:block;width:100%;height:100%;object-fit:contain}
+:is(#app,body) .specimen{width:min(100%,300px);border:0;border-radius:0;box-shadow:none;background:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
+:is(#app,body) .specimen .specimen-image{width:100%;height:100%;min-height:0;max-height:100%;object-fit:contain}
+.creature-header{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);align-items:center;gap:12px;min-height:120px}
+:is(#app,body) .route-s5a .creature-header .specimen{height:120px;width:100%;margin:0}
+:is(#app,body) .challenge-creatures .specimen-image{width:94%;height:94%;object-fit:contain;min-height:0}
+:is(#app,body) .challenge-creatures>div{border-radius:16px;padding:6px;overflow:hidden}
+:is(#app,body) .creature-cards .creature-icon{width:100%;height:94px;display:block}
+:is(#app,body) .creature-icon .specimen-image{width:100%;height:100%;object-fit:contain}
+.hub-art-status{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:#eaf3e9f5;color:var(--ink);padding:40px;text-align:center;font-size:var(--reading-size)}
+.hub-art-status[hidden],.hub-art-status button[hidden]{display:none}
+.hub-art-status button{min-height:52px;padding:12px 24px}
+@media(max-width:800px){.home-friends .jjang{width:150px;height:100px}.story-friends .character.jjang,.ending-friends .character.jjang{width:110px;height:80px}}
+
+/* Discovery feedback stays beside the action, with one short chapter finale. */
+.site.collected{border-color:#79a98d;background:#edf5e7}
+.site.selected,.sample-token.selected{outline:3px solid var(--teal);outline-offset:1px}
+.mini-progress i{transition:width .25s ease-out}
+.lab-readiness,.capture-status{padding:12px;border-radius:12px;background:#f3ecd8;color:var(--ink);font-size:var(--label-size)!important}
+.lab-readiness.ready,.capture-status,.choice.recorded{background:#e7f2df;border-color:#79a98d}
+.trace.found>span{background:#e4f2d9;border-color:#4b8868;color:#225a42}
+.trace.selected>span{outline:3px solid var(--teal);outline-offset:3px}
+:is(#app,body) .creature-features .choice{font-size:var(--label-size);min-height:52px;padding:10px;line-height:1.35}
+:is(#app,body) .route-s5a .specimen{height:110px;margin:8px 0}
+:is(#app,body) .challenge-feedback.good{animation:discovery-settle .24s ease-out}
+@keyframes discovery-settle{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+body dialog.chapter-reward{width:min(760px,calc(100vw - 40px))}
+.chapter-reward .settings-body{text-align:center}
+.chapter-badge{display:grid;place-items:center;width:96px;height:96px;margin:8px auto 16px;border:3px solid #c9a457;border-radius:50%;background:#fff0b9;color:#8a5d24;box-shadow:0 6px 0 #d5b878;animation:badge-arrive .4s ease-out}
+.chapter-badge svg{width:56px;height:56px}
+.chapter-reward h2{font-size:clamp(28px,3vw,38px);line-height:1.3;margin:16px 0 8px}
+.reward-records{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.reward-records span{padding:8px 12px;border-radius:12px;background:#e7f2df;font-size:var(--label-size);color:#285b46}
+.chapter-reward .reward-progress{font-size:var(--label-size)!important;margin:20px 0 8px}
+.reward-track{display:flex;gap:8px;max-width:340px;margin:0 auto 12px}
+.reward-track i{flex:1;height:10px;border-radius:8px;background:#dce5d9}
+.reward-track .filled{background:var(--teal)}
+.chapter-reward .modal-footer{justify-content:space-between;flex-wrap:wrap}
+.chapter-reward .modal-footer .primary{flex:1}
+@keyframes badge-arrive{from{opacity:0;transform:scale(.82) rotate(-8deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+@media(max-width:800px){.chapter-reward .modal-footer>button{width:100%}.chapter-badge{width:72px;height:72px}.chapter-badge svg{width:44px;height:44px}}
+@media(min-width:801px) and (max-height:760px){
+ :is(#app,body) .route-s5a .specimen{height:72px;margin:6px 0}
+ :is(#app,body) .route-s5a .work-panel h2{margin-bottom:8px}
+ :is(#app,body) .route-s5a .creature-features{gap:8px}
+}

@@ -1,0 +1,746 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "titleKo": "푸른행성 조사본부",
+    "titleEn": "Blue Planet Research HQ",
+    "repository": "blue-planet-research-hq",
+    "description": "Interactive Grade 3 science game for investigating Earth's surface, seawater, coastal landforms, tides, and mudflat ecosystems through observation, experiments, time-based comparison, and evidence-based missions.",
+    "grade": 3,
+    "subject": "과학",
+    "semester": "3학년 2학기",
+    "unit": "지구와 바다",
+    "topicId": "topic-06-earth-sea",
+    "curriculum": "2025학년도 적용 2022 개정 교육과정",
+    "stageCount": 5,
+    "screenCount": 10,
+    "aspectRatio": "16:9 landscape",
+    "backend": "none-required",
+    "threeDScreens": [
+      1,
+      2,
+      3,
+      10
+    ],
+    "coreThreeDScreen": 3,
+    "curriculumStandards": [
+      {
+        "code": "4과06-01",
+        "text": "지구가 대기로 둘러싸여 있음을 알고, 지구 표면을 구성하는 육지와 바다의 특징을 비교할 수 있다."
+      },
+      {
+        "code": "4과06-02",
+        "text": "바닷물의 특징을 육지의 물과 비교하고, 바닷가에서 볼 수 있는 다양한 지형을 조사할 수 있다."
+      },
+      {
+        "code": "4과06-03",
+        "text": "밀물과 썰물의 차이를 알고, 갯벌의 가치와 보전의 필요성을 설득·홍보할 수 있다."
+      }
+    ],
+    "benchmarkPolicy": "첨부 수업자료는 학습효과와 상호작용 아이디어를 높이기 위한 벤치마킹으로만 사용한다. 화면, 캐릭터, 문항, 문구, 게임 규칙, 레이아웃을 직접 복제하지 않는다."
+  },
+  "globalDesignSystem": {
+    "concept": "푸른 지구를 관측하는 프리미엄 과학 조사본부. 우주 관측실, 물 표본 실험실, 밝은 해안 조사구역, 시간 변화 해안, 생태가 살아 있는 갯벌이 하나의 조사 네트워크로 연결된다.",
+    "palette": [
+      "deep ocean blue",
+      "cyan",
+      "turquoise",
+      "warm white",
+      "mudflat earth brown",
+      "olive",
+      "restrained gold",
+      "warning orange"
+    ],
+    "learningLoop": [
+      "조사 계획 또는 예상",
+      "직접 조작",
+      "관찰",
+      "증거 기록",
+      "비교",
+      "판단",
+      "적용 또는 설득",
+      "재검토"
+    ],
+    "interactionDiversityRule": "각 Stage는 다른 핵심 조작 문법을 사용하며 동일한 drag-and-drop만으로 여러 Stage를 연속 완료할 수 없게 한다.",
+    "uiRules": [
+      "한글 텍스트는 이미지나 GLB에 굽지 않고 HTML/CSS/SVG로 구현한다.",
+      "16:9 가로형, 주요 safe area 6%를 확보한다.",
+      "터치 영역 최소 44px, 권장 48px.",
+      "색만으로 정답·상태·경고를 구분하지 않는다.",
+      "이모지 중심 UI, 유아용 스티커북, 기본 바이브코딩 템플릿 느낌을 피한다.",
+      "오답은 정답 공개보다 재관찰·재실험으로 되돌린다.",
+      "핵심 기능은 한 손가락으로 수행 가능하며 pinch는 보조 기능이다."
+    ],
+    "runtimePolicy": {
+      "threejsScreens": [
+        1,
+        2,
+        3,
+        10
+      ],
+      "phaserScreens": [
+        5,
+        6,
+        8,
+        9
+      ],
+      "domSvgCanvasScreens": [
+        4,
+        7
+      ],
+      "sceneReuse": "Screen 02와 Screen 10은 동일 Research HQ 3D scene을 재사용하고 데이터 복구 state와 camera preset만 변경한다.",
+      "performance": "저사양 태블릿 3D 최소 30fps, 2D 목표 60fps, 화면별 lazy load, Phaser와 Three.js 동시 상시 렌더 금지"
+    },
+    "contentGuardrails": [
+      "밀물과 썰물은 바닷물 높이와 해안에서 드러나고 잠기는 모습의 차이 수준으로 다룬다.",
+      "달의 인력, 조석 발생 원인, 조석 주기 계산을 평가하지 않는다.",
+      "바닷가 지형은 모습과 특징 조사에 집중하고 침식·운반·퇴적 심화를 핵심 평가로 사용하지 않는다.",
+      "바닷물을 가열하고 남는 물질을 순수한 소금 하나로 과도하게 단정하지 않는다.",
+      "바닷물이나 남은 물질을 맛보는 상호작용을 넣지 않는다.",
+      "갯벌 생물 이름만 맞히는 것으로 Stage를 완료할 수 없다."
+    ]
+  },
+  "pages": [
+    {
+      "pageNumber": 1,
+      "pageId": "p01-blue-planet-intro-3d",
+      "stage": "INTRO",
+      "stageName": "푸른행성 조사본부",
+      "title": "조사본부에 접속하라",
+      "standardCodes": [],
+      "runtime": "threejs-dom",
+      "threeDLevel": "light",
+      "learningGoal": "지구와 바다를 조사하는 역할과 다섯 종류의 손상 데이터를 파악하고 탐구 맥락에 진입한다.",
+      "studentMission": "3D 지구를 돌려 오류 신호를 탐색하고 조사본부가 잃어버린 데이터 종류를 확인한다.",
+      "coreInteractions": [
+        "3D 제한 회전",
+        "오류 신호 raycast",
+        "지구 확대/축소 보조",
+        "데이터 슬롯 미리보기"
+      ],
+      "layout": {
+        "top": "프로젝트 제목 + 음향/설정",
+        "center": "3D 푸른 지구와 조사본부",
+        "right": "오류 신호 로그",
+        "bottom": "조사 시작"
+      },
+      "gameLogic": [
+        "오류 신호를 최소 3곳 확인해야 조사 시작 버튼이 활성화된다.",
+        "이 화면에서는 과학 정답을 평가하지 않는다.",
+        "자유 비행은 금지하고 제한 orbit만 허용한다."
+      ],
+      "completionRules": [
+        "오류 신호 3개 이상 확인",
+        "5종 데이터 손상 안내 확인"
+      ],
+      "feedback": {
+        "observe": "지구를 조금 돌려 다른 방향의 신호도 확인해 봐.",
+        "complete": "다섯 종류의 조사 데이터가 손상된 것을 확인했어."
+      },
+      "visualPrompt": "우주를 향한 넓은 관측창과 중앙의 푸른 3D 지구가 있는 세련된 과학 조사본부. 지구 표면의 작은 데이터 오류 신호가 점멸한다. 밝은 청록·딥블루·웜화이트, 절제된 금속 질감, 초등 3학년에게 친근하지만 유아용이 아닌 프리미엄 교육 게임. 한글 텍스트는 이미지에 포함하지 않는다.",
+      "implementationPrompt": "Three.js fixed 3/4 camera + limited OrbitControls. EarthRoot raycast zone 5개를 anomaly marker로 표시한다. DOM HUD는 별도 overlay. 3D text mesh 금지. 종료 시 serialize/dispose.",
+      "assetsNeeded": [
+        "blue_planet_intro.glb",
+        "earth_globe_low.glb",
+        "anomaly_marker.webp",
+        "intro_ambient.ogg"
+      ],
+      "nonGoals": [
+        "학습 퀴즈",
+        "우주전투",
+        "자유 비행",
+        "과도한 파티클"
+      ]
+    },
+    {
+      "pageNumber": 2,
+      "pageId": "p02-research-hq-3d",
+      "stage": "HQ",
+      "stageName": "조사본부 상황실",
+      "title": "다섯 조사 데이터를 확인하라",
+      "standardCodes": [],
+      "runtime": "threejs-dom",
+      "threeDLevel": "light",
+      "learningGoal": "다섯 Stage의 목적과 진행 상태를 한눈에 파악한다.",
+      "studentMission": "상황실의 다섯 데이터 코어를 확인하고 첫 번째 조사 구역에 진입한다.",
+      "coreInteractions": [
+        "3D 데이터 코어 터치",
+        "camera preset focus",
+        "진행도 확인",
+        "조사노트 열기"
+      ],
+      "layout": {
+        "top": "DATA RESTORE 진행도",
+        "center": "3D 상황실 + 5 데이터 코어",
+        "left": "조사노트",
+        "right": "Stage 설명",
+        "bottom": "진입/이어하기"
+      },
+      "gameLogic": [
+        "기본은 Stage 1부터 순차 해금한다.",
+        "교사용 해금 상태에서는 자유 진입을 허용한다.",
+        "완료 Stage는 LOST에서 RESTORED state로 바뀐다.",
+        "Screen 10에서 동일 3D scene을 재사용한다."
+      ],
+      "completionRules": [
+        "Stage 1 데이터 코어 선택",
+        "첫 조사 목표 확인"
+      ],
+      "feedback": {
+        "locked": "앞 조사 기록을 먼저 복구해야 이 구역을 열 수 있어.",
+        "complete": "지구 표면 조사 구역이 열렸어."
+      },
+      "visualPrompt": "밝은 푸른행성 조사본부 내부. 중앙 원형 상황실에 지구 표면, 물 표본, 해안 지형, 바닷물 변화, 갯벌 생태를 상징하는 다섯 데이터 코어가 배치되어 있고 손상 코어는 은은하게 꺼져 있다.",
+      "implementationPrompt": "Three.js HQ scene + fixed camera presets. Core mesh raycast 후 DOM detail panel 업데이트. completion state를 emissive/animation에 바인딩. P10에서 asset/camera 재사용.",
+      "assetsNeeded": [
+        "blue_planet_hq.glb",
+        "data_core.glb",
+        "hq_ui_icons.webp",
+        "main_hq.ogg"
+      ],
+      "nonGoals": [
+        "복잡한 3D 이동",
+        "텍스트를 3D texture로 굽기",
+        "실시간 멀티플레이"
+      ]
+    },
+    {
+      "pageNumber": 3,
+      "pageId": "p03-earth-scan-3d",
+      "stage": "STAGE 1",
+      "stageName": "지구 표면 조사",
+      "title": "지구를 스캔하라",
+      "standardCodes": [
+        "4과06-01"
+      ],
+      "runtime": "threejs-dom-svg",
+      "threeDLevel": "core",
+      "learningGoal": "지구가 대기로 둘러싸여 있고 지표가 육지와 바다로 이루어짐을 직접 관찰한다.",
+      "studentMission": "지구를 회전하고 대기 렌즈와 지표 스캐너를 사용해 여러 방향의 표본을 수집한다.",
+      "coreInteractions": [
+        "3D 지구 회전",
+        "pinch zoom 보조",
+        "대기 렌즈",
+        "지표 raycast 스캔",
+        "탐사 핀",
+        "표본 카드 생성"
+      ],
+      "layout": {
+        "top": "Stage 1 / 조사 횟수",
+        "center": "대형 3D 지구",
+        "left": "대기 렌즈·스캐너",
+        "right": "수집 표본 트레이",
+        "bottom": "관측 방향 안내 + 다음"
+      },
+      "gameLogic": [
+        "대기 렌즈를 지구 가장자리 서로 다른 방향에 3회 이상 적용한다.",
+        "검수된 land/sea zone에서 표본을 8개 이상 수집한다.",
+        "sampling coverage rule로 한쪽 지역만 반복 조사되지 않게 한다.",
+        "대기 shell은 정량 두께 모델이 아니라 교육용 시각화다.",
+        "수집 자료는 P04로 전달한다."
+      ],
+      "completionRules": [
+        "대기 관찰 3회 이상",
+        "표본 8개 이상",
+        "육지/바다 표본 각각 1개 이상"
+      ],
+      "feedback": {
+        "coverage": "한쪽만 조사했어. 지구를 더 돌려 다른 방향도 스캔해 봐.",
+        "complete": "지구 표면 표본이 충분히 모였어."
+      },
+      "visualPrompt": "밝은 관측실 안에 떠 있는 현실감 있는 3D 지구. 지구 가장자리에 얇고 은은한 대기 표현, 육지와 바다가 명확히 보이고 스캐너 마커는 작고 절제된다. 장식보다 회전·관측 가독성 우선.",
+      "implementationPrompt": "Three.js object-centered OrbitControls, pan off, zoom clamp. AtmosphereShell transparent material. raycast zone metadata에서 land/sea sample 생성. scan placement mode에서는 camera rotation lock 가능.",
+      "assetsNeeded": [
+        "earth_globe.glb",
+        "earth_surface_1k.webp",
+        "earth_surface_2k.webp",
+        "atmosphere_fx.webp",
+        "scan_marker.webp"
+      ],
+      "nonGoals": [
+        "실제 대기 두께 정량 측정",
+        "자유 비행",
+        "지역명 암기",
+        "한 번 터치 후 자동 정답"
+      ]
+    },
+    {
+      "pageNumber": 4,
+      "pageId": "p04-surface-data-compare",
+      "stage": "STAGE 1",
+      "stageName": "지구 표면 조사",
+      "title": "표본으로 비교하라",
+      "standardCodes": [
+        "4과06-01"
+      ],
+      "runtime": "dom-svg",
+      "threeDLevel": "none",
+      "learningGoal": "직접 수집한 육지와 바다 표본을 비교해 지구 표면의 특징을 근거로 정리한다.",
+      "studentMission": "P03에서 모은 표본을 검토·분류하고 그래프와 관찰 근거를 보고 결론을 완성한다.",
+      "coreInteractions": [
+        "표본 카드 검토",
+        "육지/바다 분류",
+        "SVG 누적 그래프",
+        "근거 2개 선택",
+        "결론 조립"
+      ],
+      "layout": {
+        "top": "Stage 1 진행 2/2",
+        "center": "표본 분류 + 비교 그래프",
+        "left": "미분류 표본",
+        "right": "관찰 근거",
+        "bottom": "조사 결론"
+      },
+      "gameLogic": [
+        "결론 버튼을 먼저 노출하지 않는다.",
+        "모든 표본을 검토하면 비교 그래프가 활성화된다.",
+        "근거 2개 이상을 선택해야 결론 제출 가능하다.",
+        "오분류 시 정답 자동 이동 대신 원본 표본 확대를 제공한다."
+      ],
+      "completionRules": [
+        "표본 전체 검토",
+        "육지/바다 분류 완료",
+        "근거 2개 이상",
+        "비교 결론 완료"
+      ],
+      "feedback": {
+        "reobserve": "이 표본을 확대해서 물과 땅의 모습을 다시 살펴봐.",
+        "complete": "지구 표면 조사 데이터가 복구됐어."
+      },
+      "visualPrompt": "과학 조사본부의 데이터 분석 데스크. 왼쪽에 학생이 직접 모은 표본 카드, 중앙에 육지와 바다 비교 그래프, 오른쪽에 관찰 근거 노트. 카드놀이보다 조사 데이터 분석 느낌.",
+      "implementationPrompt": "DOM cards + SVG bar chart. P03 SampleRecord를 읽어 분류 상태 관리. SurfaceCompareValidator로 completion 판정. 색 외에 LAND/SEA 아이콘과 패턴 병행.",
+      "assetsNeeded": [
+        "sample_card_frames.svg",
+        "land_sea_icons.svg",
+        "analysis_panel.webp"
+      ],
+      "nonGoals": [
+        "고정 4지선다",
+        "정답 선노출",
+        "표본과 무관한 임의 그래프"
+      ]
+    },
+    {
+      "pageNumber": 5,
+      "pageId": "p05-water-sample-lab",
+      "stage": "STAGE 2",
+      "stageName": "물 표본 분석",
+      "title": "두 물의 흔적을 비교하라",
+      "standardCodes": [
+        "4과06-02"
+      ],
+      "runtime": "phaser-dom-svg",
+      "threeDLevel": "none",
+      "learningGoal": "육지의 물과 바닷물을 같은 조건에서 비교하고 가열 후 남는 모습을 관찰한다.",
+      "studentMission": "두 표본의 양을 같게 맞춘 뒤 가열하고 전후 모습을 확대해 차이를 증거로 기록한다.",
+      "coreInteractions": [
+        "스포이트 양 조절",
+        "동일 조건 확인",
+        "가열 시작/중지",
+        "시간 진행",
+        "확대경",
+        "전후 스냅",
+        "A/B 비교"
+      ],
+      "layout": {
+        "top": "Stage 2 / 실험 안전",
+        "center": "A/B 증발 접시와 가열 장치",
+        "left": "표본/양 조절",
+        "right": "관찰 스냅",
+        "bottom": "가열·시간·확대 도구"
+      },
+      "gameLogic": [
+        "A/B 양 차이가 허용 범위를 넘으면 가열 시작이 잠긴다.",
+        "실제 물리엔진 대신 검수 가능한 단계형 증발 state를 사용한다.",
+        "바닷물 표본에는 가열 후 흰색 고체 흔적을 표현한다.",
+        "표현은 소금 등 바닷물에 녹아 있던 물질 수준으로 제한한다.",
+        "맛보기 상호작용은 금지한다.",
+        "두 접시 전/후를 모두 관찰해야 결론이 활성화된다."
+      ],
+      "completionRules": [
+        "동일 조건 맞추기",
+        "실험 1회 이상",
+        "두 표본 전후 관찰",
+        "차이 근거 2개 이상"
+      ],
+      "feedback": {
+        "fair": "두 물의 양이 달라. 공정하게 비교하려면 먼저 같게 맞춰 봐.",
+        "observe": "물이 줄어든 뒤 접시 바닥을 확대해서 살펴봐.",
+        "complete": "두 물의 가열 뒤 모습에서 차이를 발견했어."
+      },
+      "visualPrompt": "밝고 깨끗한 초등 과학 실험실. 좌우에 동일한 증발 접시와 표본 A/B, 중앙 가열 장치. 가열 후 한쪽 접시에 흰색 고체 흔적이 관찰되지만 과장된 소금 결정 산처럼 표현하지 않는다.",
+      "implementationPrompt": "Phaser state machine idle→volume_match→heating→evaporating→residue_observation→compare. 액체는 mask/sprite interpolation. real fluid/thermal physics 사용 금지.",
+      "assetsNeeded": [
+        "evaporation_dish.webp",
+        "pipette.webp",
+        "heater.webp",
+        "residue_texture.webp",
+        "lab_stage2.ogg"
+      ],
+      "nonGoals": [
+        "맛보기",
+        "해수 성분 퍼센트 계산",
+        "실제 유체 물리",
+        "OX 연속"
+      ]
+    },
+    {
+      "pageNumber": 6,
+      "pageId": "p06-coast-field-scan",
+      "stage": "STAGE 3",
+      "stageName": "해안 지형 조사",
+      "title": "해안을 조사하라",
+      "standardCodes": [
+        "4과06-02"
+      ],
+      "runtime": "phaser-2.5d-dom",
+      "threeDLevel": "none",
+      "learningGoal": "바닷가에서 볼 수 있는 다양한 지형의 모습을 직접 이동·촬영하며 조사한다.",
+      "studentMission": "해안을 이동해 서로 다른 지형을 찾아 촬영하고, 각 사진에서 특징을 두 곳 이상 표시한다.",
+      "coreInteractions": [
+        "2.5D 이동",
+        "조사 카메라",
+        "프레임 이동",
+        "확대 촬영",
+        "특징 핀",
+        "주석",
+        "재촬영"
+      ],
+      "layout": {
+        "top": "Stage 3 진행 1/2",
+        "center": "넓은 2.5D 해안 조사구역",
+        "left": "탐사 미니맵",
+        "right": "카메라/촬영 기록",
+        "bottom": "이동 + 촬영 + 특징핀"
+      },
+      "gameLogic": [
+        "지형 이름은 촬영 전에 노출하지 않는다.",
+        "검수된 지형 zone 4종 이상을 조사한다.",
+        "각 capture는 특징 anchor 2개 이상이 있어야 유효하다.",
+        "정밀 픽셀 판정 대신 넓은 hotspot polygon을 사용한다.",
+        "형성 원인의 상세 메커니즘은 평가하지 않는다."
+      ],
+      "completionRules": [
+        "서로 다른 지형 4종 이상 촬영",
+        "각 사진 특징 2개 이상",
+        "유효 capture 4개 이상"
+      ],
+      "feedback": {
+        "feature": "이 지형을 다른 곳과 구별해 주는 모습을 두 군데 표시해 봐.",
+        "retake": "사진에 특징이 잘 보이지 않아. 조금 이동해서 다시 찍어도 돼.",
+        "complete": "해안 조사 사진이 충분히 모였어."
+      },
+      "visualPrompt": "학생이 좌우로 이동하며 발견하는 밝은 한국형 해안 조사구역. 모래사장, 가파른 바위, 움푹 들어간 바위 공간, 구멍 난 바위, 갯벌의 모습을 자연스럽게 배치. 과장된 판타지보다 실제 현장조사 느낌.",
+      "implementationPrompt": "Phaser wide world + parallax 2.5D. landform zone metadata와 CameraCaptureSystem 사용. capture는 zoneId + normalized frame + featureAnchorIds로 저장하고 실제 device camera는 사용하지 않는다.",
+      "assetsNeeded": [
+        "coast_bg_layers.webp",
+        "sand_beach.webp",
+        "cliff.webp",
+        "cave_rock.webp",
+        "hole_rock.webp",
+        "mudflat_edge.webp",
+        "camera_frame.svg"
+      ],
+      "nonGoals": [
+        "숨은그림 퍼즐",
+        "지형 이름 선노출",
+        "형성원인 심화 평가"
+      ]
+    },
+    {
+      "pageNumber": 7,
+      "pageId": "p07-coast-research-album",
+      "stage": "STAGE 3",
+      "stageName": "해안 지형 조사",
+      "title": "해안 기록을 완성하라",
+      "standardCodes": [
+        "4과06-02"
+      ],
+      "runtime": "dom-svg-canvas",
+      "threeDLevel": "none",
+      "learningGoal": "자신이 촬영한 자료의 특징을 근거로 해안 지형 조사 기록을 정리하고 비교한다.",
+      "studentMission": "촬영 사진, 특징, 지형 이름을 연결하고 비슷한 두 지형을 나란히 비교해 조사 앨범을 완성한다.",
+      "coreInteractions": [
+        "사진 확대",
+        "특징 태그",
+        "지형 이름 연결",
+        "A/B 비교",
+        "조사 캡션",
+        "되돌아보기"
+      ],
+      "layout": {
+        "top": "Stage 3 진행 2/2",
+        "center": "해안 조사 앨범",
+        "left": "촬영 사진 목록",
+        "right": "특징/이름/비교 노트",
+        "bottom": "비교 보기 + 조사 완료"
+      },
+      "gameLogic": [
+        "P06에서 학생이 만든 capture와 annotation을 그대로 사용한다.",
+        "최소 4개 조사 카드가 필요하다.",
+        "비슷한 두 사진 1쌍을 나란히 비교하고 차이 1개 이상 기록한다.",
+        "잘못 연결하면 P06 해당 지점으로 돌아가 재관찰할 수 있다."
+      ],
+      "completionRules": [
+        "조사 카드 4개 이상",
+        "각 카드 사진+특징+이름",
+        "비교 기록 1쌍 이상"
+      ],
+      "feedback": {
+        "checkEvidence": "이름을 바꾸기 전에 네가 표시한 특징을 다시 확인해 봐.",
+        "compare": "두 사진을 나란히 놓고 바닥과 경사를 비교해 봐.",
+        "complete": "해안 지형 데이터가 복구됐어."
+      },
+      "visualPrompt": "깔끔한 디지털 현장 조사 앨범. 학생이 직접 촬영한 프레임이 큰 사진 카드로 보이고 특징 핀이 사진 위에 남는다. 종이 학습지처럼 빈칸이 빽빽하지 않고 비교와 근거가 중심.",
+      "implementationPrompt": "DOM/SVG card authoring + Canvas export optional. P06 capture metadata로 preview 재구성. CoastRecordValidator가 4개 record와 compare pair 검증.",
+      "assetsNeeded": [
+        "field_notebook_bg.webp",
+        "feature_tags.svg",
+        "compare_frame.svg"
+      ],
+      "nonGoals": [
+        "종이 활동지 단순 복제",
+        "고정 빈칸 채우기만으로 완료"
+      ]
+    },
+    {
+      "pageNumber": 8,
+      "pageId": "p08-tide-time-scan",
+      "stage": "STAGE 4",
+      "stageName": "바닷물 높이 변화 조사",
+      "title": "시간을 움직여 비교하라",
+      "standardCodes": [
+        "4과06-03"
+      ],
+      "runtime": "phaser-2.5d-dom",
+      "threeDLevel": "none",
+      "learningGoal": "같은 장소의 시간에 따른 바닷물 높이 변화를 비교해 밀물과 썰물의 차이를 증거로 설명한다.",
+      "studentMission": "시간축을 앞뒤로 움직여 두 시점을 저장하고 길·배·바위·기둥 등 달라진 곳을 증거로 표시한다.",
+      "coreInteractions": [
+        "timeline scrub",
+        "시간 step 버튼",
+        "A/B snapshot",
+        "분할 비교",
+        "evidence pin",
+        "바닷물 높이 판단",
+        "용어 연결"
+      ],
+      "layout": {
+        "top": "Stage 4 / 관측 장소",
+        "center": "같은 해안의 시간 변화 장면",
+        "left": "A 스냅",
+        "right": "B 스냅/증거",
+        "bottom": "큰 시간축 + 저장 A/B"
+      },
+      "gameLogic": [
+        "실제 조석 예측이 아니라 검수된 교육용 deterministic timeline을 사용한다.",
+        "A와 B는 충분히 다른 서로 다른 시점이어야 한다.",
+        "길, 해변 경계, 배, 바위, 기둥 중 2개 이상의 변화 증거를 요구한다.",
+        "바닷물 높이 변화 판단 뒤에 밀물/썰물 용어를 활성화한다.",
+        "달의 인력, 조석 원인, 실제 시각 예보 기능은 넣지 않는다."
+      ],
+      "completionRules": [
+        "A/B 서로 다른 시점 저장",
+        "변화 증거 2개 이상",
+        "높이 변화 판단",
+        "밀물/썰물 용어 연결"
+      ],
+      "feedback": {
+        "moveTime": "시간 막대를 더 멀리 움직여 같은 장소가 어떻게 달라지는지 봐.",
+        "evidence": "A와 B에서 길이나 배의 위치를 비교해 봐.",
+        "complete": "바닷물 높이 변화 데이터가 복구됐어."
+      },
+      "visualPrompt": "같은 한국 해안 장소를 넓게 보여주는 2.5D 장면. 시간축을 움직이면 물 경계가 자연스럽게 이동하고 길, 바위, 기둥, 배의 보이는 정도와 높이가 달라진다. 재난처럼 과장하지 않는다.",
+      "implementationPrompt": "Phaser deterministic TideFrame curve. water mask/plane과 props 상태를 t=0..1에서 보간. TimelineScrubber는 DOM. A/B snapshot은 state + optional render texture. EvidencePinSystem은 넓은 hotspot polygon.",
+      "assetsNeeded": [
+        "tide_coast_bg.webp",
+        "water_mask.webp",
+        "road_prop.webp",
+        "boat_prop.webp",
+        "pillar_prop.webp",
+        "rock_prop.webp",
+        "timeline_ui.svg",
+        "stage4_tide.ogg"
+      ],
+      "nonGoals": [
+        "실제 조위 예측",
+        "달의 인력 설명",
+        "조석 주기 계산",
+        "영상 재생만으로 완료"
+      ]
+    },
+    {
+      "pageNumber": 9,
+      "pageId": "p09-mudflat-ecology-scan",
+      "stage": "STAGE 5",
+      "stageName": "갯벌 생태 조사",
+      "title": "갯벌의 단서를 수집하라",
+      "standardCodes": [
+        "4과06-03"
+      ],
+      "runtime": "phaser-dom",
+      "threeDLevel": "none",
+      "learningGoal": "갯벌의 다양한 생물과 특징을 조사하고 갯벌의 가치를 설명할 근거를 수집한다.",
+      "studentMission": "갯벌의 구멍·흔적·식물 일부·움직임을 찾아 확대하고 특징을 두 개 이상 확보해 조사 도감을 완성한다.",
+      "coreInteractions": [
+        "갯벌 pan",
+        "흔적 탐색",
+        "확대경",
+        "생태 스캐너",
+        "사진 촬영",
+        "특징 핀",
+        "후보 비교",
+        "도감 등록"
+      ],
+      "layout": {
+        "top": "Stage 5 진행 1/2",
+        "center": "넓은 갯벌 조사구역",
+        "left": "도감 진행",
+        "right": "확대 렌즈/특징 기록",
+        "bottom": "탐색·촬영·스캔 도구"
+      },
+      "gameLogic": [
+        "생물 전체 사진을 처음부터 모두 노출하지 않는다.",
+        "hidden clue→zoom→feature1→feature2→candidate compare→record 순서로 진행한다.",
+        "동물/식물/철새 범주를 포함한 최소 5개 기록을 요구한다.",
+        "각 도감 항목은 사진 또는 관찰 스냅 + 특징 2개가 있어야 등록된다.",
+        "이름 맞히기만으로 완료할 수 없다."
+      ],
+      "completionRules": [
+        "조사 기록 5개 이상",
+        "동물/식물/철새 범주 포함",
+        "각 기록 특징 2개 이상",
+        "가치 근거 카드 2개 이상 확보"
+      ],
+      "feedback": {
+        "moreClue": "이름을 정하기 전에 몸이나 잎의 특징을 하나 더 찾아봐.",
+        "diversity": "다른 구역도 조사해 봐.",
+        "complete": "갯벌 생태 데이터가 충분히 모였어."
+      },
+      "visualPrompt": "실제 갯벌처럼 처음에는 작은 구멍, 움직임, 흔적, 식물 일부가 보이는 탐사 공간. 확대하면 게, 조개류, 망둑어/짱뚱어류, 갯지렁이, 철새, 염생식물 특징이 발견된다. 생태를 존중하는 밝고 자연스러운 톤.",
+      "implementationPrompt": "Phaser zone-based clue state machine + LensSystem. species data는 mudflat-species.json에서 로드. requiredFeatureIds 2개 이상 충족 후 record 등록. 확대 이미지는 zone 진입 시 lazy load.",
+      "assetsNeeded": [
+        "mudflat_bg.webp",
+        "clue_holes.webp",
+        "mudflat_species_atlas.webp",
+        "mudflat_plants_atlas.webp",
+        "bird_assets.webp",
+        "lens_ui.svg",
+        "stage5_mudflat.ogg"
+      ],
+      "nonGoals": [
+        "순간사진 이름 맞히기만 반복",
+        "생물을 클릭하면 즉시 정답",
+        "실제 갯벌 훼손 행동을 보상"
+      ]
+    },
+    {
+      "pageNumber": 10,
+      "pageId": "p10-final-briefing-3d",
+      "stage": "STAGE 5 / FINAL",
+      "stageName": "갯벌 생태 조사",
+      "title": "최종 보호 브리핑",
+      "standardCodes": [
+        "4과06-03"
+      ],
+      "runtime": "threejs-dom-canvas",
+      "threeDLevel": "light",
+      "learningGoal": "갯벌의 가치와 보전 필요성을 자신이 수집한 조사 증거로 설득·홍보한다.",
+      "studentMission": "주장을 세우고 앞에서 확보한 증거를 두 개 이상 연결한 뒤 실천 제안을 포함한 최종 브리핑을 완성한다.",
+      "coreInteractions": [
+        "3D HQ 복구 연출",
+        "주장 작성/선택",
+        "증거 카드 연결",
+        "가치 근거 연결",
+        "실천 제안",
+        "선택적 10초 음성",
+        "PNG 결과 카드"
+      ],
+      "layout": {
+        "top": "BLUE PLANET DATA 복구율",
+        "center": "복구된 3D 상황실 + 브리핑 패널",
+        "left": "내 조사 증거",
+        "right": "주장/근거/실천 구조",
+        "bottom": "미리보기 + 완료 + 저장"
+      },
+      "gameLogic": [
+        "P02 HQ 3D scene을 재사용하고 restored state만 변경한다.",
+        "주장 + 학생 조사 증거 2개 + 가치 근거 1개 + 실천 제안 1개가 있어야 완료된다.",
+        "음성 녹음은 선택 기능이며 권한 없이 완주 가능하다.",
+        "완료 후 MissionResult를 생성한다.",
+        "결과 카드 PNG 저장은 선택 기능이다."
+      ],
+      "completionRules": [
+        "주장 1개",
+        "조사 증거 2개 이상",
+        "가치 근거 1개 이상",
+        "실천 제안 1개",
+        "최종 미리보기 확인"
+      ],
+      "feedback": {
+        "evidence": "네 주장을 뒷받침하는 조사 증거가 하나 더 필요해.",
+        "action": "왜 중요한지 말했어. 이제 우리가 할 수 있는 행동도 하나 제안해 봐.",
+        "complete": "다섯 조사 데이터가 모두 복구됐어. 푸른행성 조사원 인증 완료!"
+      },
+      "visualPrompt": "Screen 02의 같은 푸른행성 조사본부 상황실이 완전히 복구된 모습. 다섯 데이터 코어가 차례로 밝아지고 중앙 지구 홀로그램이 선명해진다. 학생이 만든 주장-증거 브리핑이 중심이며 3D는 성취감을 보조한다.",
+      "implementationPrompt": "P02 Three.js scene asset reuse + restored HQWorldState. DOM authoring panel에서 claim/evidence/value/action validator 적용. MediaRecorder는 optional capability check. Canvas 2D 결과 카드. 완료 시 MissionResultAdapter 호출.",
+      "assetsNeeded": [
+        "blue_planet_hq.glb",
+        "data_core.glb",
+        "restore_fx.webp",
+        "blue_planet_badge.webp",
+        "result_card_frame.svg",
+        "final_hq.ogg"
+      ],
+      "nonGoals": [
+        "고정 20문항 단원평가",
+        "음성 녹음 필수",
+        "개인정보 서버 저장",
+        "새로운 고학년 개념 추가"
+      ]
+    }
+  ],
+  "sourceBenchmarkNotes": [
+    {
+      "source": "초등학교_교과별_성취기준_2025.pdf",
+      "usedFor": "[4과06-01]~[4과06-03] 직접 성취기준",
+      "transformedInto": "각 Stage의 수행 행동과 완료 조건",
+      "notCopied": "문서 레이아웃"
+    },
+    {
+      "source": "과학(이)_3-2-2_2차시_게임PPT_솔로몬의선택.pptx",
+      "usedFor": "대기와 공기 관찰 요소",
+      "transformedInto": "P03 3D 대기 렌즈와 다방향 관찰",
+      "notCopied": "2지선다, 솔로몬 설정, 점수 게임, 화면 디자인"
+    },
+    {
+      "source": "과학(정)_3-2-2_5차시_게임PPT_OX미션게임.pptx / 과학(이)_3-2-2_5차시_게임PPT_카드를뒤집어라.pptx / 아이스크림_4-보완_지구와바다_1차시_바닷물은 육지의 물과 어떻게 다를까.pptx",
+      "usedFor": "육지의 물과 바닷물의 비교 및 가열 관찰",
+      "transformedInto": "P05 동일 조건 가상 실험 + 확대 관찰 + 전후 비교",
+      "notCopied": "OX, 카드 뒤집기, 원본 문항, 점수 규칙"
+    },
+    {
+      "source": "과학(이)_3-2-2_6차시_게임PPT_퍼즐퀴즈.pptx",
+      "usedFor": "다양한 바닷가 지형의 관찰 대상",
+      "transformedInto": "P06 현장 촬영 + 특징 마킹, P07 조사 앨범",
+      "notCopied": "퍼즐 조각 제거, 동물 그림, OX, 원본 슬라이드"
+    },
+    {
+      "source": "아이스크림_4-보완_지구와바다_2차시_밀물과 썰물은 무엇일까.pptx / (보완)밀물썰물갯벌,기후변화.pptx",
+      "usedFor": "같은 장소의 시간 변화에서 길, 배, 기둥, 해변 범위를 비교하는 학습 구조",
+      "transformedInto": "P08 Timeline Scrubber + A/B Snapshot + Evidence Pin",
+      "notCopied": "영상/사진 배치, 슬라이드 문구, 원본 문제"
+    },
+    {
+      "source": "갯벌에 사는 생물 조사하기.pdf / 과학(이)_3-2-2_8-9차시_게임PPT_순간카메라.pptx",
+      "usedFor": "갯벌 생물과 식물의 관찰 특징, 다양한 생물 범주",
+      "transformedInto": "P09 흔적→확대→특징 2개→후보 비교→도감 등록",
+      "notCopied": "빈칸 학습지, 순간 사진 이름 맞히기, 점수 게임"
+    },
+    {
+      "source": "천재정용재_6-보완2－１０１１_지구와바다_소중한 갯벌을 지켜요.pptx / 아이스크림_4-보완_지구와바다_3차시_살아 숨 쉬는 자연의 보물 창고, 갯벌.pptx",
+      "usedFor": "갯벌 가치와 보전 필요성, 홍보 자료 제작 목표",
+      "transformedInto": "P10 주장 + 조사 증거 + 가치 근거 + 실천 제안 브리핑",
+      "notCopied": "원본 홍보물 양식, 문구, 슬라이드 디자인"
+    }
+  ]
+}

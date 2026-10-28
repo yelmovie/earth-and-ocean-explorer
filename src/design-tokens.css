@@ -1,0 +1,52 @@
+/* Blue Planet: cream field journal, navy instruments, teal actions. */
+:root {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  font-synthesis: none;
+  font-size: 18px;
+  color: var(--ink);
+  background: var(--color-background);
+
+  --ink: #173f4b;
+  --muted: #47666b;
+  --navy: #103e4e;
+  --teal: #086c6b;
+  --mint: #b8decb;
+  --paper: #fffdf5;
+  --line: #c7d8ce;
+  --gold: #f3c98d;
+  --apricot: #f8e0bc;
+  --color-background: #f2f3e9;
+  --color-primary: var(--teal);
+  --color-primary-hover: #075957;
+  --color-surface: var(--paper);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--muted);
+  --color-success: #216343;
+  --color-warning: #875319;
+  --color-error: #a23f32;
+  --color-focus: #a85b0e;
+
+  --font-heading: 'Malgun Gothic', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  --font-body: var(--font-heading);
+  --font-body-size: 18px;
+  --font-title-size: clamp(28px, 2.5vw, 36px);
+  --font-heading-size: clamp(23px, 2vw, 28px);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --radius-small: 8px;
+  --radius-medium: 12px;
+  --radius-large: 20px;
+  --radius: var(--radius-large);
+  --shadow-small: 0 2px 4px #173f4b0d;
+  --shadow-medium: 0 8px 24px #173f4b14;
+  --shadow: var(--shadow-medium);
+  --touch-min: 48px;
+  --motion-fast: 160ms;
+  --motion-standard: 240ms;
+  --layer-header: 4;
+  --layer-feedback: 20;
+}

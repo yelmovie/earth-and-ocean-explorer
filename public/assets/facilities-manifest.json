@@ -1,0 +1,98 @@
+{
+  "source": "references/generated/facilities-atlas.png",
+  "size": [
+    512,
+    512
+  ],
+  "pivot": [
+    256,
+    440
+  ],
+  "sprites": [
+    {
+      "stage": 1,
+      "file": "facility-1.webp",
+      "sourceCrop": [
+        0,
+        0,
+        512,
+        498
+      ],
+      "alphaBounds": [
+        41,
+        17,
+        491,
+        492
+      ],
+      "bytes": 103382
+    },
+    {
+      "stage": 2,
+      "file": "facility-2.webp",
+      "sourceCrop": [
+        512,
+        0,
+        1024,
+        540
+      ],
+      "alphaBounds": [
+        19,
+        85,
+        496,
+        521
+      ],
+      "bytes": 106980
+    },
+    {
+      "stage": 3,
+      "file": "facility-3.webp",
+      "sourceCrop": [
+        1024,
+        0,
+        1536,
+        560
+      ],
+      "alphaBounds": [
+        16,
+        33,
+        498,
+        529
+      ],
+      "bytes": 107812
+    },
+    {
+      "stage": 4,
+      "file": "facility-4.webp",
+      "sourceCrop": [
+        0,
+        498,
+        512,
+        1024
+      ],
+      "alphaBounds": [
+        76,
+        4,
+        484,
+        491
+      ],
+      "bytes": 83006
+    },
+    {
+      "stage": 5,
+      "file": "facility-5.webp",
+      "sourceCrop": [
+        512,
+        540,
+        1024,
+        1024
+      ],
+      "alphaBounds": [
+        7,
+        38,
+        499,
+        436
+      ],
+      "bytes": 95782
+    }
+  ]
+}

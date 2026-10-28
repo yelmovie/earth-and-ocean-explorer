@@ -1,0 +1,265 @@
+{
+  "moves": [
+    {
+      "from": "files",
+      "to": "references\\source-docs"
+    },
+    {
+      "from": "image",
+      "to": "references\\images"
+    },
+    {
+      "from": "references\\source-docs\\3-2_blue-planet-research-hq_docs.zip",
+      "to": "references\\archives\\3-2_blue-planet-research-hq_docs.zip"
+    }
+  ],
+  "archive_checks": [
+    {
+      "archive": "3-2_blue-planet-research-hq_docs.zip",
+      "file": "3-2_blue-planet-research-hq_PRD.md",
+      "size": 15705,
+      "sha256": "b72e1763e692ec9caf70fc3f816aaa7eae29a511365b7e546d5950f9138c0e7e",
+      "matches_source": true
+    },
+    {
+      "archive": "3-2_blue-planet-research-hq_docs.zip",
+      "file": "3-2_blue-planet-research-hq_TRD.md",
+      "size": 22805,
+      "sha256": "6131c25b2980ae00fba860af9611ce4f376471895822c84bad2828578709b14e",
+      "matches_source": true
+    },
+    {
+      "archive": "3-2_blue-planet-research-hq_docs.zip",
+      "file": "3-2_blue-planet-research-hq_page_design_prompts.json",
+      "size": 33970,
+      "sha256": "98876f0d3ba4da77ffa272026012a72c5901bab4aa927e58e89a463bb66dab60",
+      "matches_source": true
+    }
+  ],
+  "images": [
+    {
+      "file": "chatgpt_generated_001_74a22d153b.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2447214
+    },
+    {
+      "file": "chatgpt_generated_002_97b942b34e.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2440659
+    },
+    {
+      "file": "chatgpt_generated_003_46032a0511.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2501178
+    },
+    {
+      "file": "chatgpt_generated_004_4d410db387.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2566172
+    },
+    {
+      "file": "chatgpt_generated_005_09cb1f095a.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2413149
+    },
+    {
+      "file": "chatgpt_generated_006_635541aa17.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2478124
+    },
+    {
+      "file": "chatgpt_generated_007_5c941e8960.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2432187
+    },
+    {
+      "file": "chatgpt_generated_008_91369c4ab2.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2503068
+    },
+    {
+      "file": "chatgpt_generated_009_be47b61e5c.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2550889
+    },
+    {
+      "file": "chatgpt_generated_010_d57132ce9f.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2578532
+    },
+    {
+      "file": "chatgpt_generated_011_8bb88176c7.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2289597
+    },
+    {
+      "file": "chatgpt_generated_012_063e09110f.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2344429
+    },
+    {
+      "file": "chatgpt_generated_013_69459d0c14.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 1991138
+    },
+    {
+      "file": "chatgpt_generated_014_ec25f7341b.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2151114
+    },
+    {
+      "file": "chatgpt_generated_015_bb92d72691.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2320132
+    },
+    {
+      "file": "chatgpt_generated_016_47dfe86041.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2165240
+    },
+    {
+      "file": "chatgpt_generated_017_122ced6dee.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2274477
+    },
+    {
+      "file": "chatgpt_generated_018_c37518fcca.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2401981
+    },
+    {
+      "file": "chatgpt_generated_019_d1b81b92ec.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2555092
+    },
+    {
+      "file": "chatgpt_generated_020_b8fb652fdd.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2247160
+    },
+    {
+      "file": "chatgpt_generated_021_9f1bff1f02.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 1906178
+    },
+    {
+      "file": "chatgpt_generated_022_7f8b2e0f77.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 1880994
+    },
+    {
+      "file": "chatgpt_generated_023_05e9efa507.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 1777405
+    },
+    {
+      "file": "chatgpt_generated_024_21fc643ea4.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 1955975
+    },
+    {
+      "file": "chatgpt_generated_025_c656299ca4.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2378480
+    },
+    {
+      "file": "chatgpt_generated_026_5424ba027a.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2362299
+    },
+    {
+      "file": "chatgpt_generated_027_03189b7a2c.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2414887
+    },
+    {
+      "file": "chatgpt_generated_028_2506a07068.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 1935658
+    },
+    {
+      "file": "chatgpt_generated_029_0da824d236.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 2591916
+    },
+    {
+      "file": "chatgpt_generated_030_85bdbc3e43.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "bytes": 1996110
+    },
+    {
+      "file": "chatgpt_generated_031_743b9241d0.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "bytes": 1294210
+    },
+    {
+      "file": "chatgpt_generated_032_12f87853ea.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "bytes": 1591577
+    }
+  ]
+}

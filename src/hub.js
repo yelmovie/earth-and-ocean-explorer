@@ -53,6 +53,8 @@ export function mountHub(canvas,s,onArrive){
   const footsteps=[{...friend},{...pos}];
   let path=[],target=null,raf=0,previous=0,stopped=false,facing=1,entered=false,manualIntent=false,arrivalTimer=0;
   let width=960,height=540,scale=1,camera={x:0,y:0},lastCamera=null,guideOpen=false;
+  // Hand mode: dragging pans a free camera; walking again returns to following.
+  let hand=false,free=null,grab=null,dragged=false;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const background=new Image();let backgroundReady=false;background.decoding='async';background.onload=()=>{backgroundReady=true;};background.src=`${import.meta.env?.BASE_URL??'/'}assets/expedition-map.webp`;
   // Transparent facility illustrations can replace the procedural fallback
@@ -77,7 +79,8 @@ export function mountHub(canvas,s,onArrive){
   function clearInput(){input.clear();pads.clear();padPointers.clear();wrap.querySelectorAll('.is-held').forEach(button=>button.classList.remove('is-held'));previous=0;}
   function travel(i){if(!Number.isInteger(i)||i<0||i>=hubDoors.length||entered)return;clearInput();guideOpen=false;target=i;manualIntent=true;path=findHubPath(pos,hubDoors[i]);message(`${chapters[i].title}까지 길을 따라 가요.`);canvas.focus({preventScroll:true});}
   function enter(i){if(entered)return;path=[];manualIntent=false;if(!enabled(i)){message(`이곳은 아직 준비 중이에요. 먼저 ${chapters[i-1]?.title??chapters[0].title}의 조사를 마쳐 주세요.`,true);return;}entered=true;returningFrom=i+1;clearInput();onArrive(i+1);}
-  function size(){const box=wrap.getBoundingClientRect();width=box.width;height=box.height;const dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);canvas.style.width=`${width}px`;canvas.style.height=`${height}px`;scale=Math.max(width/960,height/540)*(width<800?1.25:1.3);lastCamera=null;}
+  function size(){const box=wrap.getBoundingClientRect();width=box.width;height=box.height;const dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);canvas.style.width=`${width}px`;canvas.style.height=`${height}px`;scale=Math.max(width/960,height/540)*(width<800?1.45:1.55);lastCamera=null;}
+  function setHand(on){hand=on;free=null;grab=null;wrap.classList.toggle('hand-on',hand);wrap.classList.remove('grabbing');const button=wrap.querySelector('[data-hub-hand]');button?.setAttribute('aria-pressed',String(hand));if(hand){path=[];target=null;message('지도를 손으로 끌어서 둘러봐요. 다시 누르거나 걸으면 부리를 따라가요.');}}
   function worldToScreen(p){return{x:p.x*scale-camera.x,y:p.y*scale-camera.y};}
   function overlays(){
     labels.forEach(label=>{const id=Number(label.dataset.hubStage),door=hubDoors[id-1];if(!door)return;const point=worldToScreen({x:door.buildingX,y:door.buildingY-61});const offscreen=point.x<85||point.x>width-85||point.y<94||point.y>height-146;
@@ -90,8 +93,10 @@ export function mountHub(canvas,s,onArrive){
   }
   function render(t){
     if(stopped||entered)return;raf=requestAnimationFrame(render);if(!startedAt)startedAt=t;
-    const dt=Math.min((t-previous)||16,40);previous=t;if(paused()){clearInput();path=[];return;}
+    // Character art may still be loading: keep drawing the map, but hold movement.
+    const dt=Math.min((t-previous)||16,40);previous=t;if(paused()){clearInput();path=[];if(artReady())return;}
     const vector=input.vector(pads);let moving=false;
+    if((vector.x||vector.y||path.length)&&hand)setHand(false);free=vector.x||vector.y||path.length?null:free;
     if(vector.x||vector.y){path=[];target=null;manualIntent=true;const before=pos;pos=moveHubPoint(pos,{x:vector.x*dt*.105,y:vector.y*dt*.105});moving=hubDistance(pos,before)>.01;if(vector.x)facing=Math.sign(vector.x);}
     else if(path.length){const p=path[0],distance=hubDistance(pos,p),step=dt*.13;if(distance<=step){pos={...p};path.shift();}else{const dx=(p.x-pos.x)/distance,dy=(p.y-pos.y)/distance;pos=moveHubPoint(pos,{x:dx*step,y:dy*step});if(dx)facing=Math.sign(dx);}moving=true;if(!path.length&&target!==null){enter(target);if(entered)return;}}
     if(manualIntent&&moving&&!path.length){const i=hubDoors.findIndex(door=>hubDistance(pos,door)<11);if(i>=0){enter(i);if(entered)return;}}
@@ -100,8 +105,8 @@ export function mountHub(canvas,s,onArrive){
     if(hubDistance(footsteps.at(-1),pos)>1){footsteps.push({...pos});if(footsteps.length>180)footsteps.shift();}
     let remaining=27;
     for(let i=footsteps.length-1;i>0;i--){const a=footsteps[i],b=footsteps[i-1],distance=hubDistance(a,b);if(distance>=remaining){const ratio=remaining/(distance||1);friend={x:a.x+(b.x-a.x)*ratio,y:a.y+(b.y-a.y)*ratio};break;}remaining-=distance;if(i===1)friend={...b};}
-    const desired={x:Math.max(0,Math.min(960*scale-width,pos.x*scale-width*.5)),y:Math.max(0,Math.min(540*scale-height,pos.y*scale-height*.56))};
-    if(!lastCamera||reduced)camera=desired;else{const blend=1-Math.exp(-dt/140);camera={x:camera.x+(desired.x-camera.x)*blend,y:camera.y+(desired.y-camera.y)*blend};}lastCamera=camera;
+    const desired={x:Math.max(0,Math.min(960*scale-width,free?free.x:pos.x*scale-width*.5)),y:Math.max(0,Math.min(540*scale-height,free?free.y:pos.y*scale-height*.56))};
+    if(!lastCamera||reduced||grab)camera=desired;else{const blend=1-Math.exp(-dt/140);camera={x:camera.x+(desired.x-camera.x)*blend,y:camera.y+(desired.y-camera.y)*blend};}lastCamera=camera;
     const dpr=canvas.width/width;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,width,height);c.translate(-camera.x,-camera.y);c.scale(scale,scale);c.imageSmoothingEnabled=false;c.drawImage(backgroundReady?background:fallback,0,0,960,540);
     const ordered=hubDoors.map((door,index)=>({y:door.buildingY+32,draw:()=>{
       const sprite=facilities[index],done=s.completed.includes(index+1);
@@ -117,7 +122,12 @@ export function mountHub(canvas,s,onArrive){
   const keydown=e=>{if(paused()||e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,select,textarea'))return;if(input.press(e.key,e.code)){e.preventDefault();guideOpen=false;}else if((e.code==='Enter'||e.code==='Space')&&e.target===canvas){e.preventDefault();const i=hubDoors.findIndex(door=>hubDistance(pos,door)<35);if(i>=0)enter(i);else message('건물 이름을 누르면 부리와 수달 모아가 함께 걸어가요.');}};
   const suspend=()=>{clearInput();path=[];};
   listen(window,'keydown',keydown);listen(window,'keyup',e=>input.release(e.key,e.code));listen(window,'blur',suspend);listen(document,'visibilitychange',suspend);
-  listen(canvas,'click',e=>{if(paused())return;const box=canvas.getBoundingClientRect(),point={x:(e.clientX-box.left+camera.x)/scale,y:(e.clientY-box.top+camera.y)/scale};const door=hubDoors.find(d=>Math.abs(point.x-d.buildingX)<54&&Math.abs(point.y-d.buildingY)<66);if(door){travel(door.id-1);return;}const road=nearestHubRoad(point);if(road.distance>38){message('밝은 흙길이나 건물 이름을 눌러 주세요.');return;}target=null;manualIntent=true;path=findHubPath(pos,road.point);canvas.focus({preventScroll:true});});
+  listen(canvas,'pointerdown',e=>{if(!hand||e.button>0||paused())return;grab={id:e.pointerId,x:e.clientX,y:e.clientY,ox:camera.x,oy:camera.y};dragged=false;});
+  listen(canvas,'pointermove',e=>{if(grab?.id!==e.pointerId)return;const dx=e.clientX-grab.x,dy=e.clientY-grab.y;if(!dragged&&Math.hypot(dx,dy)<6)return;if(!dragged){dragged=true;canvas.setPointerCapture?.(e.pointerId);wrap.classList.add('grabbing');}free={x:Math.max(0,Math.min(960*scale-width,grab.ox-dx)),y:Math.max(0,Math.min(540*scale-height,grab.oy-dy))};});
+  const letGo=e=>{if(grab?.id!==e.pointerId)return;grab=null;wrap.classList.remove('grabbing');};
+  listen(canvas,'pointerup',letGo);listen(canvas,'pointercancel',letGo);listen(canvas,'lostpointercapture',letGo);
+  listen(wrap.querySelector('[data-hub-hand]'),'click',()=>{setHand(!hand);canvas.focus({preventScroll:true});});
+  listen(canvas,'click',e=>{if(paused())return;if(hand||dragged){dragged=false;return;}const box=canvas.getBoundingClientRect(),point={x:(e.clientX-box.left+camera.x)/scale,y:(e.clientY-box.top+camera.y)/scale};const door=hubDoors.find(d=>Math.abs(point.x-d.buildingX)<54&&Math.abs(point.y-d.buildingY)<66);if(door){travel(door.id-1);return;}const road=nearestHubRoad(point);if(road.distance>38){message('밝은 흙길이나 건물 이름을 눌러 주세요.');return;}target=null;manualIntent=true;path=findHubPath(pos,road.point);canvas.focus({preventScroll:true});});
   const syncPads=()=>{pads.clear();for(const direction of padPointers.values())if(direction)pads.add(direction);for(const button of wrap.querySelectorAll('[data-hub-direction]'))button.classList.toggle('is-held',pads.has(button.dataset.hubDirection));};
   for(const button of wrap.querySelectorAll('[data-hub-direction]')){
     const direction=button.dataset.hubDirection;

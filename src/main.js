@@ -42,7 +42,8 @@ async function render(){
   let content=r==='home'?home(state):r==='hub'?hub(state):m?learning(state,+m[1],m[2]):r==='report'?report(state):r==='link'?link(state,{caseIndex:state.finalDraft.caseIndex,linkStage:state.finalDraft.stage,linkReason:state.finalDraft.reason}):r==='ending'?ending(state):certificate(state);
   const bg=r==='home'?'home':m?chapters[+m[1]-1].asset:r==='ending'?'ending':'terrace';
   app.className=`app route-${r}`;app.style.setProperty('--scene',`url("${asset(bg)}")`);
-  app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">관리자 전체 해금 중 · 학습 기록과 별도</div>':''}<main id="main">${content}</main><span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
+  const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
+  app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">관리자 전체 해금 중 · 학습 기록과 별도</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
@@ -100,6 +101,24 @@ function syncSettingControls(){
   const output=document.querySelector('#music-volume-output');if(output)output.textContent=`${Math.round(state.settings.volume*100)}%`;
   audioPlayer.sync();
 }
+// Teacher preview: with every stage unlocked, screens can be skimmed without
+// solving them. Movement never completes a stage or writes evidence.
+function teacherTargets(r){
+  const i=routes.indexOf(r);if(!state.settings.unlockAll||i<2)return null;
+  const m=/^s([1-5])/.exec(r),n=m?+m[1]:0;
+  return{left:routes[i-1],right:routes[i+1]??null,up:n?(n>1?`s${n-1}a`:'hub'):i>2?'s5a':null,down:n?(n<5?`s${n+1}a`:'report'):routes[i+1]??null};
+}
+function teacherNav(r){
+  const t=teacherTargets(r);if(!t)return '';
+  const pad=[['up','↑','이전 스테이지'],['left','←','이전 화면'],['down','↓','다음 스테이지'],['right','→','다음 화면']].map(([dir,arrow,label])=>`<button class="teacher-key" data-action="go" data-value="${t[dir]??''}" data-teacher-key="${dir}" aria-label="${label}${t[dir]?`: ${esc(routeName(t[dir]))}`:''}" title="${label}" ${t[dir]?'':'disabled'}>${arrow}</button>`).join('');
+  const skip=t.down?`<button class="teacher-skip" data-action="go" data-value="${t.down}"><span><small>다음 스테이지로 바로 가기</small>${esc(routeName(t.down))}</span>${icon('arrow')}</button>`:'';
+  return `<nav class="teacher-nav" aria-label="교사용 빠른 이동"><div class="teacher-pad"><div class="teacher-keys">${pad}</div><p><b>교사용 이동</b>키보드 방향키도 돼요<br>← → 화면 · ↑ ↓ 스테이지</p></div>${skip}</nav>`;
+}
+document.addEventListener('keydown',e=>{
+  const dir={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'}[e.key],t=dir&&teacherTargets(state.route);
+  if(!t||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||document.querySelector('dialog[open]')||e.target.closest?.('input,select,textarea,[contenteditable="true"],[role="slider"],canvas'))return;
+  e.preventDefault();if(t[dir]){tone();navigate(t[dir]);}
+});
 document.addEventListener('toggle',e=>{if(e.target.matches('.moa-hint[open]'))sound('hint');},true);
 document.addEventListener('input',e=>{if(e.target.dataset.setting!=='volume')return;state.settings.volume=Number(e.target.value)/100;syncSettingControls();});
 document.addEventListener('change',e=>{

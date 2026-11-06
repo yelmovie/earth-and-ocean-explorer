@@ -22,6 +22,7 @@
 - facility-1~5.webp: 새 생성 시설 시트에서 분리한 관측소·실험실·해안 초소·수위 관측탑·생태 시설. 원본 references/generated/facilities-atlas.png, sourceCrop과 pivot은 public/assets/facilities-manifest.json.
 - 지도 부리와 홈·이야기·최종 미션·엔딩의 부리/짱이: 2026-10-28 내장 image_gen으로 개별 생성한 투명 일러스트. 기존 캐릭터 시트를 정체성 참고로 사용했다. 지도 수달 모아는 기존 생성 이미지를 유지한다.
 - 게·짱뚱어·갈대 관찰 그림: 2026-10-28 내장 image_gen 생성. 실제 사진이나 종 동정 자료가 아닌 학습용 관찰 일러스트다. UI·수치와 연동되는 과학 도해는 프로젝트 자체 CSS/SVG/Canvas다.
+- home-deck.jpg: 2026-10-29 Canva 이미지 생성(generate-image)으로 만든 바닷가 연구소 데크 타이틀 배경(1920×1080). 원본은 assets/generated/20261029/home-seaside-deck.jpg에 보존. 납품 전 Canva 계정의 AI 생성물 이용 조건을 확인한다.
 - 장면은 현장 사진이 아닌 학습용 재현이다. 위치·날씨·크기·생물의 공간 배치는 과학 사실의 증거로 삼지 않는다.
 
 ## 교육 내용·지리 출처

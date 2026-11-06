@@ -1,3 +1,11 @@
+# 푸른행성 조사본부 인계 (2026-10-29)
+
+최신 작업(1~4번 프로젝트 메인·지도 참고): 타이틀 화면을 위아래 띠·카드 없는 전체화면으로 재구성했어. 새 배경 public/assets/home-deck.jpg(Canva 생성, 원본 assets/generated/20261029)에 큰 로고·금색 시작 버튼·탐사 지도 버튼·기록 5칸 점, 우하단 부리·짱이를 배치(src/screens.js home, experience.css "Title screen" 블록).
+지도: 확대 배율 1.3→1.55, 좌측 "지도 둘러보기"(손 아이콘) 켜면 드래그로 지도 이동(grab 커서), 걷기·방향키·건물 이동 시 부리 따라가기로 복귀. 캐릭터 그림 로딩 중에도 지도는 그려짐(hub.js).
+교사용: 설정>교사용 가이드>"모든 단계 한 번에 열기" 켜면 스테이지·보고서·엔딩·인증서 화면에 좌하단 방향키 패드(←→ 이전/다음 화면, ↑↓ 이전/다음 스테이지, 키보드 방향키 동일)와 우하단 "다음 스테이지로 바로 가기" 버튼이 떠. 이동만 하고 완료·증거는 기록하지 않아(main.js teacherNav). 해금 끄면 학생 화면에는 안 보여.
+검증: npm test 28개 통과, npm run build 성공, 개발·빌드 미리보기에서 1280×720·1024×768·844×390·768×1024 화면, 손 드래그, 방향키 복귀, s1a→인증서 빠른 이동·키보드 이동 확인. 콘솔 에러 없음. 새 문구로 글꼴 부분집합 재생성(fonttools는 외장 SSD DevCaches/pydeps-fonttools).
+맥 실행 메모: node_modules가 윈도우 설치본이라 맥용 rolldown·lightningcss·fsevents 바이너리를 lock 버전 그대로 추가해 둠. .claude/launch.json에 개발(5174)·빌드 미리보기(4173) 설정.
+
 # 푸른행성 조사본부 인계 (2026-10-28)
 
 최신 시각 작업: image_gen으로 부리·짱이·게·짱뚱어·갈대 5종을 개별 생성해 홈/지도/이야기/최종 미션/엔딩과 갯벌 활동/도감/보고서에 적용했어. 지도 사각형 오리·CSS 시트 크롭을 제거했고, 투명 WebP와 지도용 소형 부리를 사용해. 주요 파일은 illustrations.js·specimens.js·hub.js·screens.js·experience.css, 자산은 public/assets/illustrations. 생성 프롬프트·검증은 docs/reviews/ILLUSTRATIONS-20261028.md를 봐. 원본은 assets/generated/20261028에 보존했어.

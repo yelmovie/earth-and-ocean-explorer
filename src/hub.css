@@ -34,3 +34,12 @@
 @media(max-width:800px){.hub-page .hub-building-label{min-width:125px;max-width:180px;min-height:48px;padding:9px 10px;font-size:16px}.hub-page .hub-dpad{left:15px;bottom:18px;gap:4px;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,48px)}.hub-page [data-hub-direction]{min-width:48px;min-height:48px;width:48px;height:48px;padding:10px}.hub-page .hub-next,.hub-page .hub-final{right:17px;bottom:20px;min-height:60px;max-width:calc(100vw - 195px);font-size:17px;padding:12px 15px}.hub-page .arrival{bottom:128px;font-size:16px;max-width:calc(100% - 40px);padding:12px 16px}.hub-page .hub-companion{font-size:22px}}
 @media(max-height:600px){.hub-page .hub-building-label{min-width:125px;padding:8px 10px;min-height:48px;font-size:15px}.hub-page .hub-building-label small{display:none}.hub-page .hub-next,.hub-page .hub-final{bottom:16px;min-height:54px;font-size:17px;padding:11px 15px}.hub-page .hub-dpad{bottom:16px;left:17px;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,48px)}.hub-page [data-hub-direction]{width:48px;height:48px;min-width:48px;min-height:48px;padding:10px}.hub-page .arrival{bottom:123px;max-width:calc(100% - 260px);font-size:16px;padding:10px 14px}}
 @media(prefers-reduced-motion:reduce){.hub-page *{transition:none!important;animation:none!important}}
+.hub-page .hub-hand{position:absolute;left:26px;bottom:154px;z-index:4;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:8px 16px 8px 12px;border:2px solid #f4e4bb;border-radius:14px;background:#fff9eaf5;color:#315b60;font-size:17px;font-weight:800;box-shadow:0 3px 0 #6c8d7d9c;filter:drop-shadow(0 4px 3px #16465333)}
+.hub-page .hub-hand svg{width:26px;height:26px;display:block}
+.hub-page .hub-hand[aria-pressed="true"]{background:#ffe9a6;border-color:#d6a94e;color:#4d3a12;box-shadow:0 3px 0 #a9873f}
+.hub-page .hub-hand:active{transform:translateY(3px);box-shadow:none}
+.hub-page .map-wrap.hand-on #hub-map{cursor:grab}
+.hub-page .map-wrap.hand-on.grabbing #hub-map{cursor:grabbing}
+.hub-page .map-wrap.hand-on .hub-building-label{pointer-events:none;opacity:.8}
+@media(min-width:1500px){.hub-page .hub-hand{bottom:180px}}
+@media(max-width:800px),(max-height:600px){.hub-page .hub-hand{left:15px;bottom:126px;min-height:48px;font-size:15px}}

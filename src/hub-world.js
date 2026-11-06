@@ -8,6 +8,11 @@ export const hubDoors = [
   { id: 4, x: 552, y: 402, buildingX: 552, buildingY: 375 },
   { id: 5, x: 276, y: 387, buildingX: 276, buildingY: 360 },
 ];
+// Residents stand beside the road. Their line changes once their chapter is restored.
+export const hubResidents = [
+  { id: 'jjang', name: '짱이', x: 512, y: 262, height: 30, facing: -1, chapter: 4, before: '나는 짱이예요. 바닷물이 빠지면 갯벌로 나와요.', after: '밀물과 썰물 기록이 돌아왔어요. 고마워요!' },
+  { id: 'crab', name: '게', x: 330, y: 398, height: 26, facing: 1, chapter: 5, before: '갯벌 구멍이 내 집이에요. 작은 흔적을 찾아봐요.', after: '갯벌 안내판 덕분에 집이 든든해요!' },
+];
 export const hubNodes = [
   ...hubDoors.map(({ x, y }) => ({ x, y })),
   { x: 238, y: 164 }, { x: 310, y: 194 }, { x: 365, y: 217 }, { x: 420, y: 232 },
@@ -32,12 +37,20 @@ export function canStandInHub(point) {
   if(!Number.isFinite(point?.x)||!Number.isFinite(point?.y))return false;
   return nearestHubRoad(point).distance <= hubMap.roadRadius-hubMap.radius || hubDistance(point,hubMap.spawn)<=43 || hubDoors.some(door=>hubDistance(point,door)<=26);
 }
+// At a road edge, slide along it so one held arrow follows a slanted road.
+function slideOnRoad(point) {
+  const road=nearestHubRoad(point),limit=hubMap.roadRadius-hubMap.radius-.01;
+  if(road.distance<=limit)return point;
+  const ratio=limit/road.distance;
+  return { x:road.point.x+(point.x-road.point.x)*ratio,y:road.point.y+(point.y-road.point.y)*ratio };
+}
 export function moveHubPoint(start,delta) {
   let point={...start};
   const count=Math.max(1,Math.ceil(Math.hypot(delta.x,delta.y)/4));
   for(let i=0;i<count;i++){
-    const dx=delta.x/count,dy=delta.y/count,next={x:point.x+dx,y:point.y+dy};
+    const dx=delta.x/count,dy=delta.y/count,next={x:point.x+dx,y:point.y+dy},slid=slideOnRoad(next);
     if(canStandInHub(next))point=next;
+    else if(canStandInHub(slid)&&hubDistance(point,slid)<=Math.hypot(dx,dy)*1.5)point=slid;
     else if(canStandInHub({x:point.x+dx,y:point.y}))point={x:point.x+dx,y:point.y};
     else if(canStandInHub({x:point.x,y:point.y+dy}))point={x:point.x,y:point.y+dy};
   }
@@ -59,6 +72,32 @@ export function findHubPath(from,to) {
   if(!Number.isFinite(distances[goal]))return [];
   const path=[];for(let i=goal;i>=0;i=previous[i]){path.unshift({...nodes[i]});if(i===start)break;}
   return path.filter((point,i)=>i===0||hubDistance(point,path[i-1])>.1);
+}
+// A point on the road toward the plaza, for a companion who walks behind the player.
+export function hubPointBehind(from,gap) {
+  const route=findHubPath(from,hubMap.spawn);let left=gap;
+  for(let i=1;i<route.length;i++){
+    const a=route[i-1],b=route[i],d=hubDistance(a,b);
+    if(d>=left)return { x:a.x+(b.x-a.x)*left/d,y:a.y+(b.y-a.y)*left/d };
+    left-=d;
+  }
+  return { ...from };
+}
+// Camera: a view is the world point at the screen centre, so fit, free view and pinch share one model.
+const maxZoom=1.6,minGlide=.004,glideMs=260;
+export const hubViewZoom=width=>width<800?1.45:1.55;
+export const hubCoverScale=(width,height)=>Math.max(width/hubMap.width,height/hubMap.height);
+export const clampHubZoom=(zoom,width)=>Math.max(1/hubViewZoom(width),Math.min(maxZoom,zoom));
+export function clampHubView(view,scale,width,height) {
+  const halfX=Math.min(hubMap.width/2,width/2/scale),halfY=Math.min(hubMap.height/2,height/2/scale);
+  return { x:Math.max(halfX,Math.min(hubMap.width-halfX,view.x)),y:Math.max(halfY,Math.min(hubMap.height-halfY,view.y)) };
+}
+export const hubScreenToWorld=(view,scale,screen,width,height)=>({ x:view.x+(screen.x-width/2)/scale,y:view.y+(screen.y-height/2)/scale });
+export const anchorHubView=(world,screen,scale,width,height)=>clampHubView({ x:world.x-(screen.x-width/2)/scale,y:world.y-(screen.y-height/2)/scale },scale,width,height);
+export function glideHubView(view,velocity,dt,scale,width,height) {
+  const moved={ x:view.x+velocity.x*dt,y:view.y+velocity.y*dt },next=clampHubView(moved,scale,width,height),decay=Math.exp(-dt/glideMs);
+  const slow=(axis)=>{const v=next[axis]===moved[axis]?velocity[axis]*decay:0;return Math.abs(v)<minGlide?0:v;};
+  return { view:next,velocity:{ x:slow('x'),y:slow('y') } };
 }
 export function createHubInput() {
   const held=new Map();

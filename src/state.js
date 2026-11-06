@@ -8,7 +8,7 @@ export function freshState() {
     3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand' },
     4: { time: 0, a: null, b: null, markers: [], direction: '', concept: '' },
     5: { found: [], features: {}, selected: '', value: '', action: '' },
-  }, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0 };
+  }, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null };
 }
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 function sanitizedDraft(n,d) {
@@ -51,6 +51,7 @@ export function normalize(raw) {
   base.resume = routes.includes(raw.resume) && canAccess(base, raw.resume) ? raw.resume : 'hub';
   base.history = Array.isArray(raw.history) ? raw.history.filter(r => routes.includes(r)).slice(-40) : [];
   base.revised = Number.isInteger(raw.revised) ? Math.max(0, raw.revised) : 0;
+  if (Number.isFinite(raw.mapPosition?.x) && Number.isFinite(raw.mapPosition?.y)) base.mapPosition = { x: raw.mapPosition.x, y: raw.mapPosition.y };
   return base;
 }
 export function loadState(storage) {

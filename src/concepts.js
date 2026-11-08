@@ -18,7 +18,7 @@ export const conceptCues={
  1:[[0,'지구는 육지와 바다로 이루어져 있어.'],[3,'전체 면적은 바다가 육지보다 넓어.'],[6,'몇 곳의 표본 개수와 전체 넓이는 구분해.']],
  2:[[0,'같은 양의 물을 같은 조건에서 가열해.'],[3,'물이 증발하면서 녹아 있던 물질이 드러나.'],[6,'바닷물에는 소금 등 여러 물질이 녹아 있어.']],
  3:[[0,'고운 모래가 쌓인 모래사장을 찾아봐.'],[2.25,'가파른 절벽은 높이 솟아 있어.'],[4.5,'동굴은 바위 안쪽으로 공간이 이어져.'],[6.75,'구멍 난 바위는 너머 풍경이 보여.']],
- 4:[[0,'움직이지 않는 같은 기둥을 기준으로 봐.'],[2,'바닷물이 들어오며 높아지는 변화는 밀물.'],[5,'바닷물이 빠지며 낮아지는 변화는 썰물.'],[8,'관측 모형이야. 실제 조석 시각과는 달라.']],
+ 4:[[0,'움직이지 않는 같은 기둥을 기준으로 봐.'],[2,'바닷물이 들어오며 높아지는 변화는 밀물.'],[5,'바닷물이 빠지며 낮아지는 변화는 썰물.'],[8,'관측 모형이야. 실제 밀물·썰물 시각과는 달라.']],
  5:[[0,'갯벌에는 게·짱뚱어·갈대가 살아.'],[3,'생김새도 살아가는 모습도 서로 달라.'],[6,'갯벌은 생물의 집! 흔적과 서식처를 지켜.']],
 };
 export function conceptMarkup(n){return `<div class="concept-player"><video playsinline preload="metadata" poster="${base()}chapter-${n}.webp" aria-label="${chapters[n-1].short} 개념 영상"><source src="${base()}chapter-${n}.webm" type="video/webm"><source src="${base()}chapter-${n}.mp4" type="video/mp4"></video><img class="concept-poster" src="${base()}chapter-${n}.webp" alt="${chapters[n-1].short} 개념 모형" hidden><div class="concept-caption" aria-live="off">${conceptCues[n][0][1]}</div><div class="concept-timeline"><i></i></div></div><div class="concept-controls"><button type="button" data-concept="play">영상 재생</button><button type="button" data-concept="replay">처음부터</button><span>9초 · 개념 모형</span></div>`;}

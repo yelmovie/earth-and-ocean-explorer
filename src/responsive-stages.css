@@ -1,0 +1,416 @@
+/* Heading + activity + actions always share one viewport. */
+#app:has(.learning){height:100dvh;min-height:0;display:grid;grid-template-rows:56px minmax(0,1fr);overflow:hidden}
+#app:has(.learning)>.topbar{height:56px;padding:4px 16px}
+#app:has(.learning)>#main{min-height:0;height:100%;padding:0;overflow:visible}
+#app #main .learning{width:100%;max-width:none;height:100%;min-height:0;display:flex;flex-direction:column;gap:12px;padding:12px 20px}
+#app #main .learning :is(.page-heading,.page-heading>div,.activity>*,.work-panel,.select-label,.sample-tray,.sample-token,.sample-bins,.range-field,.companion-tools,.mission-footer>*,.challenge-layout>*){min-width:0;min-height:0}
+#app #main .learning .page-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 20px;margin:0;flex:none}
+#app #main .learning .page-heading h1{font-size:clamp(24px,2vw,38px);line-height:1.15}
+#app #main .learning .page-heading .eyebrow{font-size:var(--label-size);margin:0 0 4px;line-height:1.2}
+#app #main .learning .page-heading p:not(.eyebrow){font-size:var(--reading-size);margin:4px 0 0;line-height:1.3}
+#app #main .learning .step-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;width:auto}
+#app #main .learning .step-tabs button{min-width:48px;min-height:48px;padding:8px 12px;font-size:var(--label-size)}
+#app #main .learning :is(.activity,.challenge-layout){flex:1;min-height:0;height:auto;margin:0;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:12px;align-items:stretch}
+#app #main .learning :is(.work-panel,.observation-panel,.challenge-card){min-height:0;height:100%;padding:16px;display:flex;flex-direction:column;gap:8px}
+#app #main .learning :is(h2,h3,p,.tag,.inset,.mini-progress,.site-grid,.segment,.status-chips,.sample-tray,.sample-bins,.earth-area-model,.record-slot,.creature-cards){margin-block:0}
+#app #main .learning .work-panel h2{font-size:clamp(22px,1.7vw,32px);line-height:1.25}
+#app #main .learning .work-panel h3{font-size:var(--reading-size);line-height:1.3}
+#app #main .learning .tag{align-self:flex-start;padding:2px 8px}
+#app #main .learning :is(.choices,.site-grid,.sample-tray){gap:8px;margin:0}
+#app #main .learning .choice{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:center;height:auto;min-height:48px;padding:8px 12px;text-align:left;line-height:1.35;font-size:var(--reading-size)}
+#app #main .learning .choice-dot{width:24px;height:24px;margin:0;font-size:18px;line-height:1}
+#app #main .learning :is(button,input,select,summary){min-height:48px}
+#app #main .learning :is(input,select){max-width:100%;min-width:0}
+#app #main .learning :is(.segment,.status-chips){display:flex;flex-wrap:wrap;gap:8px}
+#app #main .learning .segment button{flex:1;padding:8px;white-space:normal}
+#app #main .learning .field-note{min-height:48px;align-self:flex-start;padding:8px;margin-top:auto;border:0;background:none;box-shadow:none;color:var(--teal);font-size:var(--label-size)}
+#app #main .learning .mission-footer{position:relative!important;bottom:auto!important;flex:none;display:flex;flex-wrap:nowrap;align-items:center;gap:12px;margin:0;padding:8px 12px!important;min-height:64px;background:var(--paper);isolation:isolate}
+#app #main .learning .mission-footer>.primary{flex:none;width:auto;max-width:100%;margin:0 0 0 auto;min-height:48px;padding:8px 16px;font-size:var(--reading-size)}
+#app #main .learning .activity-guide{flex:1;font-size:var(--label-size);line-height:1.35}
+#app #main .learning .companion-tools{display:flex;flex:none;gap:8px;align-items:center}
+#app #main .learning .moa-hint>summary{padding:4px 8px;min-height:48px}
+#app #main .learning .moa-hint img{width:32px;height:40px;object-fit:contain}
+#app #main .learning .concept-replay{padding:8px;font-size:var(--label-size)}
+#app #main .learning .moa-bubble{width:min(430px,calc(100vw - 48px));max-height:65dvh;overflow-y:auto;left:auto;right:0;bottom:calc(100% + 12px)}
+#app #main .learning .activity-playback{display:flex;flex:none;gap:4px}
+#app #main .learning .activity-playback button{display:flex;align-items:center;gap:6px;padding:8px 12px;border-color:var(--teal);color:var(--teal);font-size:var(--label-size);white-space:nowrap}
+#app #main .learning .activity-playback button[aria-pressed=true]{color:var(--paper);background:var(--teal)}
+#app #main .learning .activity-playback select{width:100px;padding:8px;font-size:var(--label-size)}
+#app #main .learning .next-target{outline:3px solid #bd8134;outline-offset:3px}
+#app #main .learning .choices.next-target{border-radius:12px}
+#app #main .learning .experiment-progress{width:100%;height:8px;flex:none;accent-color:var(--teal)}
+#app #main .learning .playback-heating .water{animation:none;transition:none}
+#app #main .learning .playback-heating .hotplate{background:#e1a14c}
+#app #main .learning .practice-banner{flex:none;padding:4px 12px;margin:0;font-size:var(--label-size)}
+/* Scene heights use the available row, instead of a second vh minimum. */
+#app #main .learning .globe-stage{flex:1;height:0;min-height:0;margin:0}
+#app #main .learning #globe{height:100%;min-height:0}
+#app #main .learning .globe-controls{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;flex:none}
+#app #main .learning .globe-controls button:last-child{grid-column:auto}
+#app #main .learning .site-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#app #main .learning .site{padding:8px;font-size:var(--reading-size)}
+#app #main .learning #site-detail{padding:8px 12px;font-size:var(--label-size)}
+#app #main .learning .mini-progress{padding:4px 0;margin-top:auto;font-size:var(--label-size)}
+#app #main .learning .sample-tray{grid-template-columns:repeat(2,minmax(0,1fr));flex:1}
+#app #main .learning .sample-token{min-height:48px;padding:8px 12px;gap:4px;justify-content:center}
+#app #main .learning .sample-bins{flex:0 0 auto}
+#app #main .learning .sample-bins button{min-height:72px;padding:8px 12px;gap:4px}
+#app #main .learning .earth-area-model{padding:12px;flex:1;display:flex;flex-direction:column;justify-content:center}
+#app #main .learning .earth-area-key{margin:8px 0}
+#app #main .learning .beaker-pair{flex:1;min-height:0;margin:0;padding:4px 0!important;align-items:stretch}
+#app #main .learning .beaker-item{display:flex;flex-direction:column;align-items:center;min-height:0}
+#app #main .learning .beaker-item h3{margin:0 0 4px;flex:none}
+#app #main .learning .beaker{flex:1;min-height:0;height:auto;display:flex;flex-direction:column;width:min(190px,80%)}
+#app #main .learning .beaker-vessel{flex:1;min-height:100px;height:auto}
+#app #main .learning .beaker-mark{min-height:28px;margin-top:4px;padding:2px;font-size:var(--label-size)}
+#app #main .learning .beaker-item .hotplate{margin-top:4px;flex:none}
+#app #main .learning .experiment>[data-action="heat"]{margin:0;min-height:48px;padding:8px;font-size:var(--reading-size)}
+#app #main .learning .experiment-fields{flex:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}
+#app #main .learning .range-field{gap:0 8px;font-size:var(--label-size)}
+#app #main .learning .lab-readiness{padding:8px;font-size:var(--label-size)}
+#app #main .learning .coast-observation{display:flex;flex-direction:column;gap:8px}
+#app #main .learning .coast-view{flex:1;height:0;min-height:0}
+#app #main .learning .coast-observation>.pan-control{position:static;margin:0;padding:4px 12px;flex:none}
+#app #main .learning .photo-slots{margin:0;gap:8px}
+#app #main .learning .photo-slots span{min-height:48px;padding:8px}
+#app #main .learning .album-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px}
+#app #main .learning .photo-card{min-height:0;display:flex;flex-direction:column;padding:8px;gap:4px}
+#app #main .learning .photo-image{flex:1;height:0;min-height:48px;aspect-ratio:auto}
+#app #main .learning .photo-card>b{font-size:var(--label-size);line-height:1.2;margin:0}
+#app #main .learning .photo-card .select-title{display:none}
+#app #main .learning .photo-card select{font-size:var(--label-size);padding:4px}
+#app #main .learning .pin-help{font-size:var(--label-size);padding:4px}
+#app #main .learning .tide-live{flex:1;min-height:0;height:0;margin:0}
+#app #main .learning .tide-live .tide-scene{width:100%;height:100%;max-height:none;object-fit:contain}
+#app #main .learning .timeline{margin:0;padding:8px;flex:none}
+#app #main .learning .timeline>span{line-height:1}
+#app #main .learning .record-slot{flex:1;min-height:0;padding:12px;margin:0;gap:4px;align-content:center}
+#app #main .learning .tide-wipe{flex:1;min-height:0;--compare-header:44px}
+#app #main .learning .tide-wipe-before{height:100%}
+#app #main .learning .tide-wipe .tide-scene{height:100%;min-height:0;max-height:none}
+#app #main .learning .tide-wipe-after{height:calc(100% - var(--compare-header))}
+#app #main .learning .compare-slider{flex:none;padding:4px 12px}
+#app #main .learning .mudflat-view{height:100%;min-height:0}
+#app #main .learning .creature-header{gap:8px}
+#app #main .learning .creature-header .specimen{width:130px;height:130px;min-height:0;margin:0}
+#app #main .learning .creature-cards{flex:1;display:grid;gap:8px}
+#app #main .learning .creature-cards article{min-height:0;padding:8px}
+/* Task switches share a header; the single status line lives beside Next. */
+#app #main .learning .challenge-layout{grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr)}
+#app #main .learning .challenge-observation>.tag{margin:0}
+#app #main .learning .challenge-observation>:not(.tag):not(.visual-caption){flex:1;min-height:0}
+#app #main .learning .challenge-board-heading{display:flex;flex:none;margin:0;padding:0;border:0}
+#app #main .learning .challenge-progress{display:flex;gap:8px;margin:0}
+#app #main .learning .challenge-progress button{display:flex;align-items:center;min-height:48px}
+#app #main .learning .challenge-options{display:grid;flex:1;gap:8px;align-content:center}
+#app #main .learning .challenge-option{min-height:48px;padding:8px 12px;gap:8px;align-items:center;line-height:1.35}
+#app #main .learning .option-key{width:28px;height:28px;min-width:28px}
+#app #main .learning .challenge-sort-area,#app #main .learning .challenge-sort-area:has(.challenge-bin:nth-child(3)){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;flex:1;min-height:0}
+#app #main .learning .challenge-sort-area :is(.challenge-items,.challenge-bins){display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-height:0}
+#app #main .learning :is(.challenge-item,.challenge-bin){min-height:48px;height:auto;padding:8px;gap:4px;align-content:center;justify-content:center;line-height:1.3}
+#app #main .learning .challenge-item small{font-size:var(--label-size)}
+#app #main .learning :is(.challenge-item>small,.sample-token>span):empty{display:none}
+#app #main .learning .challenge-bin>span{display:none}
+#app #main .learning .challenge-feedback{margin:0;padding:0;flex:1;min-height:0;font-size:var(--label-size);line-height:1.35;border:0;background:none}
+#app #main .learning .challenge-page-count{display:none}
+#app #main .learning .challenge-sequence{flex:1;min-height:48px;padding:8px;margin:0;gap:4px}
+#app #main .learning .challenge-sequence>div{padding:4px;gap:4px;line-height:1.3}
+#app #main .learning .challenge-board:has(.challenge-sequence)>.challenge-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#app #main .learning .challenge-art{height:100%;max-height:none}
+#app #main .learning :is(.challenge-earth,.challenge-lab,.coast-detail-model,.residue-record){display:flex;flex-direction:column;justify-content:center}
+#app #main .learning :is(.challenge-earth,.coast-detail-model)>svg{width:100%;height:0;flex:1;min-height:0;max-height:none}
+#app #main .learning .visual-caption{font-size:var(--label-size);margin:0;line-height:1.35;flex:none}
+#app #main .learning .challenge-tide-pair{display:flex;align-items:center;gap:8px}
+#app #main .learning .challenge-tide-pair figure{min-width:0;flex:1;margin:0}
+/* Keep the scene below its time caption, not squeezed beside a 70px column. */
+#app #main .learning .challenge-tide-pair.three-records figure{display:flex;flex-direction:column;gap:4px}
+#app #main .learning .challenge-tide-pair.three-records figcaption{width:100%;text-align:center}
+#app #main .learning .challenge-tide-pair svg{width:100%;height:auto;max-height:280px;min-height:0}
+#app #main .learning .challenge-creatures{align-items:center;gap:8px}
+#app #main .learning .challenge-creatures figure{margin:0;min-width:0}
+#app #main .learning .challenge-creatures figure>div{height:clamp(60px,20vh,210px);min-height:0}
+#app #main .learning .lab-model-glass{height:clamp(80px,22vh,230px)}
+#app #main .learning .question-step{flex:none;border:1px solid var(--line);border-radius:12px;padding:0 8px}
+#app #main .learning .question-step>summary{display:flex;align-items:center;cursor:pointer;padding:8px;font-size:var(--reading-size);font-weight:700;list-style:none}
+#app #main .learning .question-step[open]{padding-bottom:8px}
+#app #main .learning .question-step>summary::after{content:'＋';margin-left:auto;color:var(--teal)}
+#app #main .learning .question-step[open]>summary::after{content:'−'}
+#app #main .learning .moa-bubble .field-note{display:inline-flex;margin:8px;padding:8px;font-size:18px;min-height:48px}
+#app #main .learning .range-field{padding:4px 8px}
+#app #main .learning .creature-header{min-height:0;padding:0;margin:0;flex:none}
+#app #main .learning .creature-cards article{grid-template-columns:72px minmax(0,1fr)}
+#app #main .learning .creature-cards .creature-icon{width:64px;height:64px}
+#app #main .learning .creature-cards p{font-size:var(--label-size)}
+/* Teacher navigation is available on demand, without a second footer. */
+#app:has(.learning) .admin-label{position:absolute;top:16px;left:50%;transform:translateX(-50%);margin:0;font-size:14px;padding:0;background:none;z-index:5}
+#app:has(.learning) .teacher-nav{position:absolute;top:4px;right:132px;left:auto;bottom:auto;display:block;width:max-content;height:auto;z-index:6;padding:0;background:var(--paper);border:1px solid var(--line);border-radius:12px;pointer-events:auto}
+#app:has(.learning) .teacher-nav>summary{cursor:pointer;padding:10px 12px;min-height:48px;font-size:18px;list-style:none}
+#app:has(.learning) .teacher-nav>nav{padding:12px;display:grid;gap:12px;max-width:min(460px,90vw)}
+#app:has(.learning) .teacher-pad{min-width:0}
+#app:has(.learning) .teacher-nav:not([open])>nav{display:none}
+#app:has(.learning) .orientation-hint{display:none}
+@media(max-height:800px),(max-width:1200px){
+  #app #main .learning{gap:8px;padding:8px 12px}
+  #app #main .learning :is(.work-panel,.observation-panel,.challenge-card){padding:12px;gap:8px}
+  #app #main .learning .mission-footer{gap:8px;padding:6px 8px!important;min-height:60px}
+  #app #main .learning .activity-guide{font-size:17px}
+  #app #main .learning .companion-tools .moa-hint>summary>span{display:inline;font-size:17px}
+  #app #main .learning .moa-hint>summary{padding:0 4px}
+  #app #main .learning .page-heading h1{font-size:26px}
+  #app #main .learning .step-tabs button{padding:8px}
+  #app #main .learning .beaker-scale{font-size:17px}
+  #app #main .learning .record-slot{padding:8px}
+  #app #main .learning .creature-header .specimen{width:110px;height:100px}
+}
+@media(max-height:620px) and (min-width:700px){
+  #app:has(.learning){grid-template-rows:48px minmax(0,1fr)}
+  #app:has(.learning)>.topbar{height:48px;padding-block:0}
+  #app:has(.learning) .icon-button{min-height:44px;height:44px;width:48px}
+  #app:has(.learning) .teacher-nav{top:0}
+  #app:has(.learning) .admin-label{top:12px}
+  #app #main .learning{gap:6px;padding:6px 12px}
+  #app #main .learning .page-heading{gap:8px}
+  #app #main .learning .page-heading>div:first-child{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
+  #app #main .learning .page-heading .eyebrow{font-size:17px;margin:0}
+  #app #main .learning .page-heading h1{font-size:22px}
+  #app #main .learning .page-heading p:not(.eyebrow){width:100%;font-size:18px;line-height:1.25;margin:0}
+  #app #main .learning .step-tabs button{font-size:17px;padding:4px 8px}
+  #app #main .learning :is(.activity,.challenge-layout){gap:8px}
+  #app #main .learning :is(.work-panel,.observation-panel,.challenge-card){padding:8px 12px;gap:4px}
+  #app #main .learning :is(.work-panel h2,.work-panel h3){font-size:20px}
+  #app #main .learning :is(.work-panel>p,.choice,.site,.challenge-item,.challenge-option,.challenge-bin){font-size:18px}
+  #app #main .learning .tag{display:none}
+  #app #main .learning .field-note{min-height:32px;padding:2px 8px;font-size:17px}
+  #app #main .learning :is(.panel-label,.range-field,.status-chips,.prediction-recall){font-size:17px}
+  #app #main .learning .panel-label{padding-bottom:4px}
+  #app #main .learning :is(.sample-tray,.site-grid,.choices,.challenge-options){gap:4px}
+  #app #main .learning .site-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #app #main .learning #site-detail{font-size:17px;padding:4px 8px}
+  #app #main .learning #site-detail p{display:inline;margin-left:8px}
+  #app #main .learning .sample-token{padding:4px 8px;gap:0}
+  #app #main .learning .sample-token>span{font-size:17px}
+  #app #main .learning .sample-bins button{min-height:48px;padding:4px 8px}
+  #app #main .learning .sample-bins span{display:none}
+  #app #main .learning .earth-area-model{flex:none;padding:4px}
+  #app #main .learning .earth-area-grid{grid-template-columns:repeat(20,minmax(0,1fr));gap:3px}
+  #app #main .learning .earth-area-key{margin:4px 0}
+  #app #main .learning .earth-area-model>small{display:none}
+  #app #main .learning .beaker-vessel{min-height:90px}
+  #app #main .learning .beaker-item .hotplate{height:12px}
+  #app #main .learning .beaker-mark{font-size:17px;min-height:24px}
+  #app #main .learning .experiment-fields{gap:0 12px}
+  #app #main .learning .lab-readiness{padding:4px 8px}
+  #app #main .learning .photo-card{padding:4px}
+  #app #main .learning .pin-help{font-size:14px;bottom:0;padding:2px}
+  #app #main .learning .timeline{padding:0 8px}
+  #app #main .learning .timeline>span{display:none}
+  #app #main .learning .record-slot{grid-template-columns:minmax(0,1fr) auto;padding:4px 8px}
+  #app #main .learning .record-slot button{grid-column:1/-1;padding:4px 8px}
+  #app #main .learning .tide-wipe{--compare-header:40px}
+  #app #main .learning .wipe-label{top:4px;padding:2px 8px;font-size:17px}
+  #app #main .learning .compare-slider{padding:0 8px;font-size:17px}
+  #app #main .learning .creature-header .specimen{width:90px;height:68px}
+  #app #main .learning .creature-features{gap:4px}
+  #app #main .learning .creature-cards{display:flex;gap:4px}
+  #app #main .learning .creature-cards article{flex:1;flex-direction:column;padding:4px;gap:0}
+  #app #main .learning .creature-cards .creature-icon{height:52px;width:60px}
+  #app #main .learning .creature-cards p{font-size:17px}
+  #app #main .learning .challenge-board-heading{position:absolute;left:12px;bottom:6px}
+  #app #main .learning.challenge-page{position:relative;padding-bottom:6px}
+  #app #main .learning.challenge-page .mission-footer{margin-left:224px}
+  #app #main .learning .challenge-sort-area :is(.challenge-items,.challenge-bins){gap:4px}
+  #app #main .learning :is(.challenge-item,.challenge-bin,.challenge-option){padding:4px 8px}
+  #app #main .learning .challenge-item small{font-size:17px}
+  #app #main .learning .challenge-sort-area:has(.challenge-item:nth-child(4)) :is(.challenge-items,.challenge-bins){grid-template-columns:repeat(2,minmax(0,1fr))}
+  #app #main .learning .visual-caption{font-size:17px}
+  #app #main .learning .lab-model-glass{height:80px}
+  #app #main .learning .challenge-earth .earth-components{font-size:17px}
+  #app #main .learning .challenge-board:has(.challenge-sequence){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
+  #app #main .learning .challenge-sequence{height:100%;grid-column:1;grid-row:1/-1;display:flex;flex-direction:column}
+  #app #main .learning .challenge-board:has(.challenge-sequence)>.challenge-items{grid-template-columns:minmax(0,1fr);gap:4px}
+  #app #main .learning .challenge-board:has(.challenge-sequence)>.text-button{font-size:17px;padding:4px}
+  #app #main .learning .activity{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  #app #main .learning .work-panel>h2{font-size:20px}
+  #app #main .learning .work-panel>.tag{display:none}
+  #app #main .learning .experiment-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 8px}
+  #app #main .learning .experiment-fields .range-field{padding:0 4px;border:0;background:none}
+  #app #main .learning .range-field>span{font-size:14px;line-height:1.2}
+  #app #main .learning .beaker-vessel{min-height:60px}
+  #app #main .learning .beaker-pair{min-height:0}
+  #app #main .learning .prediction-recall{display:none}
+  #app #main .learning .creature-header .specimen{height:60px;width:90px}
+  #app #main .learning .creature-cards article{display:flex;flex-direction:column}
+  #app #main .learning .creature-cards p{font-size:14px;line-height:1.2}
+  #app #main .learning .creature-cards .creature-icon{width:52px;height:44px}
+  #app #main .learning .challenge-sequence{grid-template-columns:minmax(0,1fr);gap:4px}
+  #app #main .learning .challenge-board:has(.challenge-sequence)>.challenge-items{align-content:start}
+  #app #main .learning .challenge-board:has(.challenge-sequence)>.text-button{align-self:end}
+  #app #main .learning .activity>aside>h2{font-size:18px;line-height:1.2}
+  #app #main .learning .mini-progress{padding:0;font-size:14px;line-height:1.2}
+  #app #main .learning .mini-progress>span{display:none}
+  #app #main .learning .mini-progress>b{grid-column:1/-1}
+  #app #main .learning #site-detail{line-height:1.2;padding:4px}
+  #app #main .learning .experiment .panel-label{display:none}
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-item h3,
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-mark{display:none}
+  #app #main .learning .beaker-pair{grid-template-rows:minmax(0,1fr);height:0}
+  #app #main .learning .experiment:not(:has(.experiment-fields)) .beaker-vessel{min-height:44px}
+  #app #main .learning .experiment:not(:has(.experiment-fields)) .beaker-scale,
+  #app #main .learning .experiment:not(:has(.experiment-fields)) .beaker-unit,
+  #app #main .learning .status-chips{display:none}
+  #app #main .learning .experiment:not(:has(.experiment-fields)) .beaker-item h3{font-size:17px;line-height:1.2}
+  #app #main .learning .experiment:not(:has(.experiment-fields)) .beaker-mark{font-size:14px;min-height:20px;line-height:1.2}
+  #app #main .learning .experiment:not(:has(.experiment-fields)) .beaker-pair{min-height:104px}
+  #app #main .learning .question-step>summary{font-size:18px;min-height:48px;padding:4px}
+  #app #main .learning .question-step[open]{padding-bottom:4px}
+  #app #main .learning .question-step .choice{padding:4px 8px}
+  #app #main .learning .photo-card>b{display:none}
+  #app #main .learning .creature-notebook{display:grid;grid-template-columns:80px minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:4px}
+  #app #main .learning .creature-header{display:flex;flex-direction:column;justify-content:center;align-items:center;grid-column:1;grid-row:1;gap:4px;border:0}
+  #app #main .learning .creature-notebook .creature-features{grid-column:2;grid-row:1;align-content:center}
+  #app #main .learning .creature-notebook .mini-progress{grid-column:1/-1;grid-row:2}
+  #app #main .learning .creature-cards{flex:none}
+  #app #main .learning .work-panel:has(>.creature-cards)>h2{display:none}
+  #app #main .learning .creature-cards .creature-icon{height:28px}
+  #app #main .learning .challenge-board:has(.challenge-sequence){grid-template-rows:minmax(0,1fr) 48px}
+  #app #main .learning .challenge-board:has(.challenge-sequence)>.challenge-items{grid-template-columns:repeat(2,minmax(0,1fr));height:100%}
+  #app #main .learning .challenge-board:has(.challenge-sequence)>.text-button{grid-column:2;grid-row:2}
+  #app #main .learning .work-panel{padding-block:2px}
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-pair{min-height:80px}
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-unit,
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-scale i:nth-child(2){display:none}
+  #app #main .learning #site-detail{font-size:14px}
+  #app #main .learning .range-field>output{font-size:14px;line-height:1.2;padding:0 4px}
+}
+@media(max-width:1000px) and (min-width:700px){
+  #app #main .learning .activity-guide{flex-basis:180px}
+  #app #main .learning .companion-tools{gap:4px}
+  #app #main .learning .activity-playback select{width:86px}
+  #app #main .learning .activity-playback button{padding:8px}
+  #app #main .learning .mission-footer>.primary{padding-inline:8px;font-size:18px}
+}
+@media(max-width:699px){
+  #app:has(.learning){grid-template-rows:48px minmax(0,1fr)}
+  #app:has(.learning)>.topbar{height:48px;padding:0 8px}
+  #app:has(.learning) .icon-button{height:44px;min-height:44px;width:44px;min-width:44px}
+  #app:has(.learning) .admin-label{display:none}
+  #app:has(.learning) .teacher-nav{top:0;right:110px}
+  #app:has(.learning) .teacher-nav>summary{font-size:17px;padding:10px 8px}
+  #app #main .learning{padding:8px;gap:8px}
+  #app #main .learning .page-heading{grid-template-columns:minmax(0,1fr);gap:4px}
+  #app #main .learning .page-heading h1{font-size:23px}
+  #app #main .learning .page-heading .eyebrow{font-size:14px}
+  #app #main .learning .page-heading p:not(.eyebrow){font-size:18px;line-height:1.25}
+  #app #main .learning .step-tabs{width:100%}
+  #app #main .learning .step-tabs button{font-size:17px;padding:4px}
+  #app #main .learning :is(.activity,.challenge-layout){grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,.85fr) minmax(0,1fr);gap:8px}
+  #app #main .learning :is(.work-panel,.observation-panel,.challenge-card){padding:8px;gap:4px}
+  #app #main .learning .work-panel h2{font-size:20px}
+  #app #main .learning .work-panel h3{font-size:18px}
+  #app #main .learning :is(.work-panel>p,.choice,.site,.challenge-option,.challenge-item,.challenge-bin){font-size:18px}
+  #app #main .learning .tag{display:none}
+  #app #main .learning .field-note{min-height:32px;padding:0 8px;font-size:14px}
+  #app #main .learning .mission-footer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;padding:6px!important}
+  #app #main .learning :is(.activity-guide,.challenge-feedback){grid-column:1/-1;font-size:17px}
+  #app #main .learning .companion-tools{grid-column:1;gap:4px}
+  #app #main .learning .mission-footer .companion-tools{position:static;transform:none;grid-column:2;grid-row:1;justify-self:end}
+  #app #main .learning :is(.activity-guide,.challenge-feedback){grid-column:1;grid-row:1}
+  #app #main .learning .mission-footer>.primary{grid-column:2;grid-row:2;margin:0;padding:6px 8px;font-size:18px}
+  #app #main .learning .activity-playback{grid-column:1;grid-row:2}
+  #app #main .learning .activity-playback button{font-size:17px;padding:6px;gap:4px}
+  #app #main .learning .activity-playback select{width:78px;font-size:17px;padding:4px}
+  #app #main .learning .activity-playback svg{width:18px}
+  #app #main .learning .concept-replay{font-size:14px;min-height:48px}
+  #app #main .learning .moa-hint img{width:24px}
+  #app #main .learning .moa-bubble{position:fixed;left:12px;right:12px;bottom:150px;width:auto}
+  #app #main .learning .panel-label{font-size:14px}
+  #app #main .learning .globe-controls button{font-size:17px;padding:4px}
+  #app #main .learning .site-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+  #app #main .learning .site{font-size:17px;padding:4px}
+  #app #main .learning #site-detail{font-size:14px;padding:4px}
+  #app #main .learning .mini-progress{font-size:14px;padding:0}
+  #app #main .learning .sample-tray{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+  #app #main .learning .sample-token{padding:4px;font-size:17px;gap:0}
+  #app #main .learning .sample-token span{font-size:14px}
+  #app #main .learning .sample-bins button{min-height:48px;padding:4px;font-size:18px}
+  #app #main .learning .sample-bins span{display:none}
+  #app #main .learning .earth-area-model{flex:none;padding:4px}
+  #app #main .learning .earth-area-grid{grid-template-columns:repeat(20,minmax(0,1fr));gap:2px}
+  #app #main .learning .earth-area-key{margin:4px 0;font-size:14px}
+  #app #main .learning .earth-area-model>small{display:none}
+  #app #main .learning .beaker-vessel{min-height:60px}
+  #app #main .learning .beaker-scale{font-size:14px}
+  #app #main .learning .beaker-mark{min-height:22px;font-size:14px}
+  #app #main .learning .beaker-item h3{font-size:18px}
+  #app #main .learning .beaker-item .hotplate{height:10px;margin-top:2px}
+  #app #main .learning .experiment-fields{gap:0 8px}
+  #app #main .learning .range-field{font-size:14px;gap:0 4px}
+  #app #main .learning .lab-readiness{font-size:14px;padding:4px}
+  #app #main .learning .status-chips{font-size:14px}
+  #app #main .learning .coast-observation>.pan-control{padding:0 8px}
+  #app #main .learning .coast-observation>.pan-control label{font-size:14px}
+  #app #main .learning .album-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #app #main .learning .photo-card{padding:4px;gap:2px}
+  #app #main .learning .photo-card>b{font-size:14px}
+  #app #main .learning .photo-card select{font-size:14px}
+  #app #main .learning .pin-help{font-size:14px;padding:2px;bottom:0}
+  #app #main .learning .record-slot{padding:4px 8px;grid-template-columns:minmax(0,1fr) auto}
+  #app #main .learning .record-slot button{grid-column:1/-1;padding:4px}
+  #app #main .learning .timeline{padding:0 8px;font-size:14px}
+  #app #main .learning .timeline>span{display:none}
+  #app #main .learning .creature-header .specimen{width:85px;height:65px}
+  #app #main .learning .creature-cards{display:flex;gap:4px}
+  #app #main .learning .creature-cards article{flex:1;flex-direction:column;padding:4px}
+  #app #main .learning .creature-cards .creature-icon{width:48px;height:48px}
+  #app #main .learning .creature-cards p{font-size:14px}
+  #app #main .learning .challenge-observation{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center}
+  #app #main .learning .visual-caption{font-size:14px}
+  #app #main .learning .challenge-board{position:static}
+  #app #main .learning .challenge-progress{gap:4px}
+  #app #main .learning .challenge-board-heading{flex:none}
+  #app #main .learning .challenge-sort-area{gap:8px}
+  #app #main .learning .challenge-sort-area :is(.challenge-items,.challenge-bins){gap:4px}
+  #app #main .learning .challenge-item small{font-size:14px}
+  #app #main .learning .challenge-creatures figure>div{height:80px}
+  #app #main .learning .lab-model-glass{height:70px}
+  #app #main .learning .range-field{padding:0 4px;background:none;border:0}
+  #app #main .learning .activity:has(.experiment-fields){grid-template-rows:minmax(0,1.3fr) minmax(0,1fr)}
+  #app #main .learning .challenge-layout{grid-template-rows:minmax(0,.45fr) minmax(0,1fr)}
+  #app #main .learning .challenge-sort-area :is(.challenge-items,.challenge-bins){align-content:stretch}
+  #app #main .learning .challenge-item{padding:4px;gap:0}
+  #app #main .learning .creature-cards article{display:flex;flex-direction:column;gap:0}
+  #app #main .learning .creature-cards .creature-icon{width:48px;height:40px}
+  #app #main .learning .activity:not(:has(.experiment-fields)){grid-template-rows:minmax(0,1fr) minmax(0,1.1fr)}
+  #app #main .learning .activity:has(.sample-tray){grid-template-rows:minmax(0,.85fr) minmax(0,1fr)}
+  #app #main .learning .challenge-layout{grid-template-rows:minmax(0,.35fr) minmax(0,1fr)}
+  #app #main .learning .experiment .panel-label{display:none}
+  #app #main .learning .beaker-pair{grid-template-rows:minmax(0,1fr);height:0}
+  #app #main .learning .status-chips{display:none}
+  #app #main .learning .prediction-recall{display:none}
+  #app #main .learning .question-step>summary{font-size:18px;min-height:48px;padding:4px}
+  #app #main .learning .question-step[open]{padding-bottom:4px}
+  #app #main .learning .work-panel:has(>.creature-cards)>h2{display:none}
+  #app #main .learning .creature-header{padding:0;margin:0;min-height:0}
+  #app #main .learning .activity:has(.sample-tray){grid-template-rows:minmax(0,.7fr) minmax(0,1fr)}
+  #app #main .learning .activity:has(.question-step){grid-template-rows:repeat(2,minmax(0,1fr))}
+  #app #main .learning .activity:has(.creature-notebook){grid-template-rows:minmax(0,.7fr) minmax(0,1.2fr)}
+  #app #main .learning .activity:has(.creature-cards){grid-template-rows:minmax(0,1.15fr) minmax(0,1fr)}
+  #app #main .learning .challenge-layout{grid-template-rows:minmax(0,.3fr) minmax(0,1fr)}
+  #app #main .learning .survey-lens{width:72px;height:72px;min-width:72px;min-height:72px}
+  #app #main .learning .survey-lens::after{height:24px;bottom:-16px;width:12px}
+  #app #main .learning .trace small{max-width:110px;width:max-content;font-size:14px;line-height:1.2}
+}
+
+@media(max-width:699px){
+  #app #main .learning .activity:has(.creature-cards)>.work-panel{padding:4px;gap:2px}
+  #app #main .learning .activity:has(.creature-cards){grid-template-rows:minmax(0,1.05fr) minmax(0,1fr)}
+  #app #main .learning .activity:has(.creature-cards) .choice{padding:4px 8px}
+  #app #main .learning .activity:has(.creature-cards) .creature-icon{height:28px}
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-pair{min-height:80px}
+  #app #main .learning .experiment:not(:has(.experiment-fields)) .beaker-pair{min-height:116px}
+  #app #main .learning .activity:has(.question-step)>.work-panel{padding-block:2px;gap:2px}
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-item h3,
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-mark,
+  #app #main .learning .beaker-unit,
+  #app #main .learning .beaker-scale i:nth-child(2){display:none}
+}

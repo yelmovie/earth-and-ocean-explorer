@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { freshState, normalize, loadState, saveState, aReady, canAccess, stageValid, completeStage, linkEvidence, allLinked } from '../src/state.js';
+import { freshState, recordPrediction, previewState, normalize, loadState, saveState, aReady, canAccess, stageValid, completeStage, linkEvidence, allLinked } from '../src/state.js';
 import { challenges } from '../src/challenge-data.js';
 import { sites, terrains, creatures, routes, finalCases } from '../src/data.js';
 
@@ -30,3 +30,11 @@ test('bad/missing/versioned saves and blocked storage do not crash',()=>{for(con
 test('land source matches all curated scan points, excluding ambiguous coasts and lakes',()=>{const geo=JSON.parse(readFileSync(new URL('../public/assets/land.geojson',import.meta.url)));function inside(point,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];if(((yi>point[1])!==(yj>point[1]))&&(point[0]<(xj-xi)*(point[1]-yi)/(yj-yi)+xi))c=!c;}return c;}for(const p of sites){const land=geo.features.some(f=>(f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates).some(poly=>inside([p.lon,p.lat],poly[0])&&!poly.slice(1).some(r=>inside([p.lon,p.lat],r))));assert.equal(land,p.type==='육지',p.name);}});
 
 test('map position survives a save and bad values fall back to the plaza',()=>{const s=freshState();assert.equal(s.mapPosition,null);s.mapPosition={x:310,y:194};assert.deepEqual(normalize(JSON.parse(JSON.stringify(s))).mapPosition,{x:310,y:194});for(const bad of [{x:'1',y:2},{x:NaN,y:2},[1,2],'x'])assert.equal(normalize({...JSON.parse(JSON.stringify(s)),mapPosition:bad}).mapPosition,null);});
+
+test('replaying a completed investigation preserves its original evidence',()=>{const s=investigated(freshState(),2);completeStage(s,2);s.drafts[2].prediction='different';completeStage(s,2);assert.equal(s.evidence[2].data.prediction,'same');});
+test('damaged save is never overwritten by navigation',()=>{let raw='{broken';const storage={getItem:()=>raw,setItem:(k,v)=>{raw=v;}};const loaded=loadState(storage);assert.ok(saveState(storage,loaded.state));assert.equal(raw,'{broken');assert.equal(saveState(storage,loaded.state,{reset:true}),'');assert.equal(JSON.parse(raw).version,2);});
+test('another tab save is preserved and repeated conflicts stay blocked',()=>{let raw=null;const storage={getItem:()=>raw,setItem:(k,v)=>{raw=v;}};const a=loadState(storage).state,b=loadState(storage).state;a.route='hub';assert.equal(saveState(storage,a),'');const expected=raw;assert.ok(saveState(storage,b));assert.ok(saveState(storage,b));assert.equal(raw,expected);assert.equal(saveState(storage,a),'');});
+test('newer content version cannot be silently downgraded',()=>{const raw=JSON.stringify({...freshState(),contentVersion:99});let stored=raw;const storage={getItem:()=>stored,setItem:(k,v)=>stored=v};const loaded=loadState(storage);assert.ok(loaded.warning);assert.ok(saveState(storage,loaded.state));assert.equal(stored,raw);});
+
+test('first prediction survives revisions and saved evidence reload',()=>{const s=investigated(freshState(),2);recordPrediction(s,'same');recordPrediction(s,'different');assert.equal(s.drafts[2].firstPrediction,'same');assert.equal(s.drafts[2].prediction,'different');completeStage(s,2);const restored=normalize(JSON.parse(JSON.stringify(s)));assert.equal(restored.evidence[2].data.firstPrediction,'same');});
+test('teacher preview changes never mutate student records',()=>{const student=investigated(freshState(),2),before=JSON.stringify(student),preview=previewState(student);recordPrediction(preview,'different');completeStage(preview,2);preview.research[1].solved.push('preview');assert.equal(JSON.stringify(student),before);assert.equal(student.settings.unlockAll,false);assert.equal(preview.settings.unlockAll,true);});

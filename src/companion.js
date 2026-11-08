@@ -7,9 +7,9 @@ const hints=[
  ['시간축을 천천히 움직여 봐. 같은 기둥의 물 닿는 위치가 다른 두 순간을 A와 B에 저장해.','비교선을 좌우로 움직여 같은 기둥과 바위를 봐. A에서 B로 물이 높아졌니, 낮아졌니?'],
  ['돋보기를 끌어 흔적을 찾아봐. 생물을 누르고 확대된 모습에서 특징을 골라 기록해.','관찰한 생물의 집을 떠올려 봐. 구멍과 갈대를 지키는 행동이 생물에게 어떤 도움이 될까?'],
 ];
-export function companion(s,n,step){
+export function companion(s,n,step,reveal=false){
  const task=['c','d'].includes(step)?pageChallenges(n,step)[s.research[n][step]??0]:null;
  const clue=task?.clue??hints[n-1][step==='b'?1:0];
  const safe=clue.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- return `<div class="companion-tools"><details class="moa-hint"><summary><img src="${asset('moa')}" alt="수달 모아"><span>모아의 힌트</span></summary><div class="moa-bubble"><b>작은 단서부터 찾아보자!</b><p>${safe}</p></div></details><button data-action="concept" data-value="${n}" class="concept-replay">개념 영상</button></div>`;
+ return `<div class="companion-tools"><details class="moa-hint"${reveal?' open':''}><summary aria-label="모아의 힌트"><img src="${asset('moa')}" alt=""><span>도움말</span></summary><div class="moa-bubble"><p>${safe}</p><button data-action="concept" data-value="${n}" class="concept-replay">개념 영상</button></div></details></div>`;
 }

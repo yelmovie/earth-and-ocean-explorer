@@ -5,9 +5,9 @@ from playwright.sync_api import sync_playwright
 from PIL import Image,ImageDraw
 ROOT=Path(__file__).resolve().parents[1]
 BASE=os.environ.get('GAME_URL','http://127.0.0.1:5173')
-OUT=ROOT/'artifacts/experience';OUT.mkdir(exist_ok=True)
+OUT=ROOT/os.environ.get('QA_OUTPUT','artifacts')/'experience';OUT.mkdir(parents=True,exist_ok=True)
 with sync_playwright() as p:
- browser=p.chromium.launch(executable_path=r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe',headless=True)
+ browser=p.chromium.launch(executable_path=os.environ.get('BROWSER_PATH',r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'),headless=True)
  page=browser.new_page(viewport={'width':1280,'height':800},has_touch=True)
  page.set_default_timeout(12000)
  errors=[];page.on('pageerror',lambda e:errors.append(str(e)))

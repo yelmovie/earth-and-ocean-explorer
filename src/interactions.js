@@ -6,31 +6,24 @@ import { handleChallenge } from './challenges.js';
 export function mountInteractions(app,ctx){
  const {state,save,render,feedback,sound,tideScene}=ctx,m=/^s([1-5])([abcd])$/.exec(state.route);
  if(!m)return ()=>{};const n=+m[1],step=m[2],d=state.drafts[n];
- let drag=null,ghost=null,timer=null,suppressUntil=0;
+ let drag=null,ghost=null,suppressUntil=0;
  const listeners=[];const on=(el,type,fn,options)=>{el?.addEventListener(type,fn,options);listeners.push(()=>el?.removeEventListener(type,fn,options));};
  app.querySelectorAll('[data-challenge-item]').forEach(el=>el.draggable=false);
  function selectSample(pick){app.querySelectorAll('[data-sample]').forEach(el=>{el.classList.toggle('selected',el===pick);el.setAttribute('aria-pressed',String(el===pick));});}
  selectSample([...app.querySelectorAll('[data-sample]')].find(el=>!['육지','바다'].includes(d.classifications?.[el.dataset.sample])));
  function assignSample(id,type){d.classifications[id]=type;save();render();sound('drop');}
- function stopTimelapse(){clearInterval(timer);timer=null;const button=app.querySelector('[data-timelapse]');if(button){button.textContent='시간 흐름 보기';button.setAttribute('aria-pressed','false');}}
- stopTimelapse();
  function updateLabStatus(){
   const status=app.querySelector('[data-lab-status]');if(!status)return;
   const inputs=['fresh','sea','heatFresh','heatSea'].map(field=>app.querySelector(`input[data-field="${field}"]`));if(inputs.some(input=>!input))return;
   const [fresh,sea,heatFresh,heatSea]=inputs.map(input=>Number(input.value)),sameAmount=fresh===sea,sameHeat=heatFresh===heatSea;
-  status.classList.toggle('ready',sameAmount&&sameHeat);status.textContent=!sameAmount?'물의 양을 같게 맞춰 줘.':!sameHeat?'가열 세기를 같게 맞춰 줘.':'같은 양 · 같은 세기! 이제 결과를 예상해 봐.';
+  status.classList.toggle('ready',sameAmount&&sameHeat);status.textContent=!sameAmount?'조건 확인 · 물의 양이 달라요.':!sameHeat?'조건 확인 · 가열 세기가 달라요.':'조건 확인 · 양과 가열 세기가 같아요.';
  }
  updateLabStatus();
  on(app,'click',e=>{
   if(performance.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation();return;}
   const pick=e.target.closest('[data-sample]');if(pick){selectSample(pick);return;}
   const bin=e.target.closest('[data-sample-bin]');if(bin){const id=app.querySelector('[data-sample].selected')?.dataset.sample;if(id)assignSample(id,bin.dataset.sampleBin);else feedback('먼저 옮길 표본 카드를 골라 줘.');}
-  if(e.target.closest('[data-timelapse]')){
-   if(timer){stopTimelapse();return;}
-   const button=app.querySelector('[data-timelapse]'),input=app.querySelector('[data-field="time"]');button.textContent='관측 멈춤';button.setAttribute('aria-pressed','true');
-   if(d.time>=6){d.time=0;if(input){input.value=d.time;preview(input);}save();}
-   timer=setInterval(()=>{d.time=Math.min(6,d.time+1);if(input){input.value=d.time;preview(input);}save();if(d.time===6)stopTimelapse();},1000);
-  }
+
  },true);
  function preview(el){const field=el.dataset.field;if(field==='time'){
    const t=+el.value;app.querySelector('.tide-live').innerHTML=tideScene(t);app.querySelector('.timeline output').textContent=timeLabel(t);app.querySelector('.tide-work .panel-label').textContent=`${timeLabel(t)} · 같은 해안의 관측 모형`;
@@ -39,8 +32,7 @@ export function mountInteractions(app,ctx){
   const output=el.closest('.range-field')?.querySelector('output');if(output)output.textContent=['heatFresh','heatSea'].includes(field)?(+el.value===1?'약하게':'세게'):`${el.value} mL`;
   if(['fresh','sea','heatFresh','heatSea'].includes(field))updateLabStatus();
  }
- on(app,'input',e=>{if(e.target.matches('[data-field="time"]'))stopTimelapse();if(e.target.matches('input[data-field]'))preview(e.target);if(e.target.matches('[data-compare]')){app.querySelector('.tide-wipe').style.setProperty('--wipe',`${e.target.value}%`);}});
- on(document,'visibilitychange',()=>{if(document.hidden)stopTimelapse();});
+ on(app,'input',e=>{if(e.target.matches('input[data-field]'))preview(e.target);if(e.target.matches('[data-compare]')){app.querySelector('.tide-wipe').style.setProperty('--wipe',`${e.target.value}%`);}});
  on(app,'pointerdown',e=>{
   if(e.button!==0)return;const source=e.target.closest('[data-challenge-item],[data-sample],[data-action="challenge-order"]');const coast=e.target.closest('.coast-view'),lens=e.target.closest('.survey-lens');
   if(!source&&!lens&&(!coast||e.target.closest('button,input,label')))return;
@@ -76,7 +68,7 @@ export function mountInteractions(app,ctx){
   else if(old.near){d.selected=old.near.id;save();render();sound('scan');}
  }
  on(app,'pointerup',end);on(app,'pointercancel',e=>end(e,true));on(app,'lostpointercapture',e=>end(e,true));
- return ()=>{listeners.forEach(fn=>fn());clearInterval(timer);ghost?.remove();drag=null;};
+ return ()=>{listeners.forEach(fn=>fn());ghost?.remove();drag=null;};
 }
 
 export function tideComparison(a,b,scene){return `<div class="tide-wipe" style="--wipe:50%"><div class="tide-wipe-before">${scene(a)}</div><div class="tide-wipe-after">${scene(b)}</div><div class="wipe-line"></div><span class="wipe-label label-a">A · ${timeLabel(a)}</span><span class="wipe-label label-b">B · ${timeLabel(b)}</span></div><label class="compare-slider">비교선을 움직여 같은 기둥을 살펴봐<input type="range" min="0" max="100" value="50" data-compare aria-label="A와 B 장면 비교선"></label>`;}

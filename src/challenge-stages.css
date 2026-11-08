@@ -1,0 +1,487 @@
+/* Observation evidence and card controls share the field journal materials. */
+#app .challenge-page .challenge-card {
+  min-width: 0;
+  border-color: #bdcec1;
+  background: var(--paper);
+}
+
+#app .challenge-page .challenge-observation {
+  background: linear-gradient(145deg, #f7f8ed, #eaf2ea);
+}
+
+#app .challenge-page .challenge-observation > .tag {
+  display: inline-flex;
+  margin-bottom: 14px;
+  background: #dcebe2;
+  color: var(--navy);
+}
+
+#app .challenge-page .challenge-board-heading {
+  gap: 8px 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+#app .challenge-page :is(.challenge-option, .challenge-item, .challenge-bin) {
+  min-width: 0;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+#app .challenge-page .challenge-option {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  padding: 14px;
+  text-align: left;
+}
+
+#app .challenge-page .option-key {
+  position: static;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  margin: 0;
+  line-height: 1;
+  font-size: var(--label-size);
+  transform: none;
+}
+
+#app .challenge-page .challenge-option > svg {
+  width: 24px;
+  height: 24px;
+  margin-top: 4px;
+}
+
+#app .challenge-page .challenge-option > span:nth-child(2) {
+  padding-top: 2px;
+}
+
+#app .challenge-page .challenge-instruction {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+
+#app .challenge-page .challenge-instruction > svg {
+  margin-top: 3px;
+  flex: 0 0 24px;
+}
+
+#app .challenge-page .challenge-sort-area {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+}
+
+#app .challenge-page .challenge-item {
+  padding: 12px;
+  gap: 8px;
+}
+
+#app .challenge-page .challenge-item > :is(span, small),
+#app .challenge-page .challenge-bin > :is(strong, span) {
+  max-width: 100%;
+  min-width: 0;
+}
+
+#app .challenge-page .challenge-item.assigned {
+  border-left: 5px solid var(--teal);
+  background: #f0f6ee;
+}
+
+#app .challenge-page .challenge-item.selected {
+  border-color: var(--teal);
+  background: #e0f0e5;
+  box-shadow: inset 0 0 0 1px var(--teal), 0 3px 0 #173f4b17;
+}
+
+#app .challenge-page .challenge-bin {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  justify-items: start;
+  min-height: 104px;
+  padding: 14px;
+  gap: 8px;
+  background: #edf3e7;
+  border-color: #8fab93;
+}
+
+#app .challenge-page .challenge-bin > :is(strong, span) {
+  width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+#app .challenge-page .challenge-bin:disabled {
+  opacity: .85;
+}
+
+#app .challenge-page .challenge-sequence {
+  min-height: 88px;
+  gap: 10px;
+}
+
+#app .challenge-page .challenge-sequence > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+#app .challenge-page .challenge-sequence b {
+  position: static;
+  width: 30px;
+  height: 30px;
+  font-size: 17px;
+}
+
+#app .challenge-page .challenge-feedback {
+  line-height: 1.5;
+}
+
+#app .challenge-page .challenge-observation summary {
+  min-height: 48px;
+  padding: 12px 0;
+  color: var(--teal);
+}
+
+#app .challenge-page .challenge-observation details p {
+  padding: 0 0 8px;
+  color: var(--ink);
+}
+
+#app .challenge-page .visual-caption {
+  margin: 12px 0 0;
+  font-size: var(--label-size);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Equal-area blocks retain texture distinctions in grayscale. */
+#app .challenge-page .ratio-grid {
+  gap: 6px;
+  padding: 12px;
+  background: #fafff7;
+  box-shadow: inset 0 1px 5px #173f4b0b;
+}
+
+#app .challenge-page .ratio-grid > i {
+  min-width: 0;
+  aspect-ratio: 1.35;
+  border: 1px solid #173f4b22;
+  box-shadow: inset 0 1px 0 #ffffff55;
+}
+
+#app .challenge-page .ratio-grid > .sea {
+  background: repeating-linear-gradient(0deg, transparent 0 10px, #b2dfe044 10px 12px), #2c8598;
+}
+
+#app .challenge-page .ratio-grid > .land {
+  background: radial-gradient(circle, #4e6d463b 1px, transparent 2px) 0 0 / 9px 9px, #9caf71;
+}
+
+#app .challenge-page .ratio-grid p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 8px 0 0;
+  font-size: var(--label-size);
+}
+
+#app .challenge-page .legend-sea::before,
+#app .challenge-page .legend-land::before {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  border: 1px solid #173f4b40;
+}
+
+#app .challenge-page .challenge-earth {
+  padding: 8px 12px 14px;
+  background: #f5f9f1;
+}
+
+#app .challenge-page .challenge-earth svg {
+  height: auto;
+  max-height: 260px;
+  min-height: 0;
+}
+
+#app .challenge-page .earth-components {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 14px;
+}
+
+#app .challenge-page .earth-components span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--label-size);
+  line-height: 1.4;
+}
+
+#app .challenge-page .earth-components span::before {
+  content: '';
+  flex: 0 0 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #173f4b44;
+  background: #a4bd76;
+}
+
+#app .challenge-page .earth-components .component-sea::before { background: #287f9c; }
+#app .challenge-page .earth-components .component-air::before { background: #cae8e9; }
+
+#app .challenge-page .challenge-tide-pair {
+  gap: 12px;
+}
+
+#app .challenge-page .challenge-tide-pair figcaption {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #e4eee5;
+  color: var(--navy);
+  font-size: var(--label-size);
+  line-height: 1.35;
+}
+
+#app .challenge-page .challenge-tide-pair svg {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: 260 / 170;
+}
+
+#app .challenge-page .challenge-tide-pair.three-records {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#app .challenge-page .three-records figure {
+  display: grid;
+  grid-template-columns: minmax(70px, .42fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+#app .challenge-page .three-records figcaption { margin-bottom: 0; }
+
+#app .challenge-page .challenge-creatures {
+  padding: 8px 0;
+  gap: 10px;
+}
+
+#app .challenge-page .challenge-creatures figure {
+  min-width: 0;
+  margin: 0;
+  text-align: center;
+}
+
+#app .challenge-page .challenge-creatures figure > div {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid #bfceae;
+  border-radius: 48% 48% 40% 40%;
+  background: radial-gradient(ellipse at 50% 85%, #b0b48b66, transparent 55%), #eef1df;
+}
+
+#app .challenge-page .challenge-creatures .specimen-image {
+  position: absolute;
+  inset: 5%;
+  width: 90%;
+  height: 90%;
+  max-height: none;
+  object-fit: contain;
+}
+
+#app .challenge-page .challenge-creatures figcaption {
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: var(--label-size);
+}
+
+/* Labels sit outside the glass so water and volume remain visible. */
+#app .challenge-page .challenge-lab {
+  padding: 14px;
+  border: 1px solid #c6d7cb;
+  border-radius: 14px;
+  background: linear-gradient(#edf5ed 75%, #dce8df 75%);
+}
+
+#app .challenge-page .lab-model-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+#app .challenge-page .lab-model-pair figure {
+  min-width: 0;
+  margin: 0;
+  text-align: center;
+}
+
+#app .challenge-page .lab-model-pair figcaption {
+  margin-bottom: 12px;
+  font-size: var(--label-size);
+  font-weight: 700;
+}
+
+#app .challenge-page .lab-model-glass {
+  position: relative;
+  width: min(130px, 100%);
+  height: clamp(120px, 15vw, 170px);
+  margin: 0 auto;
+  isolation: isolate;
+  overflow: hidden;
+  border: 3px solid #80a8ac;
+  border-top: 5px solid #80a8ac;
+  border-radius: 7px 7px 20px 20px;
+  background: linear-gradient(90deg, #ffffff90, #f6fffc44 28%, #ffffff99 85%);
+  box-shadow: inset 5px 0 0 #ffffff77, 3px 5px 8px #173f4b0d;
+}
+
+#app .challenge-page .lab-model-water {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--water-level);
+  border-top: 3px solid #8acbd0;
+  border-radius: 50% 50% 0 0 / 5px 5px 0 0;
+  background: linear-gradient(#88d0daaa, #4c9fbfcc);
+}
+
+#app .challenge-page .lab-model-ticks {
+  position: absolute;
+  top: 18%;
+  bottom: 12%;
+  right: 8px;
+  width: 16px;
+  background: repeating-linear-gradient(0deg, #416c7980 0 2px, transparent 2px 20px);
+}
+
+#app .challenge-page .lab-model-glass b {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  color: var(--navy);
+  background: #fffdf5ed;
+  font-size: var(--label-size);
+  font-variant-numeric: tabular-nums;
+}
+
+#app .challenge-page .lab-model-plate {
+  width: min(150px, 100%);
+  height: 17px;
+  margin: 7px auto 0;
+  border: 2px solid #6a8383;
+  border-radius: 7px;
+  background: linear-gradient(#839c9c 45%, #3a6068 45%);
+}
+
+#app .challenge-page .lab-model-heat {
+  margin: 8px 0 0;
+  font-size: var(--label-size);
+  line-height: 1.5;
+}
+
+#app .challenge-page .residue-record {
+  padding: 12px;
+  border: 1px solid #c6d7cb;
+  border-radius: 14px;
+  background: #eff4ea;
+}
+
+#app .challenge-page .visual-record-label {
+  display: block;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #cad8c7;
+  font-size: var(--label-size);
+  font-weight: 700;
+}
+
+#app .challenge-page .challenge-residue {
+  padding: 16px 0 0;
+  gap: 12px;
+}
+
+#app .challenge-page .challenge-residue > div {
+  font-size: var(--label-size);
+  gap: 12px;
+}
+
+#app .challenge-page .challenge-residue i {
+  width: min(100%, 160px);
+  border: 5px solid #8da6a0;
+  background: radial-gradient(ellipse, #d5dcd4, #eaf0e6 68%, #b9c7be);
+  box-shadow: inset 0 3px 5px #56736833, 0 5px 3px #173f4b12;
+}
+
+#app .challenge-page .challenge-residue .has-residue::after {
+  inset: 16% 14%;
+  border: 2px dotted #b6b29b;
+  background: radial-gradient(circle, #ffffff 0 2px, transparent 3px) 0 0 / 9px 9px, #f7f3dc;
+  box-shadow: inset 0 1px 4px #b6ab8066;
+}
+
+#app .challenge-page .challenge-residue small {
+  font-size: var(--label-size);
+  line-height: 1.45;
+}
+
+#app .challenge-page .coast-detail-model {
+  margin: 0;
+}
+
+#app .challenge-page .coast-detail-model svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #aabfb5;
+  border-radius: 14px;
+}
+
+#app .challenge-page .coast-detail-model figcaption {
+  margin-top: 12px;
+  font-size: var(--label-size);
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+@media (max-width: 1200px) {
+  #app .challenge-page .challenge-sort-area,
+  #app .challenge-page .challenge-sort-area:has(.challenge-bin:nth-child(3)) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #app .challenge-page .challenge-bins { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  #app .challenge-page .challenge-option {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 12px;
+  }
+  #app .challenge-page .option-key { width: 30px; height: 30px; min-width: 30px; }
+  #app .challenge-page .challenge-bins { grid-template-columns: minmax(0, 1fr); }
+  #app .challenge-page .challenge-bin { min-height: 84px; }
+  #app .challenge-page .challenge-tide-pair { gap: 8px; }
+  #app .challenge-page .challenge-tide-pair figcaption { padding: 6px; }
+  #app .challenge-page .challenge-lab { padding: 10px; }
+  #app .challenge-page .lab-model-pair { gap: 12px; }
+  #app .challenge-page .challenge-creatures { gap: 6px; }
+}

@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .cache/
+.tmp/
 assets/generated/
 .env*
 *.log
@@ -11,3 +12,6 @@ references/archives/
 references/extracted/
 __pycache__/
 *.py[cod]
+
+# macOS metadata on the external SSD
+._*

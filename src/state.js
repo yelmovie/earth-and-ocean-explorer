@@ -4,7 +4,7 @@ export const SAVE_KEY = 'blue-planet-hq:v2';
 export function freshState() {
   return { version: 2, contentVersion: 3, research: freshResearch(), route: 'home', resume: 'hub', history: [], settings: { muted: false, bgmEnabled: true, sfxEnabled: true, volume: 0.35, unlockAll: false, flatGlobe: false }, drafts: {
     1: { samples: [], atmosphere: false, classifications: {}, conclusion: '' },
-    2: { fresh: 40, sea: 60, heatFresh: 1, heatSea: 2, prediction: '', prepared: false, heated: false, seenBefore: false, seenAfter: false, view: 'before', residue: '', reason: '' },
+    2: { fresh: 40, sea: 60, heatFresh: 1, heatSea: 2, prediction: '', firstPrediction: '', prepared: false, heated: false, seenBefore: false, seenAfter: false, view: 'before', residue: '', reason: '' },
     3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand' },
     4: { time: 0, a: null, b: null, markers: [], direction: '', concept: '' },
     5: { found: [], features: {}, selected: '', value: '', action: '' },
@@ -29,7 +29,7 @@ function sanitizedDraft(n,d) {
 }
 export function normalize(raw) {
   const base = freshState();
-  if (!object(raw) || raw.version !== 2) throw new Error('지원하지 않는 저장 형식');
+  if (!object(raw) || raw.version !== 2 || raw.contentVersion > 3) throw new Error('지원하지 않는 저장 형식');
   for (const key of ['muted', 'unlockAll', 'flatGlobe']) base.settings[key] = raw.settings?.[key] === true;
   for (const key of ['bgmEnabled','sfxEnabled']) base.settings[key] = typeof raw.settings?.[key]==='boolean'?raw.settings[key]:raw.settings?.muted!==true;
   base.research = normalizeResearch(raw.research);
@@ -54,13 +54,45 @@ export function normalize(raw) {
   if (Number.isFinite(raw.mapPosition?.x) && Number.isFinite(raw.mapPosition?.y)) base.mapPosition = { x: raw.mapPosition.x, y: raw.mapPosition.y };
   return base;
 }
+// Each loaded state tracks the exact persisted value it owns. A stale tab or
+// unreadable/newer save must not silently replace another learner's record.
+const saveSessions = new WeakMap();
 export function loadState(storage) {
-  try { const raw = storage.getItem(SAVE_KEY); return { state: raw ? normalize(JSON.parse(raw)) : freshState(), warning: '' }; }
-  catch { return { state: freshState(), warning: '저장 기록을 읽지 못했어. 이번 탐사는 새 기록으로 시작해. 브라우저 저장 권한을 확인해 줘.' }; }
+  let raw;
+  try {
+    raw = storage.getItem(SAVE_KEY);
+    const state = raw ? normalize(JSON.parse(raw)) : freshState();
+    saveSessions.set(state, { raw, blocked: false });
+    return { state, warning: '' };
+  } catch {
+    const state = freshState();
+    saveSessions.set(state, { raw, blocked: true });
+    return { state, warning: '기존 저장 기록을 읽지 못해 원본을 보존하고 있어. 지금 탐사는 임시 기록이야. 새로고침하거나 선생님과 설정의 기록 초기화를 확인해 줘.' };
+  }
 }
-export function saveState(storage, state) {
-  try { storage.setItem(SAVE_KEY, JSON.stringify(state)); return ''; }
-  catch { return '저장 공간을 사용할 수 없어. 지금은 계속할 수 있지만 창을 닫으면 기록이 사라질 수 있어.'; }
+export function saveState(storage, state, { reset = false } = {}) {
+  try {
+    const session = saveSessions.get(state);
+    const current = typeof storage.getItem === 'function' ? storage.getItem(SAVE_KEY) : null;
+    if (!reset && (session?.blocked || (session && current !== session.raw) || (!session && current))) {
+      return '기존 기록 또는 다른 창의 기록을 보호하려고 저장을 멈췄어. 현재 창을 닫기 전에 선생님과 확인해 줘.';
+    }
+    const raw = JSON.stringify(state);
+    storage.setItem(SAVE_KEY, raw);
+    saveSessions.set(state, { raw, blocked: false });
+    return '';
+  } catch { return '저장 공간을 사용할 수 없어. 지금은 계속할 수 있지만 창을 닫으면 기록이 사라질 수 있어.'; }
+}
+export function recordPrediction(state, value) {
+  if (!['same', 'different'].includes(value)) return;
+  const draft = state.drafts[2];
+  if (!draft.firstPrediction) draft.firstPrediction = value;
+  draft.prediction = value;
+}
+export function previewState(student) {
+  const preview = structuredClone(student);
+  preview.settings.unlockAll = true;
+  return preview;
 }
 export function aReady(s, n) {
   const d = s.drafts[n];
@@ -92,7 +124,7 @@ export function evidenceFor(s, n) { return { title: chapters[n - 1].evidence, da
 export function completeStage(s, n) {
   if (!stageValid(s, n)) return false;
   if (!s.completed.includes(n)) s.completed.push(n);
-  s.evidence[n] = evidenceFor(s, n); return true;
+  if (!s.evidence[n]) s.evidence[n] = evidenceFor(s, n); return true;
 }
 export function allLinked(s) { return s.completed.length === 5 && finalCases.every((c,i) => s.links[i]?.stage === c.stage && s.links[i]?.reason === c.answer); }
 export function linkEvidence(s, index, stage, reason) {

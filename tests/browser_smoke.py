@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=os.environ.get('GAME_URL','http://127.0.0.1:5173')
 print('QA boot',flush=True)
 with sync_playwright() as p:
- browser=p.chromium.launch(executable_path=r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe',headless=True)
+ browser=p.chromium.launch(executable_path=os.environ.get('BROWSER_PATH',r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'),headless=True)
  print('Edge launched',flush=True)
  page=browser.new_page(viewport={'width':1280,'height':800},device_scale_factor=1)
  page.set_default_timeout(15000)
@@ -34,7 +34,7 @@ with sync_playwright() as p:
   page.wait_for_url('**/#'+name)
   assert page.locator('.concept-dialog[open],video').count()==0, 'A stage transition must not force a concept replay'
  def shot(name):
-  page.screenshot(path=str(ROOT/'artifacts'/name))
+  page.screenshot(path=str(ROOT/os.environ.get('QA_OUTPUT','artifacts')/name))
  shot('home-v3-1280.png')
  click('go','hub');route('hub')
  page.locator('#hub-map').wait_for()
@@ -146,7 +146,7 @@ with sync_playwright() as p:
    if metrics['overflow']:layouts.append({'route':r,'size':[width,height],**metrics})
    if r in ['hub','s1c','s3b','s4b','s5d'] and width in [1024,873,1920]:shot(r+'-'+str(width)+'x'+str(height)+'.png')
  print(json.dumps({'homeLoadSeconds':load,'fullJourney':'PASS','extensionTasks':40,'reload':'PASS','adminRecordIsolation':'PASS','resetCancelFocus':'PASS','layoutFailures':layouts,'errors':errors},ensure_ascii=False),flush=True)
- (ROOT/'artifacts'/'browser-verification.json').write_text(json.dumps({'homeLoadSeconds':load,'fullJourney':'PASS','extensionTasks':40,'layoutFailures':layouts,'errors':errors},ensure_ascii=False,indent=2),encoding='utf8')
+ (ROOT/os.environ.get('QA_OUTPUT','artifacts')/'browser-verification.json').write_text(json.dumps({'homeLoadSeconds':load,'fullJourney':'PASS','extensionTasks':40,'layoutFailures':layouts,'errors':errors},ensure_ascii=False,indent=2),encoding='utf8')
  browser.close()
  assert not errors,errors
  assert not layouts,layouts

@@ -22,7 +22,7 @@ export async function mountGlobe(el,{flat=false,atmosphere=false,selected='asia'
   const canvas=document.createElement('canvas');canvas.setAttribute('aria-label','지구 관찰 화면');el.replaceChildren(canvas);
   let isFlat=flat;
   if(!flat){try{
-    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(el.clientWidth,el.clientHeight);scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(36,el.clientWidth/el.clientHeight,.1,100);camera.position.z=3.6;
+    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(el.clientWidth,el.clientHeight);scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(36,el.clientWidth/el.clientHeight,.1,100);camera.position.z=3.6;
     const texture=new THREE.CanvasTexture(data.surface);texture.colorSpace=THREE.SRGBColorSpace;
     sphere=new THREE.Mesh(new THREE.SphereGeometry(1,64,40),new THREE.MeshStandardMaterial({map:texture,roughness:.85}));scene.add(sphere);
     const ambient=new THREE.AmbientLight('#eaf9ff',2);scene.add(ambient);const sun=new THREE.DirectionalLight('#fff5dc',2.3);sun.position.set(-3,3,5);scene.add(sun);

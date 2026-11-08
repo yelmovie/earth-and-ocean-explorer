@@ -29,3 +29,6 @@
 자료: docs/EXPERIENCE-20261022.md, artifacts/experience/verification.json·tablet-contact-sheet.jpg. public/assets/concepts·audio·fonts, assets/moa-original.png와 CREDITS.md에 원본/출처. 영상 재현 scripts/render-concepts.mjs, 글꼴 재현 scripts/subset-fonts.py.
 다음: 실제 학교 태블릿·전자칠판에서 터치감·뒷자리 가독성·음량 확인 후 필요한 부분만 조정.
 주의: 현재 프로젝트는 F:/iscreammedia_sc34/10 earthsea. 저장/정답/해금 조건 보존. 새 문구 뒤 글꼴 부분집합 재생성. npm run dev의 실제 출력 포트 확인(이번 검증은 5174). 브라우저 검증은 설치된 Python/Playwright를 쓰며 서비스 의존성은 추가하지 않아. 반말로 소통.
+
+## 2026-11-07 과학 6~16 순차 개선 · 10번
+최초 예상/증거 보존, 손상·미래형식·다중탭 저장 보호, 교사 미리보기 완전 분리, 짧은 화면 툴바 가림·48px 터치 개선. 43단위 테스트와 실제 40과제 완주·8뷰포트·저장안전 검증 통과. docs/reviews/RELEASE-REVIEW-20261107.md, SCORE-20261107.md, UPGRADE-PROMPT-20261107.md 참조. 미리보기의 변경은 새로고침하면 사라지는 임시 기록이다. 정상 학생의 과거 저장은 보존한다. 커밋·배포 안 함.

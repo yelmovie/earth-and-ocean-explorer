@@ -387,3 +387,17 @@ body dialog.chapter-reward{width:min(760px,calc(100vw - 40px))}
 #app .teacher-skip:active{transform:translateY(4px);box-shadow:0 1px 0 #a9873f}
 @media(max-width:800px){#app .teacher-pad p{display:none}#app .teacher-skip small{display:none}#app .teacher-skip{min-height:56px}}
 @media print{#app .teacher-nav{display:none}}
+
+/* 2026-11-07: teacher buttons are touch targets too. Short landscape screens
+   scroll naturally rather than stacking two fixed toolbars over the experiment. */
+#app .teacher-keys{grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,48px)}
+#app .teacher-key{min-width:48px;min-height:48px;width:48px;height:48px}
+#app.has-teacher-nav>#main{padding-bottom:140px}
+@media(min-width:801px){#app.has-teacher-nav .learning .mission-footer{bottom:132px}}
+@media(max-height:600px),(max-width:800px){
+  :is(#app,body) .learning .mission-footer{position:static!important;bottom:auto!important}
+  #app .teacher-nav{position:static;align-items:center;flex-wrap:wrap;padding:12px 20px}
+  #app.has-teacher-nav>#main{padding-bottom:0}
+  #app .teacher-pad p{display:none}
+  #app .teacher-skip{max-width:calc(100vw - 40px)}
+}

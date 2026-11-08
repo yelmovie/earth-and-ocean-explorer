@@ -1,0 +1,14 @@
+{
+  "id": "tide.foreshore",
+  "file": "tide-foreshore.webp",
+  "source": "assets/generated/20261108/tide-foreshore-original.png",
+  "tool": "OpenAI built-in image_gen",
+  "generatedOn": "2026-11-08",
+  "role": "Static dry coastal terrain behind code-driven tide water and fixed reference objects",
+  "containsText": false,
+  "containsWater": false,
+  "transparent": false,
+  "modelLimit": "Illustrative observation model, not a tide forecast or a photograph",
+  "prompt": "One 16:9 polished friendly elementary science 2D coastal foreshore background. Neutral daylight, blue sky, low grassy rocky dunes and broad empty sand foreground. No water, waves, boat, pole, large foreground rock, UI, text, labels or watermark. Dynamic water and reference objects are rendered separately by the application. One cohesive background, no collage or asset sheet.",
+  "consumers": ["src/screens.js:tideScene", "src/challenges.js:visual"]
+}

@@ -1,0 +1,553 @@
+/* Field instruments: keep labels in their own space and the observation clear. */
+#app .activity:is([data-chapter="3"],[data-chapter="4"],[data-chapter="5"]) > * {
+  min-width: 0;
+}
+
+/* A camera frame, rather than another target, surrounds the four real targets. */
+#app .activity[data-chapter="3"] .coast-view {
+  height: clamp(350px, 44vh, 570px);
+  border: 5px solid var(--navy);
+  border-radius: 20px;
+  box-shadow: inset 0 0 0 2px #ffffff80, 0 8px 20px #173f4b24;
+  isolation: isolate;
+}
+#app .activity[data-chapter="3"] .coast-view::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#062f4550, transparent 28%, transparent 80%, #062f4530);
+  pointer-events: none;
+}
+#app .activity[data-chapter="3"] .camera-viewfinder {
+  inset: 80px 24px 24px;
+  border: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(#ffffffb3, #ffffffb3) left top / 28px 2px,
+    linear-gradient(#ffffffb3, #ffffffb3) left top / 2px 28px,
+    linear-gradient(#ffffffb3, #ffffffb3) right top / 28px 2px,
+    linear-gradient(#ffffffb3, #ffffffb3) right top / 2px 28px,
+    linear-gradient(#ffffffb3, #ffffffb3) left bottom / 28px 2px,
+    linear-gradient(#ffffffb3, #ffffffb3) left bottom / 2px 28px,
+    linear-gradient(#ffffffb3, #ffffffb3) right bottom / 28px 2px,
+    linear-gradient(#ffffffb3, #ffffffb3) right bottom / 2px 28px;
+  background-repeat: no-repeat;
+}
+#app .activity[data-chapter="3"] .camera-viewfinder::after {
+  content: none;
+}
+#app .activity[data-chapter="3"] .hotspot {
+  z-index: 1;
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+  min-height: 54px;
+  background: #123e4de8;
+  border: 3px solid #fffdf5;
+  box-shadow: 0 0 0 5px #ffffff4d, 0 3px 8px #062f4555;
+  line-height: 1;
+}
+#app .activity[data-chapter="3"] .hotspot.selected {
+  background: #f6d48c;
+  box-shadow: 0 0 0 6px #f6d48c66, 0 3px 8px #062f4555;
+}
+#app .activity[data-chapter="3"] .hotspot[data-value="cave"] {
+  margin-top: 12px;
+}
+#app .activity[data-chapter="3"] .scene-tag,
+#app .activity[data-chapter="5"] .scene-tag {
+  max-width: calc(100% - 24px);
+  z-index: 1;
+  top: 12px;
+  left: 12px;
+  padding: 8px 12px;
+  color: #fffdf5;
+  background: #103e4ef2;
+  border: 1px solid #ffffff70;
+  border-radius: 10px;
+  font-size: var(--label-size);
+  line-height: 1.4;
+  text-wrap: balance;
+}
+#app .activity[data-chapter="3"] .coast-observation > .pan-control {
+  padding: 10px 16px;
+  margin-top: 12px;
+  border: 2px solid #b5cec3;
+  background: #fffdf5;
+}
+#app .activity[data-chapter="3"] .coast-observation > .pan-control label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  white-space: normal;
+  font-size: var(--label-size);
+  font-weight: 700;
+}
+#app .activity[data-chapter="3"] .pan-control input {
+  width: 100%;
+  margin: 0;
+  min-height: 48px;
+}
+#app .activity[data-chapter="3"] .photo-slots {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+#app .activity[data-chapter="3"] .photo-slots span {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 10px 12px;
+  font-size: var(--label-size);
+  line-height: 1.4;
+}
+#app .activity[data-chapter="3"] .photo-slots .filled {
+  background: #e2efda;
+  border-color: #8ab39b;
+  color: #215a43;
+}
+#app .activity[data-chapter="3"] .album-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+#app .activity[data-chapter="3"] .photo-card {
+  padding: 10px 10px 16px;
+  border: 2px solid #c4d7cb;
+  box-shadow: 0 4px 0 #c4d7cb60;
+  background: #fffdf5;
+}
+#app .activity[data-chapter="3"] .photo-image {
+  aspect-ratio: 16 / 10;
+  height: auto;
+  min-height: 140px;
+  border: 1px solid #173f4b35;
+  border-radius: 10px;
+  box-shadow: none;
+}
+#app .activity[data-chapter="3"] .photo-card > b {
+  margin: 12px 0 8px;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: var(--reading-size);
+  line-height: 1.3;
+}
+#app .activity[data-chapter="3"] .photo-card .select-label {
+  min-width: 0;
+  gap: 6px;
+}
+#app .activity[data-chapter="3"] .photo-card select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+#app .activity[data-chapter="3"] .pin-help {
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  padding: 8px;
+  background: #103e4eeb;
+  font-size: var(--label-size);
+  line-height: 1.4;
+}
+#app .activity[data-chapter="3"] .photo-pin {
+  width: 23px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  border: 3px solid #fffdf5;
+  box-shadow: 0 0 0 3px #173f4b99, 0 3px 8px #173f4b55;
+}
+
+/* A/B labels have a separate header, so neither can cover a reference object. */
+#app .activity[data-chapter="4"] .tide-scene {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: 16 / 9;
+  border: 1px solid #9fc3c4;
+}
+#app .activity[data-chapter="4"] .tide-live {
+  overflow: hidden;
+  border: 3px solid #c1d7d1;
+  border-radius: 16px;
+  margin: 14px 0;
+  background: #d9eff2;
+  box-shadow: 0 4px 0 #173f4b12;
+}
+#app .activity[data-chapter="4"] .tide-live .tide-scene {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+#app .activity[data-chapter="4"] .timelapse-button {
+  width: 100%;
+  min-height: 52px;
+  margin: 12px 0;
+  background: #e9f3ef;
+  border-color: #9fc8b6;
+  color: #14574f;
+}
+#app .activity[data-chapter="4"] .timeline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  padding: 14px;
+  border: 1px solid #c4d8cb;
+  border-radius: 14px;
+  background: #f1f5ec;
+  font-size: var(--label-size);
+}
+#app .activity[data-chapter="4"] .timeline output {
+  float: none;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #fffdf5;
+  color: #075c60;
+  font-variant-numeric: tabular-nums;
+}
+#app .activity[data-chapter="4"] .timeline input,
+#app .activity[data-chapter="4"] .timeline > span {
+  grid-column: 1 / -1;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+}
+#app .activity[data-chapter="4"] .timeline > span {
+  font-size: var(--label-size);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+#app .activity[data-chapter="4"] .record-slot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 16px;
+  margin: 16px 0;
+  gap: 8px;
+  border: 1px solid #b3cfc7;
+  border-left: 5px solid #368a85;
+  border-radius: 14px;
+  background: #edf5ef;
+}
+#app .activity[data-chapter="4"] .record-slot + .record-slot {
+  border-color: #ddc49e;
+  border-left-color: #ac7837;
+  background: #faf0df;
+}
+#app .activity[data-chapter="4"] .record-slot > b {
+  font-size: var(--label-size);
+}
+#app .activity[data-chapter="4"] .record-slot > span {
+  font-size: var(--reading-size);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+  color: var(--ink);
+}
+#app .activity[data-chapter="4"] .record-slot button {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 12px;
+  background: #fffdf5;
+  line-height: 1.4;
+  white-space: normal;
+}
+#app .activity[data-chapter="4"] .tide-wipe {
+  --compare-header: 56px;
+  padding-top: var(--compare-header);
+  border: 2px solid #acc9c4;
+  border-radius: 16px;
+  background: #edf5ef;
+}
+#app .activity[data-chapter="4"] .tide-wipe-before,
+#app .activity[data-chapter="4"] .tide-wipe-after {
+  width: 100%;
+}
+#app .activity[data-chapter="4"] .tide-wipe-after {
+  top: var(--compare-header);
+}
+#app .activity[data-chapter="4"] .tide-wipe .tide-scene {
+  border: 0;
+  border-radius: 0;
+}
+#app .activity[data-chapter="4"] .wipe-line {
+  top: var(--compare-header);
+  width: 4px;
+  background: #fffdf5;
+  box-shadow: 0 0 0 1px #103e4e;
+}
+#app .activity[data-chapter="4"] .wipe-label {
+  top: 8px;
+  max-width: calc(50% - 16px);
+  padding: 6px 10px;
+  border: 1px solid #b4d2c9;
+  background: #fffdf5;
+  color: #1a5b55;
+  line-height: 1.35;
+  font-size: var(--label-size);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+#app .activity[data-chapter="4"] .wipe-label.label-b {
+  background: #fcf0dd;
+  border-color: #ddc49e;
+  color: #78501d;
+}
+#app .activity[data-chapter="4"] .compare-slider {
+  padding: 12px 14px 4px;
+  border: 1px solid #c4d8cb;
+  border-radius: 12px;
+  background: #f1f5ec;
+  font-size: var(--label-size);
+  line-height: 1.45;
+}
+#app .activity[data-chapter="4"] .segment {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+#app .activity[data-chapter="4"] .segment button {
+  min-width: 0;
+  min-height: 52px;
+  padding: 10px;
+  font-size: var(--label-size);
+}
+
+/* The circle is anchored to the real trace coordinates; text does not move it. */
+#app .activity[data-chapter="5"] .mudflat-view {
+  height: clamp(430px, 48vh, 600px);
+  border: 5px solid #d0bc91;
+  border-radius: 20px;
+  box-shadow: inset 0 0 0 1px #fffdf599, 0 8px 20px #173f4b1f;
+  isolation: isolate;
+}
+#app .activity[data-chapter="5"] .trace {
+  z-index: 3;
+  display: block;
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+  min-height: 54px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+}
+#app .activity[data-chapter="5"] .trace > span {
+  width: 54px;
+  height: 54px;
+  border: 3px solid #fff4d8;
+  background: #234d48e8;
+  box-shadow: 0 0 0 5px #fffdf555, 0 3px 8px #173f4b55;
+  font-size: 30px;
+  line-height: 1;
+}
+#app .activity[data-chapter="5"] .trace small {
+  position: absolute;
+  bottom: calc(100% + 11px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  width: clamp(124px, 13vw, 176px);
+  max-width: none;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid #d1bb8c;
+  border-radius: 10px;
+  background: #fffaf0f5;
+  color: #234d48;
+  font-size: var(--label-size);
+  font-weight: 700;
+  line-height: 1.35;
+  box-shadow: 0 3px 8px #173f4b1a;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+#app .activity[data-chapter="5"] .trace small::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 5px);
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  border-right: 1px solid #d1bb8c;
+  border-bottom: 1px solid #d1bb8c;
+  background: #fffaf0;
+  transform: rotate(45deg);
+}
+#app .activity[data-chapter="5"] .trace.found > span {
+  background: #267355;
+  border-color: #d5efbd;
+}
+#app .activity[data-chapter="5"] .trace.selected > span {
+  background: #f3ce84;
+  color: #193f43;
+  border-color: #fffdf5;
+  box-shadow: 0 0 0 5px #f3ce8480, 0 3px 8px #173f4b55;
+}
+#app .activity[data-chapter="5"] .survey-lens {
+  z-index: 2;
+  width: 96px;
+  height: 96px;
+  min-width: 96px;
+  min-height: 96px;
+  border: 6px solid #f7dfac;
+  box-shadow: 0 0 0 3px #234d48, 0 5px 0 #234d4833, 0 8px 18px #173f4b40;
+}
+#app .activity[data-chapter="5"] .survey-lens::after {
+  width: 15px;
+  height: 38px;
+  right: -1px;
+  bottom: -27px;
+  background: #234d48;
+}
+#app .activity[data-chapter="5"] .creature-header {
+  grid-template-columns: minmax(0, 1fr) minmax(90px, .8fr);
+  min-height: 130px;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 2px solid #d5dfcb;
+}
+#app .activity[data-chapter="5"] .creature-header:not(:has(.specimen)) {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
+}
+#app .activity[data-chapter="5"] .creature-header .specimen {
+  width: 100%;
+  height: 135px;
+  margin: 0;
+  padding: 8px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #f1f4df, #dfebd400 72%);
+}
+#app .activity[data-chapter="5"] .creature-header h2 {
+  margin-bottom: 0;
+}
+#app .activity[data-chapter="5"] .creature-features .choice {
+  padding: 12px;
+  min-height: 56px;
+  font-size: var(--reading-size);
+  line-height: 1.4;
+}
+#app .activity[data-chapter="5"] .creature-features .choice.recorded {
+  border-color: #4d9075;
+  background: #e8f4df;
+}
+#app .activity[data-chapter="5"] .creature-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 16px 0 20px;
+}
+#app .activity[data-chapter="5"] .creature-cards article {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid #c7d9bd;
+  border-radius: 14px;
+  background: #f0f4e6;
+}
+#app .activity[data-chapter="5"] .creature-cards .creature-icon {
+  width: 96px;
+  height: 88px;
+  border-radius: 12px;
+  background: #fffdf5a6;
+}
+#app .activity[data-chapter="5"] .creature-cards article b {
+  font-family: var(--font-heading);
+  font-size: var(--reading-size);
+  font-weight: 400;
+}
+#app .activity[data-chapter="5"] .creature-cards p {
+  margin-top: 4px;
+  font-size: var(--label-size);
+  line-height: 1.45;
+}
+
+@media (min-width: 1600px) {
+  #app .activity[data-chapter="4"] .tide-wipe {
+    --compare-header: 64px;
+  }
+  #app .activity[data-chapter="4"] .wipe-label {
+    padding: 8px 14px;
+  }
+  #app .activity[data-chapter="5"] .creature-cards article {
+    grid-template-columns: 130px minmax(0, 1fr);
+  }
+  #app .activity[data-chapter="5"] .creature-cards .creature-icon {
+    width: 130px;
+    height: 104px;
+  }
+}
+@media (max-width: 1100px) and (min-width: 801px) {
+  #app .activity[data-chapter="3"] .album-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #app .activity[data-chapter="3"] .photo-image {
+    aspect-ratio: 16 / 8;
+  }
+  #app .activity[data-chapter="5"] .trace small {
+    width: 124px;
+  }
+}
+@media (max-width: 800px) {
+  #app .activity[data-chapter="3"] .coast-view {
+    height: 380px;
+  }
+  #app .activity[data-chapter="5"] .mudflat-view {
+    height: 430px;
+  }
+  #app .activity[data-chapter="5"] .trace small {
+    width: clamp(124px, 23vw, 156px);
+  }
+}
+@media (max-width: 550px) {
+  #app .activity[data-chapter="3"] .album-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #app .activity[data-chapter="3"] .coast-view {
+    height: 350px;
+  }
+  #app .activity[data-chapter="3"] .scene-tag,
+  #app .activity[data-chapter="5"] .scene-tag {
+    font-size: 17px;
+  }
+  #app .activity[data-chapter="5"] .trace small {
+    font-size: 17px;
+    width: 124px;
+    padding: 7px;
+  }
+  #app .activity[data-chapter="5"] .trace[data-value="skipper"] small {
+    transform: translateX(-20%);
+  }
+  #app .activity[data-chapter="5"] .trace[data-value="skipper"] small::after {
+    left: calc(20% - 5px);
+  }
+  #app .activity[data-chapter="5"] .trace[data-value="reed"] small {
+    transform: translateX(-60%);
+  }
+  #app .activity[data-chapter="5"] .trace[data-value="reed"] small::after {
+    left: calc(60% - 5px);
+  }
+  #app .activity[data-chapter="5"] .creature-cards article {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 10px;
+  }
+  #app .activity[data-chapter="5"] .creature-cards .creature-icon {
+    width: 76px;
+    height: 76px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #app .activity[data-chapter="3"] .coast-view {
+    transition: none;
+  }
+}

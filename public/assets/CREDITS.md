@@ -46,3 +46,7 @@
 - 개념 영상 5종: 프로젝트 자체 SVG 도해를 sharp + FFmpeg로 렌더. 각 9초 / 1280×720 / 24fps, 무음 MP4·WebM와 끝 장면 WebP. Remotion 미사용, 렌더 도구는 배포하지 않음.
 - 효과음: https://kenney.nl/assets/interface-sounds · Kenney · CC0 1.0. 원본 `License.txt`를 `public/assets/audio/Kenney-License.txt`에 보존. 원래 파일명과 사용처는 `sources.json`. MP3 변환과 음량 정규화 수행.
 - 글꼴: Google Fonts Jua / orioncactus Pretendard v1.3.9 · SIL OFL 1.1. 원본은 assets/font-sources, 파생물은 BluePlanetDisplay/BluePlanetBody로 내부 이름까지 변경. Jua-OFL.txt와 Pretendard-OFL.txt 동봉. 폰트 단독 판매나 소유권 주장은 하지 않음.
+
+## 2026-11-08 조석 관측 배경
+- `tide-foreshore.webp`: 내장 OpenAI `image_gen`으로 생성한 텍스트 없는 마른 해안 배경 1장. Imagen을 사용하지 않았다. 원본은 `assets/generated/20261108/tide-foreshore-original.png`, 제작 기록은 `tide-foreshore-manifest.json`.
+- 그림에 수면을 넣지 않고 기존 SVG의 물높이, 기둥, 바위, 배와 라벨을 겹쳐 사용한다. 관측 모형이며 실제 조석 예보나 현장 사진이 아니다. 생성 계정과 납품 시 이용 조건은 최종 권리 검토 대상이다.

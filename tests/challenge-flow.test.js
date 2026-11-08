@@ -43,7 +43,7 @@ test('automatic card selection supports a wrong answer, correction and a single 
  task.items.slice(1).forEach(item=>run.send('challenge-bin',item.answer));
  assert.ok(!run.state.research[1].solved.includes(task.id));
  assert.equal(run.state.revised,1);
- assert.match(challengeScreen(run.state,1,'c'),/<details open>/);
+ assert.match(challengeScreen(run.state,1,'c'),/<details class="moa-hint" open>/);
  const saved=run.calls.saved,rendered=run.calls.rendered;
  run.send('challenge-drop','land',{itemId:'mountain'});
  assert.equal(run.calls.saved,saved+1);

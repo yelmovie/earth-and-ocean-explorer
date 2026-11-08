@@ -26,6 +26,7 @@ const paths = {
   shell: '<path d="M12 21 4 13a7 7 0 1 1 16 0zm0 0V4m0 17L7 6m5 15 5-15M4 13h16"/>',
   compass: '<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/>',
   play: '<path d="m8 4 13 8L8 20z"/>',
+  pause: '<path d="M8 5v14M16 5v14"/>',
   reset: '<path d="M3 10a9 9 0 1 1 2 8M3 3v7h7"/>',
   award: '<circle cx="12" cy="9" r="6"/><path d="m8 14-2 8 6-3 6 3-2-8"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/>',

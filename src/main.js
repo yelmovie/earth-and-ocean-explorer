@@ -1,27 +1,37 @@
+import { mountNpcGuide } from './npc-guide.js';
+let disposeNpc;
 import './styles.css';
 import './settings.css';
 import './diagnostics.js';
 import './experience.css';
+import './science-stages.css';
+import './field-stages.css';
+import './challenge-stages.css';
+import './responsive-stages.css';
 import { showConcept, showChapterReward } from './concepts.js';
 import { mountInteractions } from './interactions.js';
 import { chapters, sites, terrains, creatures, routes, asset, finalCases } from './data.js';
-import { freshState, loadState, saveState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
+import { freshState, loadState, saveState, recordPrediction, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
 import { home, hub, learning, report, link, ending, certificate, recordDetail, tideScene, esc, btn, character } from './screens.js';
 import { mountHub } from './hub.js';
 import { icon } from './icons.js';
 import { createAudio } from './audio.js';
 import { settingsContent as copy } from './settingsContent.js';
 import { handleChallenge, mountChallenges } from './challenges.js';
+import { mountActivityFlow, startActivityHeating } from './activity-flow.js';
+let cleanupActivityFlow;
 
 const app=document.querySelector('#app');
 let storage;try{storage=window.localStorage;}catch{storage={getItem(){throw Error();},setItem(){throw Error();}};}
-const loaded=loadState(storage);let state=loaded.state,warning=loaded.warning,local={},controller=null,cleanupChallenges=null,cleanupInteractions=null,epoch=0,toastTimer,heatTimer,focusBeforeModal;
+const loaded=loadState(storage);let state=loaded.state,warning=loaded.warning,local={},controller=null,cleanupChallenges=null,cleanupInteractions=null,epoch=0,toastTimer,focusBeforeModal;
+let studentState=null;
+if(state.settings.unlockAll){state.settings.unlockAll=false;studentState=state;state=previewState(studentState);}
 const audioPlayer=createAudio(()=>state.settings);
 const tone=(frequency=520)=>audioPlayer.tone(frequency);
 const sound=name=>audioPlayer.effect(name);
 const playConcept=(n,options={})=>showConcept(n,{audio:audioPlayer,...options});
 const context=()=>({state,save,render,feedback,navigate,sound,tideScene,finishChapter:n=>showChapterReward(n,{navigate,completed:state.completed.length})});
-function save(){warning=saveState(storage,state);const status=document.querySelector('#save-status');if(status)status.textContent=warning?'저장 확인 필요':'자동 저장됨';if(!warning)document.querySelector('.storage-warning')?.remove();else if(!document.querySelector('.storage-warning')){const p=document.createElement('div');p.className='storage-warning';p.setAttribute('role','alert');p.textContent=warning;app.prepend(p);}}
+function save(options){if(studentState){const status=document.querySelector('#save-status');if(status)status.textContent='미리보기 · 저장하지 않음';return;}warning=saveState(storage,state,options);const status=document.querySelector('#save-status');if(status)status.textContent=warning?'저장 확인 필요':'자동 저장됨';if(!warning)document.querySelector('.storage-warning')?.remove();else if(!document.querySelector('.storage-warning')){const p=document.createElement('div');p.className='storage-warning';p.setAttribute('role','alert');p.textContent=warning;app.prepend(p);}}
 function routeName(r){const m=/^s([1-5])([abcd])$/.exec(r);return m?`${chapters[+m[1]-1].title} · ${({a:'관찰',b:'연결',c:'도전',d:'적용'}[m[2]])}`:({home:'시작 화면',hub:'탐사 지도',report:'최종 보고서',link:'DATA LINK',ending:'2D 엔딩',certificate:'조사원 인증서'}[r]||'탐사 지도');}
 function navigate(route,{back=false,push=true}={}){
   if(!canAccess(state,route)){feedback('앞선 조사를 마치면 열리는 곳이야. 탐사 지도에서 다음 장소를 확인해 줘.');return;}
@@ -33,9 +43,10 @@ function navigate(route,{back=false,push=true}={}){
 }
 function previous(){let r;while(state.history.length){const candidate=state.history.pop();if(candidate!==state.route&&canAccess(state,candidate)){r=candidate;break;}}navigate(r||'hub',{back:true});}
 function feedback(message,good=false){const hint=[...document.querySelectorAll('#hint, .challenge-feedback')].find(el=>el.getClientRects().length);if(hint){hint.textContent=message;hint.classList.toggle('good',good);}else{let toast=document.querySelector('#toast');if(!toast){toast=document.createElement('div');toast.id='toast';toast.setAttribute('role','status');document.body.append(toast);}toast.textContent=message;toast.className=good?'show good':'show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.className='',3600);}tone(good?660:330);}
-function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button>${state.route==='hub'?`<button class="icon-button" data-hub-hand aria-pressed="false" aria-label="손으로 지도 움직이기" title="손으로 지도 움직이기">${icon('hand')}</button><button class="icon-button" data-hub-overview aria-pressed="false" aria-label="지도 전체 보기" title="지도 전체 보기">${icon('expand')}</button>`:''}</div><span class="sr-only" id="save-status" role="status">${warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group"><button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
+function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button>${state.route==='hub'?`<button class="icon-button" data-hub-hand aria-pressed="false" aria-label="손으로 지도 움직이기" title="손으로 지도 움직이기">${icon('hand')}</button><button class="icon-button" data-hub-overview aria-pressed="false" aria-label="지도 전체 보기" title="지도 전체 보기">${icon('expand')}</button>`:''}</div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group"><button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
 async function render(){
-  clearTimeout(heatTimer);heatTimer=null;local.heating=false;
+  cleanupActivityFlow?.();cleanupActivityFlow=null;
+  disposeNpc?.();
   if(state.route==='s4b'&&app.classList.contains('route-s4b'))local.tideWipe=app.querySelector('[data-compare]')?.value??local.tideWipe;
   const focused=document.activeElement?.closest('[data-action],[data-field]');const focusSelector=focused?.dataset.action?`[data-action="${CSS.escape(focused.dataset.action)}"][data-value="${CSS.escape(focused.dataset.value??'')}"]${focused.dataset.field?`[data-field="${CSS.escape(focused.dataset.field)}"]`:''}`:focused?.dataset.field?`[data-field="${CSS.escape(focused.dataset.field)}"]`:null;
   cleanupInteractions?.();cleanupInteractions=null;cleanupChallenges?.();cleanupChallenges=null;controller?.dispose();controller=null;const ticket=++epoch;const r=state.route,m=/^s([1-5])([abcd])$/.exec(r);
@@ -43,10 +54,15 @@ async function render(){
   const bg=r==='home'?'home':m?chapters[+m[1]-1].asset:r==='ending'?'ending':'terrace';
   app.className=`app route-${r}`;app.style.setProperty('--scene',`url("${asset(bg)}")`);
   const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
-  app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">관리자 전체 해금 중 · 학습 기록과 별도</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
+  app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">교사 미리보기 · 체험 내용은 저장되지 않아요</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
+  app.querySelectorAll('.learning [data-note]').forEach(note=>app.querySelector('.moa-bubble')?.append(note));
+  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{src:import.meta.env.BASE_URL+'assets/audio/npc-welcome.m4a',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false});
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
+  cleanupActivityFlow=mountActivityFlow(app,context());
+  const taskProgress=app.querySelector('.challenge-progress');
+  if(taskProgress)app.querySelector('.challenge-board-heading')?.replaceChildren(taskProgress);
   document.querySelector('h1')?.setAttribute('tabindex','-1');
   if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});
   if(r==='hub')controller=mountHub(document.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save);
@@ -67,7 +83,7 @@ function observeSite(id){
   app.querySelector('[data-action="go"][data-value="s1b"]').disabled=!canAccess(state,'s1b');sound('scan');
   feedback(aReady(state,1)?'관찰 준비 완료! 모은 표본을 비교하러 가자.':`${sites.find(site=>site.id===id).name} 기록 완료 · ${d.samples.length}곳 관찰했어.`,true);
 }
-function updateField(field,value){const m=/^s([1-5])/.exec(state.route);if(field==='linkReason'){state.finalDraft.reason=+value;save();render();return;}if(!m)return;const n=+m[1],d=state.drafts[n],[key,sub]=field.split('.');if(!Object.hasOwn(d,key))return;if(typeof d[key]==='number')value=+value;if(sub)d[key][sub]=value;else d[key]=value;save();if(key==='time'||key==='pan'){render();}else if(['fresh','sea','heatFresh','heatSea'].includes(key)){d.prepared=false;d.heated=false;d.seenBefore=false;d.seenAfter=false;d.view='before';save();render();}else if(document.activeElement?.tagName!=='SELECT')render();}
+function updateField(field,value){const m=/^s([1-5])/.exec(state.route);if(field==='linkReason'){state.finalDraft.reason=+value;save();render();return;}if(!m)return;const n=+m[1],d=state.drafts[n],[key,sub]=field.split('.');if(!Object.hasOwn(d,key))return;if(typeof d[key]==='number')value=+value;if(n===2&&key==='prediction')recordPrediction(state,value);else if(sub)d[key][sub]=value;else d[key]=value;save();if(key==='time'||key==='pan'){render();}else if(['fresh','sea','heatFresh','heatSea'].includes(key)){d.prepared=false;d.heated=false;d.seenBefore=false;d.seenAfter=false;d.view='before';save();render();}else if(document.activeElement?.tagName!=='SELECT')render();}
 const paragraphs=lines=>lines.map(line=>`<p>${esc(line)}</p>`).join('');
 const details=(title,content)=>`<details><summary>${esc(title)}</summary><div class="settings-details-content">${content}</div></details>`;
 function settings(){
@@ -112,11 +128,12 @@ function teacherNav(r){
   const t=teacherTargets(r);if(!t)return '';
   const pad=[['up','↑','이전 스테이지'],['left','←','이전 화면'],['down','↓','다음 스테이지'],['right','→','다음 화면']].map(([dir,arrow,label])=>`<button class="teacher-key" data-action="go" data-value="${t[dir]??''}" data-teacher-key="${dir}" aria-label="${label}${t[dir]?`: ${esc(routeName(t[dir]))}`:''}" title="${label}" ${t[dir]?'':'disabled'}>${arrow}</button>`).join('');
   const skip=t.down?`<button class="teacher-skip" data-action="go" data-value="${t.down}"><span><small>다음 스테이지로 바로 가기</small>${esc(routeName(t.down))}</span>${icon('arrow')}</button>`:'';
-  return `<nav class="teacher-nav" aria-label="교사용 빠른 이동"><div class="teacher-pad"><div class="teacher-keys">${pad}</div><p><b>교사용 이동</b>키보드 방향키도 돼요<br>← → 화면 · ↑ ↓ 스테이지</p></div>${skip}</nav>`;
+  const controls=`<div class="teacher-pad"><div class="teacher-keys">${pad}</div><p><b>교사용 이동</b>키보드 방향키도 돼요<br>← → 화면 · ↑ ↓ 스테이지</p></div>${skip}`;
+  return /^s[1-5][abcd]$/.test(r)?`<details class="teacher-nav"><summary>교사 이동</summary><nav aria-label="교사용 빠른 이동">${controls}</nav></details>`:`<nav class="teacher-nav" aria-label="교사용 빠른 이동">${controls}</nav>`;
 }
 document.addEventListener('keydown',e=>{
   const dir={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'}[e.key],t=dir&&teacherTargets(state.route);
-  if(!t||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||document.querySelector('dialog[open]')||e.target.closest?.('input,select,textarea,[contenteditable="true"],[role="slider"],canvas'))return;
+  if(!t||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||document.querySelector('dialog[open]')||e.target.closest?.('input,select,textarea,[contenteditable="true"],[role="slider"],canvas'))return;
   e.preventDefault();if(t[dir]){tone();navigate(t[dir]);}
 });
 document.addEventListener('toggle',e=>{if(e.target.matches('.moa-hint[open]'))sound('hint');},true);
@@ -128,6 +145,8 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('click',async e=>{
   audioPlayer.start();
+  const note=e.target.closest('[data-note]');
+  if(note){const dialog=document.createElement('dialog');dialog.className='settings-modal activity-note';dialog.setAttribute('aria-label','더 알아보기');dialog.innerHTML=`<div class="modal-head"><h2>더 알아보기</h2><button class="icon-button" aria-label="닫기">${icon('close')}</button></div><div class="settings-body"><p>${esc(note.dataset.note)}</p></div>`;dialog.querySelector('button').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{dialog.remove();note.focus();},{once:true});document.body.append(dialog);dialog.showModal();return;}
   const button=e.target.closest('[data-action]');if(!button||button.disabled)return;const action=button.dataset.action,value=button.dataset.value;const match=/^s([1-5])/.exec(state.route),n=match?+match[1]:0,d=state.drafts[n];
   if(['challenge-pick','challenge-task','case','tide-save','marker'].includes(action))sound(action==='tide-save'?'scan':'click');
   if(action==='go'||action==='home'){tone();navigate(action==='home'?'home':value);return;}
@@ -135,7 +154,7 @@ document.addEventListener('click',async e=>{
   if(action==='sound'){const enable=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);state.settings.muted=!enable;state.settings.bgmEnabled=enable;state.settings.sfxEnabled=enable;save();audioPlayer.sync();render();if(enable)tone();return;}
   if(action==='settings'){settings();return;}
   if(action==='toggle-setting'){if(!['bgmEnabled','sfxEnabled'].includes(value))return;state.settings[value]=state.settings[value]===false;state.settings.muted=false;save();syncSettingControls();return;}
-  if(action==='toggle-unlock'){state.settings.unlockAll=!state.settings.unlockAll;save();button.setAttribute('aria-pressed',String(state.settings.unlockAll));button.innerHTML=`${icon(state.settings.unlockAll?'unlock':'lock')}<span>${esc(state.settings.unlockAll?copy.unlocked:copy.unlock)}</span>`;if(!canAccess(state,state.route)){state.route='hub';state.resume='hub';save();window.history.replaceState({route:'hub'},'','#hub');}return;}
+  if(action==='toggle-unlock'){if(studentState){state=studentState;studentState=null;}else{studentState=state;state=previewState(studentState);}save();button.setAttribute('aria-pressed',String(state.settings.unlockAll));button.innerHTML=`${icon(state.settings.unlockAll?'unlock':'lock')}<span>${esc(state.settings.unlockAll?copy.unlocked:copy.unlock)}</span>`;if(!canAccess(state,state.route)){state.route='hub';state.resume='hub';save();window.history.replaceState({route:'hub'},'','#hub');}window.history.replaceState({route:state.route},'','#'+state.route);audioPlayer.sync();return;}
   if(action==='view-record'){const dialog=document.createElement('dialog');dialog.className='settings-modal record-modal';dialog.setAttribute('aria-label',chapters[+value-1].evidence);dialog.innerHTML=`<div class="modal-head"><h2>${chapters[+value-1].evidence}</h2><button data-action="close-record" class="icon-button" aria-label="기록 닫기">${icon('close')}</button></div><div class="settings-body">${recordDetail(state,+value)}</div>`;document.body.append(dialog);dialog.showModal();dialog.querySelector('button').setAttribute('aria-label','기록 닫기');dialog.addEventListener('close',()=>{dialog.remove();button.focus();});return;}
   if(action==='close-record'){document.querySelector('.record-modal')?.close();return;}
   if(action==='close-settings'){closeSettings();return;}
@@ -144,7 +163,7 @@ document.addEventListener('click',async e=>{
   if(action==='settings-go'){if(!allLinked(state))return;closeSettings();navigate(value);return;}
   if(action==='reset-ask'){const confirmation=document.querySelector('#reset-confirm');confirmation.hidden=false;confirmation.scrollIntoView({block:'nearest'});confirmation.querySelector('[data-action="reset-cancel"]').focus();return;}
   if(action==='reset-cancel'){document.querySelector('#reset-confirm').hidden=true;document.querySelector('[data-action="reset-ask"]').focus();return;}
-  if(action==='reset-confirm'){const sounds={muted:state.settings.muted,volume:state.settings.volume,bgmEnabled:state.settings.bgmEnabled,sfxEnabled:state.settings.sfxEnabled};state=freshState();Object.assign(state.settings,sounds);warning='';save();audioPlayer.sync();closeSettings();navigate('home');return;}
+  if(action==='reset-confirm'){const sounds={muted:state.settings.muted,volume:state.settings.volume,bgmEnabled:state.settings.bgmEnabled,sfxEnabled:state.settings.sfxEnabled};state=freshState();Object.assign(state.settings,sounds);warning='';if(studentState)state.settings.unlockAll=true;save({reset:true});audioPlayer.sync();closeSettings();navigate('home');return;}
   if(handleChallenge({...context(),action,value,button,event:e}))return;
   if(action==='concept'){playConcept(+value);return;}
   if(action==='travel'){controller?.travel?.(+value-1);return;}
@@ -157,7 +176,7 @@ document.addEventListener('click',async e=>{
     if(n===2)d.prepared=d.fresh===d.sea&&d.heatFresh===d.heatSea&&Boolean(d.prediction);
     if(!aReady(state,n)){const hints=['세 곳 이상에서 육지·바다를 모두 스캔하고 대기를 관찰해 줘.','물의 양과 가열 세기를 각각 같게 맞추고 예상을 골라 줘.','네 가지 지형을 모두 촬영해 줘.','A보다 나중 시각을 B에 저장해. 물 높이가 서로 달라야 비교할 수 있어.','세 생물 모두 보이는 특징을 골라 도감에 기록해 줘.'];feedback(hints[n-1]);return;}save();navigate(`s${n}b`);return;
   }
-  if(action==='heat'){if(local.heating)return;local.heating=true;const heatEpoch=epoch;const area=document.querySelector('.activity');area.inert=true;document.querySelector('#experiment-visual')?.classList.add('is-heating');button.textContent='가열 중 · 물의 변화를 관찰해';sound('heat');heatTimer=setTimeout(()=>{heatTimer=null;local.heating=false;if(epoch!==heatEpoch)return;d.heated=true;d.seenBefore=true;d.seenAfter=true;d.view='after';save();render();feedback('같은 시간 동안 가열했어. 가열 전후를 다시 보며 남은 흔적을 비교해 봐.',true);},matchMedia('(prefers-reduced-motion: reduce)').matches?600:2400);return;}
+  if(action==='heat'){startActivityHeating();return;}
   if(action==='experiment-view'){if(value==='before')d.seenBefore=true;else d.seenAfter=true;d.view=value;save();render();return;}
   if(action==='target'){const terrain=terrains.find(t=>t.id===value);if(!terrain)return;d.target=value;const fresh=!d.photos.includes(value);if(fresh)d.photos.push(value);save();render();if(fresh){feedback(d.photos.length===4?'사진 네 장 완성! 앨범에서 특징을 비교해 보자.':`${terrain.name} 촬영 완료 · ${d.photos.length} / 4`,true);sound('camera');document.querySelector('.coast-view')?.classList.add('photo-captured');}return;}
   if(action==='pin'){sound('drop');const r=button.getBoundingClientRect();d.pins[value]={x:e.detail===0?50:Math.min(95,Math.max(5,(e.clientX-r.left)/r.width*100)),y:e.detail===0?50:Math.min(95,Math.max(5,(e.clientY-r.top)/r.height*100))};save();render();return;}
@@ -172,7 +191,7 @@ document.addEventListener('click',async e=>{
   if(action==='case'){state.finalDraft={caseIndex:+value,stage:null,reason:null};save();render();return;}
   if(action==='link-stage'){state.finalDraft.stage=+value;save();render();return;}
   if(action==='check-link'){const result=linkEvidence(state,+value,state.finalDraft.stage,state.finalDraft.reason);if(result==='wrong'){state.revised++;save();feedback('상황 속 관찰과 기록의 내용을 비교해 봐. 증거와 설명이 둘 다 맞아야 연결돼.');}else if(result==='practice'){feedback('연습 연결은 맞았어! 해당 장을 조사하면 내 증거로 실제 연결할 수 있어.',true);}else{save();render();feedback(allLinked(state)?'모든 기록을 연결했어! 이제 복구된 이야기를 만나자.':'내 조사 증거로 연결했어! 다음 상황도 해결해 보자.',true);}return;}
-  if(action==='print'){if(allLinked(state))window.print();return;}
+  if(action==='print'){if(!studentState&&allLinked(state))window.print();return;}
 });
 window.addEventListener('popstate',()=>{const r=location.hash.slice(1)||'home';if(canAccess(state,r))navigate(r,{back:true,push:false});else{window.history.replaceState({route:'hub'},'','#hub');navigate('hub',{back:true,push:false});}});
 const requested=location.hash.slice(1);if(routes.includes(requested)&&canAccess(state,requested))state.route=requested;

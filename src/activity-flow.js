@@ -77,7 +77,7 @@ export function mountActivityFlow(app,ctx) {
     (el?.closest('.choices')||el)?.classList.add('next-target');
   }
   function sync() {
-    if(button){button.setAttribute('aria-pressed',String(playback.playing));button.innerHTML=`${icon(playback.playing?'pause':'play')}<span>${playback.playing?'일시정지':playback.heating?'이어보기':'자동재생'}</span>`;}
+    if(button){button.setAttribute('aria-pressed',String(playback.playing));button.innerHTML=`${icon(playback.playing?'pause':'play')}<span>${playback.playing?'직접 해보기':playback.heating?'이어보기':'자동재생'}</span>`;}
     app.classList.toggle('activity-playing',playback.playing);
     if(playback.heating) {
       const visual=app.querySelector('#experiment-visual');visual?.classList.add('playback-heating');

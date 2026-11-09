@@ -485,3 +485,11 @@
   #app .challenge-page .lab-model-pair { gap: 12px; }
   #app .challenge-page .challenge-creatures { gap: 6px; }
 }
+
+/* 2026-11-09 오답 뒤 다시 볼 곳: 점선 테두리 + "다시 보기" 글자(색만으로 구분하지 않음). 정답은 알려 주지 않는다. */
+#app .challenge-page .challenge-item.recheck,
+#app .challenge-page .challenge-option.recheck {
+  outline: 3px dashed #b25a1f;
+  outline-offset: 3px;
+}
+#app .challenge-page .challenge-item.recheck small { color: #8a4214; font-weight: 800; }

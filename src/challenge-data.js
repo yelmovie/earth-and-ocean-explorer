@@ -58,6 +58,15 @@ export function correctResponse(task,response){
  if(task.type==='order')return Array.isArray(response)&&task.answer.length===response.length&&task.answer.every((x,i)=>response[i]===x);
  return response&&typeof response==='object'&&!Array.isArray(response)&&task.items.every(x=>response[x.id]===x.answer)&&Object.keys(response).length===task.items.length;
 }
+// After a complete but wrong answer: point at what to look at again (which cards,
+// how many picks hold up, where an order first breaks) without revealing the answer.
+export function mistakeHint(task,response){
+ if(['sort','match'].includes(task.type)){const wrong=task.items.filter(x=>response?.[x.id]&&response[x.id]!==x.answer).map(x=>x.id);if(!wrong.length)return null;const first=task.items.find(x=>x.id===wrong[0]).label;return {wrong,text:wrong.length===1?`‘${first}’ 카드의 자리를 다시 살펴봐요.`:`표시된 카드 ${wrong.length}장의 자리를 다시 살펴봐요.`};}
+ if(task.type==='multi'&&Array.isArray(response)){const right=response.filter(x=>task.answer.includes(x)).length;return {wrong:response.filter(x=>!task.answer.includes(x)),text:right?`고른 것 중 ${right}개는 근거와 맞아요. 나머지를 다시 살펴봐요.`:'고른 두 가지 모두 다시 살펴봐요.'};}
+ if(task.type==='order'&&Array.isArray(response)){const i=response.findIndex((x,k)=>x!==task.answer[k]);if(i<0)return null;return {wrong:response.slice(i),text:`${i+1}번째 카드부터 순서를 다시 살펴봐요.`};}
+ if(task.type==='choice'&&response!==undefined)return {wrong:[response],text:'고른 답이 관찰 자료와 맞는지 다시 살펴봐요.'};
+ return null;
+}
 export const freshResearch=()=>Object.fromEntries([1,2,3,4,5].map(n=>[n,{answers:{},solved:[],c:0,d:0}]));
 export const pageReady=(s,n,step)=>pageChallenges(n,step).every(t=>s.research?.[n]?.solved.includes(t.id)&&correctResponse(t,s.research[n].answers[t.id]));
 export const researchReady=(s,n)=>pageReady(s,n,'c')&&pageReady(s,n,'d');

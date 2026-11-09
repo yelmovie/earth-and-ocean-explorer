@@ -383,6 +383,7 @@
 #app .activity[data-chapter="5"] .trace.found > span {
   background: #267355;
   border-color: #d5efbd;
+  color: #fffdf5; /* 2026-11-09: 찾은 흔적 체크 표시 대비 1.4 → 6:1 */
 }
 #app .activity[data-chapter="5"] .trace.selected > span {
   background: #f3ce84;

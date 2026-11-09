@@ -1892,7 +1892,7 @@ input[type=range] {
 
 .certificate-sub {
   font-size: 16px;
-  color: #6b8068;
+  color: #4c6449;
 }
 
 .certificate-line {
@@ -1924,12 +1924,12 @@ input[type=range] {
 }
 
 .certificate small {
-  color: #708270;
+  color: #4f604f;
 }
 
 .certificate-promise {
   font-size: 14px !important;
-  color: #638771;
+  color: #436652;
   margin-top: 20px;
 }
 

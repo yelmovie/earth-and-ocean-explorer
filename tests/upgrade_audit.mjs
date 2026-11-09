@@ -57,7 +57,15 @@ try{
     let minFont=99,minFontText='';const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;
     while(node=walker.nextNode()){const text=node.textContent.trim();if(!text||!node.parentElement||!visible(node.parentElement))continue;const size=parseFloat(getComputedStyle(node.parentElement).fontSize);if(size<minFont){minFont=size;minFontText=text.slice(0,30);}}
     const small=[];for(const el of document.querySelectorAll('button,a[href],input,select,summary,[role="button"]')){if(!visible(el)||el.disabled)continue;const r=el.getBoundingClientRect();if(el.matches('input[type="range"]'))continue;if(r.width<44||r.height<44)small.push(`${(el.getAttribute('aria-label')||el.textContent).trim().slice(0,24)} ${Math.round(r.width)}x${Math.round(r.height)}`);}
-    const de=document.documentElement;return {minFont,minFontText,smallTargets:small,hScroll:de.scrollWidth>innerWidth+2,vScroll:de.scrollHeight>innerHeight+2};
+    // Contrast on solid backgrounds only (text over pictures is judged by eye in screenshots).
+    const rgb=c=>{const m=c.match(/[\d.]+/g)?.map(Number)||[0,0,0,0];return {r:m[0],g:m[1],b:m[2],a:m[3]??1};};
+    const lum=({r,g,b})=>{const f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4;};return .2126*f(r)+.7152*f(g)+.0722*f(b);};
+    let minContrast=99,minContrastText='',lowContrast=0;const seen=new Set();const w2=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let tn;
+    while(tn=w2.nextNode()){const el=tn.parentElement;if(!tn.textContent.trim()||!el||seen.has(el)||!visible(el))continue;seen.add(el);const cs=getComputedStyle(el);if(parseFloat(cs.opacity)<1)continue;
+      let bg=null;for(let a=el;a;a=a.parentElement){const s=getComputedStyle(a);if(s.backgroundImage!=='none'||parseFloat(s.opacity)<1||s.backdropFilter&&s.backdropFilter!=='none')break;const c=rgb(s.backgroundColor);if(c.a>=.95){bg=c;break;}if(c.a>0)break;}
+      if(!bg)continue;const fg=rgb(cs.color);if(fg.a<.95)continue;const L1=lum(fg),L2=lum(bg),ratio=(Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05);
+      const large=parseFloat(cs.fontSize)>=24||(parseFloat(cs.fontSize)>=18.66&&Number(cs.fontWeight)>=700);if(ratio<(large?3:4.5))lowContrast++;if(ratio<minContrast){minContrast=+ratio.toFixed(2);minContrastText=tn.textContent.trim().slice(0,24);}}
+    const de=document.documentElement;return {minFont,minFontText,smallTargets:small,hScroll:de.scrollWidth>innerWidth+2,vScroll:de.scrollHeight>innerHeight+2,minContrast,minContrastText,lowContrast};
   };
   for(const [w,h] of [[1920,1080],[1280,800],[1024,768],[1024,600],[915,412]]){
     await page.setViewportSize({width:w,height:h});
@@ -86,6 +94,7 @@ try{
 } finally {await browser.close();}
 const fails=report.routes.filter(r=>r.hScroll||r.smallTargets.length);
 const fontFloor=report.routes.filter(r=>(r.size==='1920x1080'&&r.minFont<18)||(r.size.startsWith('1024')&&r.minFont<14));
-report.summary={routeChecks:report.routes.length,hScrollOrSmall:fails.length,belowFontFloor:fontFloor.length,errors:report.errors.length};
+const contrast=report.routes.filter(r=>r.lowContrast);
+report.summary={lowContrastRoutes:contrast.length,minContrast:Math.min(...report.routes.map(r=>r.minContrast)),routeChecks:report.routes.length,hScrollOrSmall:fails.length,belowFontFloor:fontFloor.length,errors:report.errors.length};
 await writeFile(path.join(out,'audit.json'),JSON.stringify(report,null,2));
-console.log(JSON.stringify({load:report.load,summary:report.summary,keyboard:report.keyboard,concepts:report.concepts,examples:fails.slice(0,8),font:fontFloor.slice(0,12).map(r=>`${r.size} ${r.route} ${r.minFont}px "${r.minFontText}"`),errors:report.errors.slice(0,8)},null,1));
+console.log(JSON.stringify({load:report.load,summary:report.summary,keyboard:report.keyboard,concepts:report.concepts,examples:fails.slice(0,8),contrast:contrast.slice(0,10).map(r=>`${r.size} ${r.route} ${r.lowContrast} min ${r.minContrast} "${r.minContrastText}"`),font:fontFloor.slice(0,12).map(r=>`${r.size} ${r.route} ${r.minFont}px "${r.minFontText}"`),errors:report.errors.slice(0,8)},null,1));

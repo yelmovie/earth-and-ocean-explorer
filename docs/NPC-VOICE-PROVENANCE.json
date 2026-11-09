@@ -1,0 +1,16 @@
+{
+  "uuid": "1946d31c-977c-4eed-bb72-ec523b267e45",
+  "model": "momo-voice",
+  "language": "ko",
+  "voice": "F1",
+  "text": "탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.",
+  "createdAt": "2026-11-07T21:59:46.844Z",
+  "license": "OpenRAIL-M (Supertonic 3)",
+  "licenseUrl": "https://huggingface.co/Supertone/supertonic-3/blob/main/LICENSE",
+  "sourceSha256": "f3125555ac647e9cf48b79e0018d1cb7bd256bf56c17874beb9afa221e6db5cd",
+  "renderSha256": "9193543965d496365afd2a9e7d9dccdb49848b1ac4fb83420560b95ed3578481",
+  "captionExactMatch": true,
+  "sourceDuration": 11.215208333333333,
+  "renderDuration": 11.215208333333333,
+  "normalizedCorrelation": 0.9988387837339952
+}

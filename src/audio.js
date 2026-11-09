@@ -9,7 +9,7 @@ export function createAudio(getSettings) {
   const canPlayMusic = () => !videoQuiet && !document.hidden && !settings().muted && settings().bgmEnabled !== false;
   function stopEffect(){if(currentEffect){currentEffect.pause();currentEffect.currentTime=0;currentEffect=null;}for(const oscillator of activeEffects){try{oscillator.stop();}catch{}}activeEffects.clear();}
   function effect(name='click'){
-    stopEffect();if(document.hidden||settings().muted||settings().sfxEnabled===false)return;
+    stopEffect();if(videoQuiet||!context||context.state!=='running'||document.hidden||settings().muted||settings().sfxEnabled===false)return;
     if(!effectNames.includes(name))name='click';
     let player=effects.get(name);if(!player){player=new Audio(`${import.meta.env.BASE_URL}assets/audio/${name}.mp3`);player.preload='auto';effects.set(name,player);}
     player.volume=name==='reward'?.34:.26;currentEffect=player;player.play().catch(()=>{});
@@ -64,5 +64,7 @@ export function createAudio(getSettings) {
   }
   document.addEventListener('visibilitychange', sync);
   document.addEventListener('pointerdown',start,{once:true});
-  return { start, sync, tone, effect, quiet(value){videoQuiet=value;sync();} };
+  document.addEventListener('keydown',start,{once:true});
+  window.addEventListener('pagehide',()=>{stopEffect();window.clearInterval(timer);timer=null;for(const oscillator of activeMusic){try{oscillator.stop();}catch{}}activeMusic.clear();context?.suspend().catch(()=>{});});
+  return { start, sync, tone, effect, quiet(value){videoQuiet=value;if(value)stopEffect();sync();} };
 }

@@ -18,7 +18,7 @@
 
 ## 이미지
 - 기존 PNG: logo, terrace, ending, tide, home, observatory, characters, mudflat, coast, lab. 원본을 보존하고 동일 크기 WebP를 실행 화면에서 사용한다.
-- expedition-map.webp: 2026-10-22 내장 image_gen 생성 섬, 원본 expedition-map.png 보존. 학습용 가상 탐사 지도다.
+- expedition-map.webp: 2026-10-22 내장 image_gen 생성 섬, 원본 expedition-map.png 보존(배포 제외, `assets/source-png/`). 학습용 가상 탐사 지도다.
 - facility-1~5.webp: 새 생성 시설 시트에서 분리한 관측소·실험실·해안 초소·수위 관측탑·생태 시설. 원본 references/generated/facilities-atlas.png, sourceCrop과 pivot은 public/assets/facilities-manifest.json.
 - 지도 부리와 홈·이야기·최종 미션·엔딩의 부리/짱이: 2026-10-28 내장 image_gen으로 개별 생성한 투명 일러스트. 기존 캐릭터 시트를 정체성 참고로 사용했다. 지도 수달 모아는 기존 생성 이미지를 유지한다.
 - 게·짱뚱어·갈대 관찰 그림: 2026-10-28 내장 image_gen 생성. 실제 사진이나 종 동정 자료가 아닌 학습용 관찰 일러스트다. UI·수치와 연동되는 과학 도해는 프로젝트 자체 CSS/SVG/Canvas다.

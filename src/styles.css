@@ -30,11 +30,11 @@ button {
   touch-action: manipulation;
 }
 
-button:hover:not(:disabled) {
+@media (hover:hover) and (pointer:fine){button:hover:not(:disabled){
   background: #edf5ef;
   border-color: var(--teal);
   transform: translateY(-1px);
-}
+}}
 
 button:active:not(:disabled) {
   transform: translateY(1px);
@@ -107,10 +107,10 @@ button svg {
   white-space: normal;
 }
 
-.primary:hover:not(:disabled) {
+@media (hover:hover) and (pointer:fine){.primary:hover:not(:disabled){
   background: var(--color-primary-hover);
   border-color: var(--color-primary-hover);
-}
+}}
 
 .secondary {
   background: #f2f7ed;
@@ -244,9 +244,9 @@ button svg {
   color: #edf6df;
 }
 
-.topbar .icon-button:hover:not(:disabled) {
+@media (hover:hover) and (pointer:fine){.topbar .icon-button:hover:not(:disabled){
   background: #ffffff25;
-}
+}}
 
 .brand {
   font-size: 16px;
@@ -637,9 +637,9 @@ button svg {
   margin-top: 5px;
 }
 
-.final-location:hover:not(:disabled) {
+@media (hover:hover) and (pointer:fine){.final-location:hover:not(:disabled){
   background: #225f69;
-}
+}}
 
 .guide-strip {
   display: flex;
@@ -1343,10 +1343,10 @@ select {
   border-radius: 8px;
 }
 
-.photo-image:hover:not(:disabled) {
+@media (hover:hover) and (pointer:fine){.photo-image:hover:not(:disabled){
   background-color: transparent;
   transform: none;
-}
+}}
 
 .photo-card>b {
   display: block;
@@ -1474,9 +1474,9 @@ input[type=range] {
   padding: 0;
 }
 
-.trace:hover:not(:disabled) {
+@media (hover:hover) and (pointer:fine){.trace:hover:not(:disabled){
   background: none;
-}
+}}
 
 .trace>span {
   display: grid;
@@ -2349,10 +2349,10 @@ input[type=range] {
   font-weight: 400;
 }
 
-.challenge-bin:hover:not(:disabled) {
+@media (hover:hover) and (pointer:fine){.challenge-bin:hover:not(:disabled){
   border-color: var(--teal);
   background: #e7f2e6;
-}
+}}
 
 .challenge-sequence {
   display: grid;

@@ -1,9 +1,9 @@
 export const chapters = [
-  { id: 1, title: '지구 관측소', short: '지구 표면', icon: '◎', color: '#7ddfd0', asset: 'observatory', evidence: '지구 관찰 기록', reward: '관측소의 신호와 지구 지도가 돌아왔어!', goal: '지구를 여러 방향에서 살펴보고, 육지와 바다의 모습을 기록해 줘.', steps: ['푸른 지구를 돌려 봐', '내 표본과 지구 전체를 비교해'] },
-  { id: 2, title: '물 표본 실험실', short: '두 물의 차이', icon: '⚗', color: '#ffcf78', asset: 'lab', evidence: '실험 비교 기록', reward: '실험실의 표본 보관대가 다시 열렸어!', goal: '두 물을 같은 조건에서 비교해서 잃어버린 표본 설명을 복구해 줘.', steps: ['공정한 실험을 준비해', '물이 사라진 뒤를 살펴봐'] },
-  { id: 3, title: '해안 조사구역', short: '해안 지형', icon: '▧', color: '#aad692', asset: 'coast', evidence: '해안 조사 앨범', reward: '네가 찍은 사진이 탐사길에 전시됐어!', goal: '해안의 네 지형을 사진으로 남겨 탐사 안내 지도를 완성해 줘.', steps: ['해안의 특징을 사진에 담아', '사진에 특징을 표시해'] },
-  { id: 4, title: '밀물·썰물 관측소', short: '밀물과 썰물', icon: '≋', color: '#a8c5ff', asset: 'tide', evidence: '시간 비교 기록', reward: '관측소에 네 A/B 비교 게시판이 켜졌어!', goal: '같은 해안의 시간별 기록을 비교해서 물 높이 변화를 알려 줘.', steps: ['같은 장소, 다른 시간을 저장해', '두 장면에서 변화의 증거를 찾아'] },
-  { id: 5, title: '갯벌 탐사구역', short: '갯벌의 생명', icon: '♧', color: '#f2b2a6', asset: 'mudflat', evidence: '생태 도감과 보호 근거', reward: '갯벌 생태 안내판 완성! 이제 다섯 기록을 연결해 보자.', goal: '작은 흔적에서 생물을 찾아, 갯벌을 지켜야 하는 까닭을 알려 줘.', steps: ['작은 흔적에서 생명을 찾아', '관찰한 증거로 갯벌을 지켜'] },
+  { id: 1, standard: '4과06-01', objective: '지구 표면에서 육지와 바다의 넓이를 비교한다.', title: '지구 관측소', short: '지구 표면', icon: '◎', color: '#7ddfd0', asset: 'observatory', evidence: '지구 관찰 기록', reward: '관측소의 신호와 지구 지도가 돌아왔어!', goal: '지구를 여러 방향에서 살펴보고, 육지와 바다의 모습을 기록해 줘.', steps: ['푸른 지구를 돌려 봐', '내 표본과 지구 전체를 비교해'] },
+  { id: 2, standard: '4과06-02', objective: '같은 조건에서 육지의 물과 바닷물을 증발시켜 남는 물질을 비교한다.', title: '물 표본 실험실', short: '두 물의 차이', icon: '⚗', color: '#ffcf78', asset: 'lab', evidence: '실험 비교 기록', reward: '실험실의 표본 보관대가 다시 열렸어!', goal: '두 물을 같은 조건에서 비교해서 잃어버린 표본 설명을 복구해 줘.', steps: ['공정한 실험을 준비해', '물이 사라진 뒤를 살펴봐'] },
+  { id: 3, standard: '4과06-02', objective: '바닷가의 여러 지형을 사진으로 조사하고 특징으로 구분한다.', title: '해안 조사구역', short: '해안 지형', icon: '▧', color: '#aad692', asset: 'coast', evidence: '해안 조사 앨범', reward: '네가 찍은 사진이 탐사길에 전시됐어!', goal: '해안의 네 지형을 사진으로 남겨 탐사 안내 지도를 완성해 줘.', steps: ['해안의 특징을 사진에 담아', '사진에 특징을 표시해'] },
+  { id: 4, standard: '4과06-03', objective: '같은 기준물에서 시간에 따른 물 높이 변화로 밀물과 썰물을 구분한다.', title: '밀물·썰물 관측소', short: '밀물과 썰물', icon: '≋', color: '#a8c5ff', asset: 'tide', evidence: '시간 비교 기록', reward: '관측소에 네 A/B 비교 게시판이 켜졌어!', goal: '같은 해안의 시간별 기록을 비교해서 물 높이 변화를 알려 줘.', steps: ['같은 장소, 다른 시간을 저장해', '두 장면에서 변화의 증거를 찾아'] },
+  { id: 5, standard: '4과06-03', objective: '갯벌 생물의 생김새와 사는 모습을 관찰하고 보전의 필요성을 설명한다.', title: '갯벌 탐사구역', short: '갯벌의 생명', icon: '♧', color: '#f2b2a6', asset: 'mudflat', evidence: '생태 도감과 보호 근거', reward: '갯벌 생태 안내판 완성! 이제 다섯 기록을 연결해 보자.', goal: '작은 흔적에서 생물을 찾아, 갯벌을 지켜야 하는 까닭을 알려 줘.', steps: ['작은 흔적에서 생명을 찾아', '관찰한 증거로 갯벌을 지켜'] },
 ];
 export const sites = [
   { id: 'asia', name: '아시아 안쪽', lon: 105, lat: 45, type: '육지' },

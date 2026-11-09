@@ -414,3 +414,15 @@
   #app #main .learning .beaker-unit,
   #app #main .learning .beaker-scale i:nth-child(2){display:none}
 }
+
+/* 2026-11-09 글자 하한(edu-final-check C20): 1024 폭 이상에서 보이는 글자는 14px 이상,
+   1600×900 이상 큰 화면(전자칠판)에서는 배지·눈썹글·본문 모두 18px 이상. 색·배치는 그대로 둔다. */
+@media (min-width:1000px){
+  #app .hub-page .hub-building-label small,#app .evidence-art>b,#app .link-status,#app .ending-page .eyebrow,#app .certificate-frame .eyebrow,#app .certificate-seal small{font-size:14px}
+}
+@media (min-width:1600px) and (min-height:900px){
+  #app .hub-page .hub-building-label small,#app .evidence-art>b,#app .link-status,#app .ending-page .eyebrow,#app .certificate-frame .eyebrow,#app .certificate-seal small{font-size:18px}
+  #app .hub-page .hub-quest p,#app .report-page .text-button,#app .link-page b,#app .link-page small,#app .ending-page small,#app .certificate-frame p,#app .certificate-frame b,#app .certificate-frame small,#app .certificate-evidence span{font-size:18px}
+  #app .challenge-page .challenge-sequence b,#app .challenge-page .challenge-tide-pair b{font-size:18px}
+  #app .certificate-promise{font-size:18px!important}
+}

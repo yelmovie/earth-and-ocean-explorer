@@ -102,7 +102,7 @@ export function mountHub(canvas,s,onArrive,onPosition){
   function travel(i){if(!Number.isInteger(i)||i<0||i>=hubDoors.length||entered)return;clearInput();guideOpen=false;target=i;manualIntent=true;path=findHubPath(pos,hubDoors[i]);message(`${chapters[i].title}까지 길을 따라 가요.`);canvas.focus({preventScroll:true});}
   function enter(i){if(entered)return;path=[];manualIntent=false;if(!enabled(i)){message(`이곳은 아직 준비 중이에요. 먼저 ${chapters[i-1]?.title??chapters[0].title}의 조사를 마쳐 주세요.`,true);return;}entered=true;s.mapPosition={x:hubDoors[i].x,y:hubDoors[i].y+21};clearInput();onArrive(i+1);}
   function size(){const box=wrap.getBoundingClientRect();width=box.width;height=box.height;const dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);canvas.style.width=`${width}px`;canvas.style.height=`${height}px`;zoom=clampHubZoom(zoom,width);scale=viewScale();lastView=null;}
-  function viewScale(){return hubCoverScale(width,height)*(overview?1:hubViewZoom(width)*zoom);}
+  function viewScale(){return overview?Math.min(width/hubMap.width,height/hubMap.height):hubCoverScale(width,height)*hubViewZoom(width)*zoom;}
   function setHand(on){if(on&&overview)setOverview(false);hand=on;free=on?{...view}:null;glide=null;if(!on&&zoom<1)zoom=1;handButton?.setAttribute('aria-pressed',String(hand));}
   function setOverview(on){overview=on;if(on&&hand)setHand(false);const label=on?'부리 따라 보기':'지도 전체 보기';overviewButton?.setAttribute('aria-pressed',String(on));overviewButton?.setAttribute('aria-label',label);if(overviewButton)overviewButton.title=label;wrap.classList.toggle('is-overview',on);}
   // A quick tap can start and end between frames, so it still takes one visible step.

@@ -1,3 +1,5 @@
+import {mountPhotoRestoration} from './photo-restoration.js';
+import './photo-restoration.css';
 import { mountNpcGuide } from './npc-guide.js';
 let disposeNpc;
 import './styles.css';
@@ -65,7 +67,7 @@ async function render(){
   if(taskProgress)app.querySelector('.challenge-board-heading')?.replaceChildren(taskProgress);
   document.querySelector('h1')?.setAttribute('tabindex','-1');
   if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});
-  if(r==='hub')controller=mountHub(document.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save);
+  if(r==='hub'){controller=mountHub(document.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save);mountPhotoRestoration(app.querySelector('.map-wrap'),state,save,sound);}
   if(r==='s1a'){
     const el=document.querySelector('#globe');try{const {mountGlobe}=await import('./globe.js');if(ticket!==epoch)return;const globe=await mountGlobe(el,{flat:state.settings.flatGlobe,atmosphere:state.drafts[1].atmosphere,selected:local.site||'asia',onReady:text=>{if(ticket===epoch)document.querySelector('#globe-mode').textContent=text;}});if(ticket!==epoch){globe.dispose();return;}controller=globe;if(local.site)siteDetail(local.site);}
     catch{if(ticket===epoch){el.innerHTML='<div class="globe-unavailable">지구 그림을 불러오지 못했어.<br>관찰 지점의 설명으로 조사를 계속할 수 있어.</div>';document.querySelector('#globe-mode').textContent='텍스트 대체 관찰';if(local.site)siteDetail(local.site);}}

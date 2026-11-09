@@ -66,5 +66,5 @@ export function createAudio(getSettings) {
   document.addEventListener('pointerdown',start,{once:true});
   document.addEventListener('keydown',start,{once:true});
   window.addEventListener('pagehide',()=>{stopEffect();window.clearInterval(timer);timer=null;for(const oscillator of activeMusic){try{oscillator.stop();}catch{}}activeMusic.clear();context?.suspend().catch(()=>{});});
-  return { start, sync, tone, effect, quiet(value){videoQuiet=value;if(value)stopEffect();sync();} };
+  return { start, sync, tone, effect, effectsAllowed:()=>!settings().muted&&settings().sfxEnabled!==false, quiet(value){videoQuiet=value;if(value)stopEffect();sync();} };
 }

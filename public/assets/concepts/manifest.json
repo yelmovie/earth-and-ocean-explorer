@@ -1,9 +1,101 @@
 {
-  "duration": 9,
-  "fps": 24,
+  "duration": 15,
+  "fps": 30,
   "width": 1280,
   "height": 720,
   "chapters": 5,
-  "audio": false,
-  "generator": "scripts/render-concepts.mjs"
+  "audio": true,
+  "generator": "films/earth-sea-concepts (HyperFrames 0.9.26, 1920x1080 30fps master → FFmpeg 1280x720 H.264+AAC / VP9+Opus)",
+  "clips": [
+    {
+      "id": 1,
+      "seconds": 15,
+      "files": [
+        {
+          "name": "chapter-1.mp4",
+          "bytes": 494008
+        },
+        {
+          "name": "chapter-1.webm",
+          "bytes": 608279
+        },
+        {
+          "name": "chapter-1.webp",
+          "bytes": 74072
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "seconds": 15,
+      "files": [
+        {
+          "name": "chapter-2.mp4",
+          "bytes": 730797
+        },
+        {
+          "name": "chapter-2.webm",
+          "bytes": 699549
+        },
+        {
+          "name": "chapter-2.webp",
+          "bytes": 77462
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "seconds": 15,
+      "files": [
+        {
+          "name": "chapter-3.mp4",
+          "bytes": 1955295
+        },
+        {
+          "name": "chapter-3.webm",
+          "bytes": 1215768
+        },
+        {
+          "name": "chapter-3.webp",
+          "bytes": 156220
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "seconds": 15,
+      "files": [
+        {
+          "name": "chapter-4.mp4",
+          "bytes": 525101
+        },
+        {
+          "name": "chapter-4.webm",
+          "bytes": 628935
+        },
+        {
+          "name": "chapter-4.webp",
+          "bytes": 78652
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "seconds": 15,
+      "files": [
+        {
+          "name": "chapter-5.mp4",
+          "bytes": 738794
+        },
+        {
+          "name": "chapter-5.webm",
+          "bytes": 1097062
+        },
+        {
+          "name": "chapter-5.webp",
+          "bytes": 181530
+        }
+      ]
+    }
+  ]
 }

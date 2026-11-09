@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Jua'; src: url('assets/fonts/Jua-Regular.ttf') format('truetype'); font-display: block; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #fbf6e6; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: 'Jua', sans-serif; color: #173f4b; background: #fbf6e6; }
+      #cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+      #bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #lines { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+      .tagwrap { position: absolute; width: max-content; transform: translate(-50%, -50%); z-index: 6; }
+      .tag { opacity: 0; background: #fffdf5; border: 4px solid #173f4b; border-radius: 18px; padding: 8px 24px 10px; line-height: 1.15; white-space: nowrap; text-align: center; box-shadow: 0 10px 18px rgba(23,63,75,.2); }
+      .tag small { display: block; font-size: 30px; color: #3c6670; margin-top: 2px; }
+      #moa-wrap { position: absolute; left: 1572px; top: 712px; width: 300px; height: 315px; z-index: 8; }
+      #moa { width: 100%; height: 100%; object-fit: contain; transform-origin: 50% 100%; opacity: 0; }
+      #ask-wrap { position: absolute; left: 1330px; top: 250px; width: 540px; z-index: 9; }
+      #ask { opacity: 0; background: #fffdf5; border: 4px solid #173f4b; border-radius: 30px; padding: 26px 34px 30px; font-size: 52px; line-height: 1.22; box-shadow: 0 10px 18px rgba(23,63,75,.2); transform-origin: 80% 100%; position: relative; }
+      #ask:after { content: ''; position: absolute; right: 92px; bottom: -34px; width: 44px; height: 44px; background: #fffdf5; border-right: 4px solid #173f4b; border-bottom: 4px solid #173f4b; transform: rotate(45deg) skew(8deg, 8deg); }
+      #ask .w { display: inline-block; opacity: 0; }
+      .endwrap { position: absolute; left: 760px; top: 108px; width: max-content; transform: translate(-50%, 0); z-index: 9; }
+      .end { opacity: 0; background: #fbf6e6; border: 4px solid #173f4b; border-radius: 28px; padding: 18px 40px 22px; font-size: 68px; line-height: 1.15; white-space: nowrap; text-align: center; box-shadow: 0 12px 22px rgba(23,63,75,.22); }
+      .end em { font-style: normal; color: #b26a00; }
+      .end small { display: block; font-size: 38px; color: #3c6670; margin-top: 6px; }
+      .critter{position:absolute;opacity:0} #crab{left:311px;top:560px;width:300px;transform-origin:50% 100%}
+        #skipper{left:894px;top:688px;width:400px} #reed{left:1407px;top:171px;height:340px;transform-origin:50% 100%}
+        #traces{position:absolute;inset:0;width:1920px;height:1080px} #traces .tr{opacity:0}
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1920" data-height="1080">
+      <div id="cam">
+        <img id="bg" src="assets/img/mudflat.webp" alt="" />
+        <svg id="traces" viewBox="0 0 1920 1080">
+        <ellipse class="tr hole" cx="421" cy="710" rx="16" ry="8" fill="#3d3326" opacity="0"/><ellipse class="tr hole" cx="471" cy="722" rx="14" ry="8" fill="#3d3326" opacity="0"/><ellipse class="tr hole" cx="513" cy="706" rx="12" ry="8" fill="#3d3326" opacity="0"/>
+        <path class="tr step" d="M571 740l10 -6m-10 6l10 6" stroke="#4a3d2c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="tr step" d="M605 754l10 -6m-10 6l10 6" stroke="#4a3d2c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="tr step" d="M639 740l10 -6m-10 6l10 6" stroke="#4a3d2c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="tr step" d="M673 754l10 -6m-10 6l10 6" stroke="#4a3d2c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="tr step" d="M707 740l10 -6m-10 6l10 6" stroke="#4a3d2c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="tr step" d="M741 754l10 -6m-10 6l10 6" stroke="#4a3d2c" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <ellipse id="ring1" class="tr" cx="1094" cy="838" rx="90" ry="22" fill="none" stroke="#e8fbff" stroke-width="6"/>
+        <ellipse id="ring2" class="tr" cx="1094" cy="838" rx="150" ry="36" fill="none" stroke="#e8fbff" stroke-width="4"/></svg>
+        <img id="crab" class="critter" src="assets/img/crab.webp" alt="" /><img id="skipper" class="critter" src="assets/img/skipper.webp" alt="" /><img id="reed" class="critter" src="assets/img/reed.webp" alt="" />
+      </div>
+      
+      <svg id="lines" viewBox="0 0 1920 1080"><line id="ln-t-trace" x1="661" y1="870" x2="611" y2="752" stroke="#173f4b" stroke-width="5" stroke-linecap="round" stroke-dasharray="128" stroke-dashoffset="128"/><circle id="dot-t-trace" cx="611" cy="752" r="9" fill="#fffdf5" stroke="#173f4b" stroke-width="5" opacity="0"/><line id="ln-t-reed" x1="1177" y1="361" x2="1487" y2="481" stroke="#173f4b" stroke-width="5" stroke-linecap="round" stroke-dasharray="332" stroke-dashoffset="332"/><circle id="dot-t-reed" cx="1487" cy="481" r="9" fill="#fffdf5" stroke="#173f4b" stroke-width="5" opacity="0"/></svg>
+      <div class="tagwrap" id="t-trace" style="left:661px;top:870px"><div class="tag" style="font-size:44px">구멍과 발자국</div></div>
+      <div class="tagwrap" id="t-crab" style="left:461px;top:450px"><div class="tag" style="font-size:44px">게<small>집게와 여러 다리</small></div></div>
+      <div class="tagwrap" id="t-skip" style="left:1124px;top:588px"><div class="tag" style="font-size:44px">짱뚱어<small>위로 솟은 눈</small></div></div>
+      <div class="tagwrap" id="t-reed" style="left:1177px;top:361px"><div class="tag" style="font-size:44px">갈대<small>진흙에 뿌리를 내려</small></div></div>
+      <div id="ask-wrap"><div id="ask"><span class="w">갯벌에는</span> <span class="w">무엇이</span> <span class="w">살고</span> <span class="w">있을까?</span></div></div>
+      <div class="endwrap"><div id="end" class="end">갯벌은 <em>생물의 집</em>이야<small>흔적을 지키며 살펴봐요</small></div></div>
+      <div id="moa-wrap"><img id="moa" src="assets/img/moa.webp" alt="" /></div>
+      <audio id="sfx-0" class="clip" data-start="3.62" data-duration="0.22" data-track-index="10" data-volume="0.5" src="assets/sfx/drop.mp3"></audio>
+      <audio id="sfx-1" class="clip" data-start="4.62" data-duration="0.41" data-track-index="11" data-volume="0.6" src="assets/sfx/scan.mp3"></audio>
+      <audio id="sfx-2" class="clip" data-start="5.97" data-duration="0.22" data-track-index="12" data-volume="0.6" src="assets/sfx/drop.mp3"></audio>
+      <audio id="sfx-3" class="clip" data-start="8.12" data-duration="0.41" data-track-index="13" data-volume="0.5" src="assets/sfx/scan.mp3"></audio>
+      <audio id="sfx-4" class="clip" data-start="11.67" data-duration="0.58" data-track-index="14" data-volume="0.8" src="assets/sfx/success.mp3"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const pop = (id, t) => {
+        const ln = document.getElementById('ln-' + id);
+        if (ln) { tl.fromTo(ln, { attr: { 'stroke-dashoffset': ln.getAttribute('stroke-dasharray') } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.22, ease: 'power2.out' }, t); tl.fromTo('#dot-' + id, { opacity: 0 }, { opacity: 1, duration: 0.1 }, t + 0.18); }
+        tl.fromTo('#' + id + ' .tag', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.32, ease: 'back.out(2)' }, t + (ln ? 0.14 : 0));
+      };
+      const hide = (id, t) => {
+        tl.to('#' + id + ' .tag', { opacity: 0, scale: 0.92, duration: 0.18, ease: 'power3.in' }, t);
+        if (document.getElementById('ln-' + id)) tl.to(['#ln-' + id, '#dot-' + id], { opacity: 0, duration: 0.18 }, t);
+      };
+      // 모아: 오른쪽에서 들어와 찌그러졌다 섬(0.3–1.1 s).
+      tl.fromTo('#moa', { opacity: 0, x: 380, rotation: 6 }, { opacity: 1, x: 0, rotation: 0, duration: 0.7, ease: 'expo.out' }, 0.25);
+      tl.fromTo('#moa', { scaleY: 1, scaleX: 1 }, { scaleY: 0.9, scaleX: 1.06, duration: 0.12, ease: 'power2.out' }, 0.8);
+      tl.to('#moa', { scaleY: 1, scaleX: 1, duration: 0.3, ease: 'back.out(2.2)' }, 0.92);
+      // 질문 말풍선: 낱말씩 또렷해짐, 3.25 s에 빠짐.
+      tl.fromTo('#ask', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(1.8)' }, 0.95);
+      tl.fromTo('#ask .w', { opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.14, stagger: 0.09, ease: 'power2.out' }, 1.1);
+      tl.to('#ask', { opacity: 0, scale: 0.9, duration: 0.22, ease: 'power3.in' }, 3.25);
+      
+      tl.fromTo('.hole', { opacity: 0, scale: 0.3, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.25, stagger: 0.12, ease: 'back.out(2)' }, 3.6);
+      tl.fromTo('.step', { opacity: 0 }, { opacity: 1, duration: 0.12, stagger: 0.08 }, 3.9);
+      pop('t-trace', 4.0); hide('t-trace', 5.0);
+      tl.fromTo('#crab', { opacity: 0, y: 70, scale: 0.75 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.6)' }, 4.6);
+      pop('t-crab', 5.15);
+      tl.fromTo('#ring1', { opacity: 0, scale: 0.4, transformOrigin: '50% 50%' }, { opacity: 0.9, scale: 1, duration: 0.4, ease: 'power2.out' }, 5.7);
+      tl.fromTo('#ring2', { opacity: 0, scale: 0.4, transformOrigin: '50% 50%' }, { opacity: 0.7, scale: 1, duration: 0.55, ease: 'power2.out' }, 5.8);
+      tl.to(['#ring1', '#ring2'], { opacity: 0, duration: 0.4 }, 6.5);
+      tl.fromTo('#skipper', { opacity: 0, x: 180 }, { opacity: 1, x: 0, duration: 0.6, ease: 'none' }, 5.95);
+      tl.fromTo('#skipper', { y: 40 }, { y: -90, duration: 0.3, ease: 'power2.out' }, 5.95);
+      tl.to('#skipper', { y: 0, duration: 0.3, ease: 'power2.in' }, 6.25);
+      tl.to('#skipper', { scaleY: 0.9, duration: 0.08, transformOrigin: '50% 100%' }, 6.55); tl.to('#skipper', { scaleY: 1, duration: 0.25, ease: 'back.out(2)' }, 6.63);
+      pop('t-skip', 6.8);
+      tl.fromTo('#reed', { opacity: 0, scaleY: 0.1 }, { opacity: 1, scaleY: 1, duration: 0.9, ease: 'power2.out' }, 8.1);
+      pop('t-reed', 9.1);
+      // 결론 한 줄과 모아의 반응(뛰어올랐다 내려앉기, 고개 끄덕).
+      tl.fromTo('#end', { opacity: 0, y: -24, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.4, ease: 'expo.out' }, 11.65);
+      tl.to('#moa', { scaleY: 0.88, scaleX: 1.08, duration: 0.12, ease: 'power2.in' }, 12.0);
+      tl.to('#moa', { y: -70, scaleY: 1.06, scaleX: 0.96, duration: 0.26, ease: 'power2.out' }, 12.12);
+      tl.to('#moa', { y: 0, scaleY: 1, scaleX: 1, duration: 0.3, ease: 'power2.in' }, 12.38);
+      tl.to('#moa', { scaleY: 0.93, scaleX: 1.04, duration: 0.08 }, 12.68);
+      tl.to('#moa', { scaleY: 1, scaleX: 1, rotation: -5, duration: 0.3, ease: 'back.out(2)' }, 12.76);
+      tl.to('#moa', { rotation: 0, duration: 0.5, ease: 'power2.inOut' }, 13.6);
+      tl.set({}, {}, 15);
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>

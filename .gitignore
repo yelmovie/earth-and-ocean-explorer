@@ -15,3 +15,6 @@ __pycache__/
 
 # macOS metadata on the external SSD
 ._*
+# HyperFrames 작업 캐시·스냅샷(렌더 원본은 TMPDIR)
+films/**/.hyperframes/
+films/**/renders/

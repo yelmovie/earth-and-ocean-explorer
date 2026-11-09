@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Jua'; src: url('assets/fonts/Jua-Regular.ttf') format('truetype'); font-display: block; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #fbf6e6; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: 'Jua', sans-serif; color: #173f4b; background: #fbf6e6; }
+      #cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+      #bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #lines { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+      .tagwrap { position: absolute; width: max-content; transform: translate(-50%, -50%); z-index: 6; }
+      .tag { opacity: 0; background: #fffdf5; border: 4px solid #173f4b; border-radius: 18px; padding: 8px 24px 10px; line-height: 1.15; white-space: nowrap; text-align: center; box-shadow: 0 10px 18px rgba(23,63,75,.2); }
+      .tag small { display: block; font-size: 30px; color: #3c6670; margin-top: 2px; }
+      #moa-wrap { position: absolute; left: 1572px; top: 712px; width: 300px; height: 315px; z-index: 8; }
+      #moa { width: 100%; height: 100%; object-fit: contain; transform-origin: 50% 100%; opacity: 0; }
+      #ask-wrap { position: absolute; left: 1330px; top: 250px; width: 540px; z-index: 9; }
+      #ask { opacity: 0; background: #fffdf5; border: 4px solid #173f4b; border-radius: 30px; padding: 26px 34px 30px; font-size: 52px; line-height: 1.22; box-shadow: 0 10px 18px rgba(23,63,75,.2); transform-origin: 80% 100%; position: relative; }
+      #ask:after { content: ''; position: absolute; right: 92px; bottom: -34px; width: 44px; height: 44px; background: #fffdf5; border-right: 4px solid #173f4b; border-bottom: 4px solid #173f4b; transform: rotate(45deg) skew(8deg, 8deg); }
+      #ask .w { display: inline-block; opacity: 0; }
+      .endwrap { position: absolute; left: 760px; top: 108px; width: max-content; transform: translate(-50%, 0); z-index: 9; }
+      .end { opacity: 0; background: #fbf6e6; border: 4px solid #173f4b; border-radius: 28px; padding: 18px 40px 22px; font-size: 68px; line-height: 1.15; white-space: nowrap; text-align: center; box-shadow: 0 12px 22px rgba(23,63,75,.22); }
+      .end em { font-style: normal; color: #b26a00; }
+      .end small { display: block; font-size: 38px; color: #3c6670; margin-top: 6px; }
+      #beakers{position:absolute;inset:0;width:1920px;height:1080px} #lab-veil{position:absolute;inset:0;background:rgba(255,253,245,.28)}
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1920" data-height="1080">
+      <div id="cam">
+        <img id="bg" src="assets/img/lab.webp" alt="" />
+        <div id="lab-veil"></div><svg id="beakers" viewBox="0 0 1920 1080"><g id="fresh"><rect x="490" y="842" width="300" height="46" rx="12" fill="#55666b" stroke="#173f4b" stroke-width="4"/><rect id="fresh-coil" x="530" y="852" width="220" height="16" rx="8" fill="#7f9196"/>
+        <g clip-path="url(#fresh-in)"><rect id="fresh-water" x="510" y="610" width="260" height="226" fill="#379eaf" opacity=".85"/></g>
+        <clipPath id="fresh-in"><path d="M510 470V812a24 24 0 0 0 24 24H746a24 24 0 0 0 24-24V470Z"/></clipPath>
+        <path d="M500 450V812a34 34 0 0 0 34 34H746a34 34 0 0 0 34-34V450" fill="rgba(240,252,255,.35)" stroke="#173f4b" stroke-width="6"/>
+        <path d="M730 590h30" stroke="#173f4b" stroke-width="4"/><path d="M730 670h30" stroke="#173f4b" stroke-width="4"/><path d="M730 750h30" stroke="#173f4b" stroke-width="4"/>
+        <path class="vapor" d="M570 600c-16-30 16-50 0-80s16-50 0-80" fill="none" stroke="#5f97a6" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 16" opacity="0"/><path class="vapor" d="M640 600c-16-30 16-50 0-80s16-50 0-80" fill="none" stroke="#5f97a6" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 16" opacity="0"/><path class="vapor" d="M710 600c-16-30 16-50 0-80s16-50 0-80" fill="none" stroke="#5f97a6" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 16" opacity="0"/></g><g id="sea"><rect x="1090" y="842" width="300" height="46" rx="12" fill="#55666b" stroke="#173f4b" stroke-width="4"/><rect id="sea-coil" x="1130" y="852" width="220" height="16" rx="8" fill="#7f9196"/>
+        <g clip-path="url(#sea-in)"><rect id="sea-water" x="1110" y="610" width="260" height="226" fill="#379eaf" opacity=".85"/><rect class="salt" x="1132" y="816" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/><rect class="salt" x="1156" y="809" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/><rect class="salt" x="1180" y="802" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/><rect class="salt" x="1204" y="816" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/><rect class="salt" x="1228" y="809" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/><rect class="salt" x="1252" y="802" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/><rect class="salt" x="1276" y="816" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/><rect class="salt" x="1300" y="809" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/><rect class="salt" x="1324" y="802" width="18" height="16" rx="3" fill="#ffffff" stroke="#9bb3b8" stroke-width="2"/></g>
+        <clipPath id="sea-in"><path d="M1110 470V812a24 24 0 0 0 24 24H1346a24 24 0 0 0 24-24V470Z"/></clipPath>
+        <path d="M1100 450V812a34 34 0 0 0 34 34H1346a34 34 0 0 0 34-34V450" fill="rgba(240,252,255,.35)" stroke="#173f4b" stroke-width="6"/>
+        <path d="M1330 590h30" stroke="#173f4b" stroke-width="4"/><path d="M1330 670h30" stroke="#173f4b" stroke-width="4"/><path d="M1330 750h30" stroke="#173f4b" stroke-width="4"/>
+        <path class="vapor" d="M1170 600c-16-30 16-50 0-80s16-50 0-80" fill="none" stroke="#5f97a6" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 16" opacity="0"/><path class="vapor" d="M1240 600c-16-30 16-50 0-80s16-50 0-80" fill="none" stroke="#5f97a6" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 16" opacity="0"/><path class="vapor" d="M1310 600c-16-30 16-50 0-80s16-50 0-80" fill="none" stroke="#5f97a6" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 16" opacity="0"/></g></svg>
+      </div>
+      
+      <svg id="lines" viewBox="0 0 1920 1080"><line id="ln-t-none" x1="505" y1="560" x2="505" y2="842" stroke="#173f4b" stroke-width="5" stroke-linecap="round" stroke-dasharray="282" stroke-dashoffset="282"/><circle id="dot-t-none" cx="505" cy="842" r="9" fill="#fffdf5" stroke="#173f4b" stroke-width="5" opacity="0"/><line id="ln-t-salt" x1="1375" y1="560" x2="1375" y2="831" stroke="#173f4b" stroke-width="5" stroke-linecap="round" stroke-dasharray="271" stroke-dashoffset="271"/><circle id="dot-t-salt" cx="1375" cy="831" r="9" fill="#fffdf5" stroke="#173f4b" stroke-width="5" opacity="0"/></svg>
+      <div class="tagwrap" id="t-fresh" style="left:640px;top:380px"><div class="tag" style="font-size:44px">육지의 물<small>40 mL</small></div></div>
+      <div class="tagwrap" id="t-seaw" style="left:1240px;top:380px"><div class="tag" style="font-size:44px">바닷물<small>40 mL</small></div></div>
+      <div class="tagwrap" id="f-fresh" style="left:640px;top:380px"><div class="tag" style="font-size:44px">육지의 물</div></div>
+      <div class="tagwrap" id="f-sea" style="left:1240px;top:380px"><div class="tag" style="font-size:44px">바닷물</div></div>
+      <div class="tagwrap" id="t-same" style="left:940px;top:930px"><div class="tag" style="font-size:44px">같은 양 · 같은 세기 · 같은 시간</div></div>
+      <div class="tagwrap" id="t-none" style="left:505px;top:560px"><div class="tag" style="font-size:44px">거의 남지 않음</div></div>
+      <div class="tagwrap" id="t-salt" style="left:1375px;top:560px"><div class="tag" style="font-size:44px">흰 물질이 남음</div></div>
+      <div id="ask-wrap"><div id="ask"><span class="w">물이</span> <span class="w">증발하면</span> <span class="w">무엇이</span> <span class="w">남을까?</span></div></div>
+      <div class="endwrap"><div id="end" class="end">바닷물에는 <em>소금</em> 등이 녹아 있어</div></div>
+      <div id="moa-wrap"><img id="moa" src="assets/img/moa.webp" alt="" /></div>
+      <audio id="sfx-0" class="clip" data-start="3.82" data-duration="0.31" data-track-index="10" data-volume="0.7" src="assets/sfx/heat.mp3"></audio>
+      <audio id="sfx-1" class="clip" data-start="7.05" data-duration="0.41" data-track-index="11" data-volume="0.5" src="assets/sfx/scan.mp3"></audio>
+      <audio id="sfx-2" class="clip" data-start="9.52" data-duration="0.41" data-track-index="12" data-volume="0.7" src="assets/sfx/scan.mp3"></audio>
+      <audio id="sfx-3" class="clip" data-start="11.67" data-duration="0.58" data-track-index="13" data-volume="0.8" src="assets/sfx/success.mp3"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const pop = (id, t) => {
+        const ln = document.getElementById('ln-' + id);
+        if (ln) { tl.fromTo(ln, { attr: { 'stroke-dashoffset': ln.getAttribute('stroke-dasharray') } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.22, ease: 'power2.out' }, t); tl.fromTo('#dot-' + id, { opacity: 0 }, { opacity: 1, duration: 0.1 }, t + 0.18); }
+        tl.fromTo('#' + id + ' .tag', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.32, ease: 'back.out(2)' }, t + (ln ? 0.14 : 0));
+      };
+      const hide = (id, t) => {
+        tl.to('#' + id + ' .tag', { opacity: 0, scale: 0.92, duration: 0.18, ease: 'power3.in' }, t);
+        if (document.getElementById('ln-' + id)) tl.to(['#ln-' + id, '#dot-' + id], { opacity: 0, duration: 0.18 }, t);
+      };
+      // 모아: 오른쪽에서 들어와 찌그러졌다 섬(0.3–1.1 s).
+      tl.fromTo('#moa', { opacity: 0, x: 380, rotation: 6 }, { opacity: 1, x: 0, rotation: 0, duration: 0.7, ease: 'expo.out' }, 0.25);
+      tl.fromTo('#moa', { scaleY: 1, scaleX: 1 }, { scaleY: 0.9, scaleX: 1.06, duration: 0.12, ease: 'power2.out' }, 0.8);
+      tl.to('#moa', { scaleY: 1, scaleX: 1, duration: 0.3, ease: 'back.out(2.2)' }, 0.92);
+      // 질문 말풍선: 낱말씩 또렷해짐, 3.25 s에 빠짐.
+      tl.fromTo('#ask', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(1.8)' }, 0.95);
+      tl.fromTo('#ask .w', { opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.14, stagger: 0.09, ease: 'power2.out' }, 1.1);
+      tl.to('#ask', { opacity: 0, scale: 0.9, duration: 0.22, ease: 'power3.in' }, 3.25);
+      
+      pop('t-fresh', 0.5); pop('t-seaw', 0.7);
+      pop('t-same', 3.55);
+      tl.to(['#fresh-coil', '#sea-coil'], { attr: { fill: '#e9784a' }, duration: 0.5, ease: 'power2.out' }, 3.8);
+      tl.fromTo(['#fresh-water', '#sea-water'], { attr: { y: 610, height: 226 } }, { attr: { y: 836, height: 0 }, duration: 3.4, ease: 'power1.inOut' }, 4.2);
+      tl.fromTo('.vapor', { opacity: 0 }, { opacity: 0.8, duration: 0.4, stagger: 0.12 }, 4.3);
+      tl.fromTo('.vapor', { attr: { 'stroke-dashoffset': 0 } }, { attr: { 'stroke-dashoffset': 200 }, duration: 3.6, ease: 'none' }, 4.3);
+      tl.to('.vapor', { opacity: 0, duration: 0.4 }, 7.5);
+      tl.fromTo('.salt', { opacity: 0, scale: 0.4, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.25, stagger: 0.07, ease: 'back.out(2)' }, 7.0);
+      tl.to(['#fresh-coil', '#sea-coil'], { attr: { fill: '#7f9196' }, duration: 0.4 }, 7.7);
+      hide('t-fresh', 7.75); hide('t-seaw', 7.75); hide('t-same', 7.75);
+      tl.fromTo('#cam', { x: 0, y: 0, scale: 1 }, { x: -423, y: -355, scale: 1.45, duration: 0.8, ease: 'power2.inOut' }, 8.0);
+      pop('t-none', 9.0); pop('t-salt', 9.5);
+      hide('t-none', 11.3); hide('t-salt', 11.3);
+      tl.to('#cam', { x: 0, y: 0, scale: 1, duration: 0.7, ease: 'power2.inOut' }, 11.4);
+      pop('f-fresh', 12.2); pop('f-sea', 12.35);
+      // 결론 한 줄과 모아의 반응(뛰어올랐다 내려앉기, 고개 끄덕).
+      tl.fromTo('#end', { opacity: 0, y: -24, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.4, ease: 'expo.out' }, 11.65);
+      tl.to('#moa', { scaleY: 0.88, scaleX: 1.08, duration: 0.12, ease: 'power2.in' }, 12.0);
+      tl.to('#moa', { y: -70, scaleY: 1.06, scaleX: 0.96, duration: 0.26, ease: 'power2.out' }, 12.12);
+      tl.to('#moa', { y: 0, scaleY: 1, scaleX: 1, duration: 0.3, ease: 'power2.in' }, 12.38);
+      tl.to('#moa', { scaleY: 0.93, scaleX: 1.04, duration: 0.08 }, 12.68);
+      tl.to('#moa', { scaleY: 1, scaleX: 1, rotation: -5, duration: 0.3, ease: 'back.out(2)' }, 12.76);
+      tl.to('#moa', { rotation: 0, duration: 0.5, ease: 'power2.inOut' }, 13.6);
+      tl.set({}, {}, 15);
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>

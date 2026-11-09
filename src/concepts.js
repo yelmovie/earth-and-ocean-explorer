@@ -1,6 +1,8 @@
 import './concept-focus.css';
 import { chapters } from './data.js';
 import { icon } from './icons.js';
+import { CONCEPT_SECONDS, conceptCues, conceptTerms, conceptSceneLabels } from './concept-data.js';
+export { conceptCues, conceptTerms };
 
 // Completion is already saved by the caller. This short celebration never
 // holds progress behind media playback and leaves the next destination explicit.
@@ -15,21 +17,15 @@ export function showChapterReward(n,{navigate,completed}={}){
  document.body.append(dialog);dialog.showModal();dialog.querySelector('.primary').focus({preventScroll:true});return true;
 }
 const base=()=>`${import.meta.env.BASE_URL}assets/concepts/`;
-export const conceptCues={
- 1:[[0,'지구는 육지와 바다로 이루어져 있어.'],[3,'전체 면적은 바다가 육지보다 넓어.'],[6,'몇 곳의 표본 개수와 전체 넓이는 구분해.']],
- 2:[[0,'같은 양의 물을 같은 조건에서 가열해.'],[3,'물이 증발하면서 녹아 있던 물질이 드러나.'],[6,'바닷물에는 소금 등 여러 물질이 녹아 있어.']],
- 3:[[0,'고운 모래가 쌓인 모래사장을 찾아봐.'],[2.25,'가파른 절벽은 높이 솟아 있어.'],[4.5,'동굴은 바위 안쪽으로 공간이 이어져.'],[6.75,'구멍 난 바위는 너머 풍경이 보여.']],
- 4:[[0,'움직이지 않는 같은 기둥을 기준으로 봐.'],[2,'바닷물이 들어오며 높아지는 변화는 밀물.'],[5,'바닷물이 빠지며 낮아지는 변화는 썰물.'],[8,'관측 모형이야. 실제 밀물·썰물 시각과는 달라.']],
- 5:[[0,'갯벌에는 게·짱뚱어·갈대가 살아.'],[3,'생김새도 살아가는 모습도 서로 달라.'],[6,'갯벌은 생물의 집! 흔적과 서식처를 지켜.']],
-};
-export const conceptTerms={1:['육지','바다','전체 넓이'],2:['증발','바닷물','소금'],3:['모래사장','절벽','동굴'],4:['밀물','썰물','기준'],5:['갯벌','생김새','서식처']};
 export function emphasize(text,terms){let rest=text,result='';const escape=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));while(rest){const hit=terms.map(term=>({term,index:rest.indexOf(term)})).filter(x=>x.index>=0).sort((a,b)=>a.index-b.index||b.term.length-a.term.length)[0];if(!hit){result+=escape(rest);break;}result+=escape(rest.slice(0,hit.index))+`<mark class="concept-keyword">${escape(hit.term)}</mark>`;rest=rest.slice(hit.index+hit.term.length);}return result;}
-export function conceptMarkup(n){return `<div class="concept-player"><video playsinline preload="metadata" poster="${base()}chapter-${n}.webp" aria-label="${chapters[n-1].short} 개념 영상"><source src="${base()}chapter-${n}.webm" type="video/webm"><source src="${base()}chapter-${n}.mp4" type="video/mp4"></video><img class="concept-poster" src="${base()}chapter-${n}.webp" alt="${chapters[n-1].short} 개념 모형" hidden><div class="concept-caption" aria-live="off">${emphasize(conceptCues[n][0][1],conceptTerms[n])}</div><div class="concept-timeline"><i></i></div></div><div class="concept-controls"><button type="button" data-concept="play">영상 재생</button><button type="button" data-concept="replay">처음부터</button><span>9초 · 개념 모형</span></div><div class="concept-focus"><small>기억할 낱말</small>${conceptTerms[n].map(term=>`<strong>${term}</strong>`).join('')}</div><nav class="concept-chapters" aria-label="개념 장면 선택">${conceptCues[n].map((cue,i)=>`<button type="button" data-concept="seek" data-cue-index="${i}" ${i===0?'aria-current="step"':''}>${i+1} · ${['관찰','변화','연결','정리'][i]}</button>`).join('')}</nav>`;}
+export function conceptMarkup(n){return `<div class="concept-player"><video playsinline preload="metadata" poster="${base()}chapter-${n}.webp" aria-label="${chapters[n-1].short} 개념 영상"><source src="${base()}chapter-${n}.webm" type="video/webm"><source src="${base()}chapter-${n}.mp4" type="video/mp4"></video><img class="concept-poster" src="${base()}chapter-${n}.webp" alt="${chapters[n-1].short} 개념 모형" hidden><div class="concept-caption" aria-live="off">${emphasize(conceptCues[n][0][1],conceptTerms[n])}</div><div class="concept-timeline"><i></i></div></div><div class="concept-controls"><button type="button" data-concept="play">영상 재생</button><button type="button" data-concept="replay">처음부터</button><span>${CONCEPT_SECONDS}초 · 개념 모형</span></div><div class="concept-focus"><small>기억할 낱말</small>${conceptTerms[n].map(term=>`<strong>${term}</strong>`).join('')}</div><nav class="concept-chapters" aria-label="개념 장면 선택">${conceptCues[n].map((cue,i)=>`<button type="button" data-concept="seek" data-cue-index="${i}" ${i===0?'aria-current="step"':''}>${i+1} · ${conceptSceneLabels[i]}</button>`).join('')}</nav>`;}
 export function mountConcept(host,n,audio){
  const video=host.querySelector('video'),caption=host.querySelector('.concept-caption'),play=host.querySelector('[data-concept="play"]'),poster=host.querySelector('.concept-poster'),bar=host.querySelector('.concept-timeline i');
  let dead=false,failed=false;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  audio?.quiet(true);
- function update(){const time=video.currentTime||0;const cue=Math.max(0,conceptCues[n].findLastIndex(c=>c[0]<=time));caption.innerHTML=emphasize(conceptCues[n][cue][1],conceptTerms[n]);host.querySelectorAll('[data-cue-index]').forEach((b,i)=>i===cue?b.setAttribute('aria-current','step'):b.removeAttribute('aria-current'));bar.style.width=`${Math.min(100,time/9*100)}%`;}
+ // The clips carry a few CC0 action sounds; they obey the app's mute and effect switches.
+ video.muted=audio?.effectsAllowed?!audio.effectsAllowed():true;
+ function update(){const time=video.currentTime||0;const cue=Math.max(0,conceptCues[n].findLastIndex(c=>c[0]<=time));caption.innerHTML=emphasize(conceptCues[n][cue][1],conceptTerms[n]);host.querySelectorAll('[data-cue-index]').forEach((b,i)=>i===cue?b.setAttribute('aria-current','step'):b.removeAttribute('aria-current'));bar.style.width=`${Math.min(100,time/CONCEPT_SECONDS*100)}%`;}
  function fallback(){failed=true;video.hidden=true;poster.hidden=false;caption.innerHTML=emphasize(conceptCues[n].map(c=>c[1]).join(' '),conceptTerms[n]);play.disabled=true;host.querySelectorAll('[data-cue-index]').forEach(b=>b.disabled=true);play.textContent='개념 그림으로 보기';bar.style.width='100%';audio?.quiet(false);}
  async function start(){if(dead||failed)return;try{await video.play();if(!dead)play.textContent='잠깐 멈춤';}catch{if(!dead)play.textContent='눌러서 재생';}}
  const click=e=>{const action=e.target.closest('[data-concept]')?.dataset.concept;if(!action||failed)return;if(action==='seek'){const index=Number(e.target.closest('[data-cue-index]')?.dataset.cueIndex);if(conceptCues[n][index]){video.currentTime=conceptCues[n][index][0];update();}return;}if(action==='replay'){video.currentTime=0;update();start();}else if(video.paused)start();else video.pause();};

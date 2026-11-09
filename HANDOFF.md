@@ -1,3 +1,7 @@
+# 푸른행성 조사본부 인계 (2026-11-09 밤 고도화)
+
+브랜치 claude/upgrade-20261109(미배포). 개념영상 5편을 HyperFrames 「모아의 탐사 노트」(15초, 효과음, 장면 질문·관찰·확대·정리)로 교체했어. 소스는 films/earth-sea-concepts, 장면 시간은 src/concept-data.js 하나로 앱 자막과 공유, 재현은 `TMPDIR=<외장> npm run concepts:render`. 글자 하한(1024 폭 ≥14px, 큰 화면 ≥18px), hover 터치 정리, 대비 수정, 오답 뒤 "다시 보기" 안내, 장별 성취기준 데이터를 넣었고, 쓰지 않는 PNG 원본은 assets/source-png로 옮겨 배포본이 52→21MB. 문구를 바꾸면 scripts/subset-fonts.py(fonttools: DevCaches/pydeps-fonttools)로 글꼴 재생성. 근거: docs/reviews/SCORE·UPGRADE-PLAN·UPGRADE-RESULT-20261109.md.
+
 # 푸른행성 조사본부 인계 (2026-11-07)
 
 최신 작업(제작 현황 시트의 완료작 1·2·3·4·9번 지도 비교): 이동은 5번 자석 도시 방식을 기준으로 맞췄어. 어디서든 끌면 지도 이동, 상단 툴바 손 아이콘은 자유 시점 켜고 끄기, 전체 보기 아이콘은 띠 없이 섬 전체(cover 배율), 걷거나 방향키를 누르면 부리 따라가기로 복귀. 방향키 하나로 비스듬한 길을 따라 미끄러지고(hub-world.js slideOnRoad), 짧게 눌러도 한 걸음 가고, 빈 곳을 눌러도 가까운 길로 걸어. 마지막 위치는 state.mapPosition에 저장, 건물에서 나오면 입구 앞에서 다시 시작하고 모아는 길 뒤쪽에 서(hubPointBehind).

@@ -109,3 +109,13 @@ export function createHubInput() {
     vector(pads=[]){const active=new Set([...held.values(),...pads]),x=Number(active.has('right'))-Number(active.has('left')),y=Number(active.has('down'))-Number(active.has('up')),length=Math.hypot(x,y)||1;return{x:x/length,y:y/length};},
   };
 }
+
+// Keep floating place names readable when the camera clamps several buildings
+// against the same screen edge. Positions use the label's bottom edge.
+export function separateHubLabel({x,y,width,height,minY,maxY}, placed, gap=8) {
+  const overlaps = bottom => placed.some(other => x-width/2 < other.x+other.width/2+gap && x+width/2+gap > other.x-other.width/2 && bottom-height < other.y+gap && bottom+gap > other.y-other.height);
+  const candidates=[y,...placed.flatMap(other=>[other.y+height+gap,other.y-other.height-gap])]
+    .filter(bottom=>bottom>=minY&&bottom<=maxY)
+    .sort((a,b)=>Math.abs(a-y)-Math.abs(b-y));
+  return candidates.find(bottom=>!overlaps(bottom)) ?? y;
+}

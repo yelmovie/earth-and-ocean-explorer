@@ -1,9 +1,9 @@
+@font-face{font-family:"NanumSquareNeo";src:url("/assets/fonts/NanumSquareNeoTTF-bRg.woff2") format("woff2");font-weight:100 500;font-style:normal;font-display:swap}
+@font-face{font-family:"NanumSquareNeo";src:url("/assets/fonts/NanumSquareNeoTTF-cBd.woff2") format("woff2");font-weight:600 700;font-style:normal;font-display:swap}
+@font-face{font-family:"NanumSquareNeo";src:url("/assets/fonts/NanumSquareNeoTTF-dEb.woff2") format("woff2");font-weight:800 900;font-style:normal;font-display:swap}
 /* Shared learning layout: readable at arm's length and on a classroom board.
    This final layer replaces scattered per-route density overrides. */
-@font-face{font-family:BluePlanetDisplay;src:url('/assets/fonts/BluePlanetDisplay-Regular.woff2') format('woff2');font-display:swap}
-@font-face{font-family:BluePlanetBody;src:url('/assets/fonts/BluePlanetBody-Regular.woff2') format('woff2');font-weight:400 600;font-display:swap}
-@font-face{font-family:BluePlanetBody;src:url('/assets/fonts/BluePlanetBody-Bold.woff2') format('woff2');font-weight:700 900;font-display:swap}
-:root{--font-heading:BluePlanetDisplay,'Malgun Gothic',sans-serif;--font-body:BluePlanetBody,'Malgun Gothic',sans-serif;--reading-size:clamp(20px,1.45vw,30px);--label-size:clamp(17px,1.2vw,24px);--panel-gap:clamp(12px,1.35vw,24px);--panel-pad:clamp(16px,1.5vw,28px);--font-body-size:var(--reading-size);--font-title-size:clamp(28px,2.4vw,44px);font-family:var(--font-body)}
+:root{--font-heading:"NanumSquareNeo",'Malgun Gothic',sans-serif;--font-body:"NanumSquareNeo",'Malgun Gothic',sans-serif;--reading-size:clamp(20px,1.45vw,30px);--label-size:clamp(17px,1.2vw,24px);--panel-gap:clamp(12px,1.35vw,24px);--panel-pad:clamp(16px,1.5vw,28px);--font-body-size:var(--reading-size);--font-title-size:clamp(28px,2.4vw,44px);font-family:var(--font-body)}
 body,button,input,select{font-family:var(--font-body)}
 :is(#app,body) .app:not(.route-home):not(.route-hub):not(.route-ending){background:linear-gradient(#f4f3e959,#f8f6ed80),var(--scene) center/cover fixed}
 h1,h2,.primary,.step-tabs button,.modal-head h2{font-family:var(--font-heading);font-weight:400;letter-spacing:0}

@@ -2,7 +2,7 @@ import './hub.css';
 import { chapters } from './data.js';
 import { illustration } from './illustrations.js';
 import { canAccess } from './state.js';
-import { hubMap, hubDoors, hubResidents, hubPointBehind, hubViewZoom, hubCoverScale, clampHubZoom, clampHubView, hubScreenToWorld, anchorHubView, glideHubView, hubSegments, hubDistance, nearestHubRoad, canStandInHub, moveHubPoint, findHubPath, createHubInput } from './hub-world.js';
+import { separateHubLabel, hubMap, hubDoors, hubResidents, hubPointBehind, hubViewZoom, hubCoverScale, clampHubZoom, clampHubView, hubScreenToWorld, anchorHubView, glideHubView, hubSegments, hubDistance, nearestHubRoad, canStandInHub, moveHubPoint, findHubPath, createHubInput } from './hub-world.js';
 
 let seenCompleted = null;
 // Loaded with the app, so the map is ready before the first visit.
@@ -110,11 +110,16 @@ export function mountHub(canvas,s,onArrive,onPosition){
   function worldToScreen(p){return{x:p.x*scale-camera.x,y:p.y*scale-camera.y};}
   function overlays(){
     const chip=quest?.getBoundingClientRect()??{width:0};
+    const placedLabels=[];
     labels.forEach(label=>{const id=Number(label.dataset.hubStage),door=hubDoors[id-1];if(!door)return;const point=worldToScreen({x:door.buildingX,y:door.buildingY-61});const center=worldToScreen({x:door.x,y:door.y-30}),offscreen=center.x<0||center.x>width||center.y<0||center.y>height;
       // `top` is the bottom edge because CSS translates the label up 100%.
       // Reserve the complete label height below the floating common controls.
       const clearsChip=point.x<chip.left-70||point.x>chip.right+70,labelFloor=(chip.width&&!clearsChip?chip.bottom+10:82)+(label.offsetHeight||52);
-      label.style.left=`${Math.max(86,Math.min(width-86,point.x))}px`;label.style.top=`${Math.max(labelFloor,Math.min(height-147,point.y))}px`;label.classList.toggle('is-offscreen',offscreen);if(offscreen)label.style.setProperty('--edge-angle',`${Math.atan2(center.y-height/2,center.x-width/2)}rad`);label.classList.toggle('is-current',id===next?.id);label.classList.toggle('is-done',s.completed.includes(id));label.classList.toggle('is-locked',!enabled(id-1));label.setAttribute('aria-label',`${chapters[id-1].title}. ${s.completed.includes(id)?'복구 완료':enabled(id-1)?'이동하기':'잠김. 이동해서 여는 방법 듣기'}`);
+      const labelWidth=label.offsetWidth||160,labelHeight=label.offsetHeight||52;
+      const x=Math.max(labelWidth/2+16,Math.min(width-labelWidth/2-16,point.x));
+      let y=Math.max(labelFloor,Math.min(height-147,point.y));
+      if(!offscreen||id===next?.id){y=separateHubLabel({x,y,width:labelWidth,height:labelHeight,minY:labelFloor,maxY:Math.max(labelFloor,height-147)},placedLabels);placedLabels.push({x,y,width:labelWidth,height:labelHeight});}
+      label.style.left=`${x}px`;label.style.top=`${y}px`;label.classList.toggle('is-offscreen',offscreen);if(offscreen)label.style.setProperty('--edge-angle',`${Math.atan2(center.y-height/2,center.x-width/2)}rad`);label.classList.toggle('is-current',id===next?.id);label.classList.toggle('is-done',s.completed.includes(id));label.classList.toggle('is-locked',!enabled(id-1));label.setAttribute('aria-label',`${chapters[id-1].title}. ${s.completed.includes(id)?'복구 완료':enabled(id-1)?'이동하기':'잠김. 이동해서 여는 방법 듣기'}`);
     });
     if(companion){const p=worldToScreen(friend);companion.style.left=`${Math.max(30,Math.min(width-30,p.x))}px`;companion.style.top=`${Math.max(84,Math.min(height-20,p.y-46*scale))}px`;}
     for(const resident of residents){if(!resident.cue)continue;const p=worldToScreen({x:resident.x,y:resident.y-resident.height-3});resident.cue.style.left=`${p.x}px`;resident.cue.style.top=`${p.y}px`;resident.cue.classList.toggle('is-offscreen',p.x<30||p.x>width-30||p.y<84||p.y>height-20);}

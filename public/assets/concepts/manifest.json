@@ -49,15 +49,15 @@
       "files": [
         {
           "name": "chapter-3.mp4",
-          "bytes": 1955295
+          "bytes": 1738145
         },
         {
           "name": "chapter-3.webm",
-          "bytes": 1215768
+          "bytes": 1195690
         },
         {
           "name": "chapter-3.webp",
-          "bytes": 156220
+          "bytes": 153458
         }
       ]
     },
@@ -67,15 +67,15 @@
       "files": [
         {
           "name": "chapter-4.mp4",
-          "bytes": 525101
+          "bytes": 522826
         },
         {
           "name": "chapter-4.webm",
-          "bytes": 628935
+          "bytes": 629717
         },
         {
           "name": "chapter-4.webp",
-          "bytes": 78652
+          "bytes": 78664
         }
       ]
     },

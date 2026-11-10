@@ -45,3 +45,8 @@
 - 개념 영상 5종: 프로젝트 자체 SVG 도해를 sharp + FFmpeg로 렌더. 각 9초 / 1280×720 / 24fps, 무음 MP4·WebM와 끝 장면 WebP. Remotion 미사용, 렌더 도구는 배포하지 않음.
 - 효과음: https://kenney.nl/assets/interface-sounds · Kenney · CC0 1.0. 원본 `License.txt`를 `public/assets/audio/Kenney-License.txt`에 보존. 원래 파일명과 사용처는 `sources.json`. MP3 변환과 음량 정규화 수행.
 - 글꼴: Google Fonts Jua / orioncactus Pretendard v1.3.9 · SIL OFL 1.1. 원본은 assets/font-sources, 파생물은 BluePlanetDisplay/BluePlanetBody로 내부 이름까지 변경. Jua-OFL.txt와 Pretendard-OFL.txt 동봉. 폰트 단독 판매나 소유권 주장은 하지 않음.
+
+## 캐릭터 목소리 (2026-11-10)
+- 부리·짱이·모아·게·이야기 내레이터 대사 39개: 모모(로컬) Qwen3-TTS 프리셋 목소리로 생성한 AI 합성 음성 · Apache-2.0. 실제 사람 목소리를 쓰지 않음.
+- 실행 파일 `public/assets/audio/voices/<대사 id>.mp3`(모노 44.1kHz 96kbps, 약 -16 LUFS). 대사 원문·목소리·길이·SHA-256은 `docs/VOICE-PROVENANCE-20261110.json`.
+- 이전 환영 음성 `npc-welcome.m4a`(기본 F1 목소리)는 부리 목소리 `welcome.mp3`로 바꾸고 삭제함.

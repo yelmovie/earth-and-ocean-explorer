@@ -49,7 +49,8 @@ export const settingsContent = {
   creditLines: [
     '캐릭터·배경·장식은 프로젝트 자체 AI 생성 이미지예요.',
     '장면 그림은 실제 현장 사진이 아닌 학습용 재현 이미지예요. 배치·날씨·크기는 사실 근거로 쓰지 않아요.',
-    '배경 음악과 효과음은 프로젝트에서 직접 만든 Web Audio 합성 소리예요.',
+    '배경 음악은 프로젝트에서 직접 만든 Web Audio 합성 소리이고, 효과음은 Kenney의 CC0 소리예요.',
+    '부리·짱이·모아·게·이야기 목소리는 AI 음성 합성으로 만든 소리예요. 실제 사람의 목소리가 아니에요.',
     '출처와 라이선스 상세 내용은 프로젝트의 assets/CREDITS.md에서 확인할 수 있어요.',
   ],
   sourcesTitle: '자료 출처 모아 보기',
@@ -60,7 +61,8 @@ export const settingsContent = {
     ['교육과정', '교육부 2022 개정 과학과 교육과정 · 경기도교육청 공개 자료'],
     ['효과음', 'Kenney Interface Sounds · kenney.nl · CC0 1.0 · 확인·촬영·기록·힌트·보상 소리'],
     ['글꼴', 'Jua / Pretendard · SIL OFL 1.1 · 이름을 바꾼 부분집합 글꼴을 기기에 함께 제공해요.'],
-    ['프로그램', 'Three.js · MIT / Vite · MIT / SVG·FFmpeg 자체 제작 개념 영상'],
+    ['캐릭터 목소리', 'Qwen3-TTS · Apache-2.0 · AI 합성 음성 39개(docs/VOICE-PROVENANCE-20261110.json)'],
+    ['프로그램', 'Three.js · MIT / Vite · MIT / HyperFrames·FFmpeg 자체 제작 개념 영상'],
   ],
   legal: [
     'ⓒ 2026 옐샘 & 아이스크림미디어. All rights reserved.',

@@ -141,7 +141,7 @@ const film4 = {
         <g transform="translate(250 ${y0 - 12})"><path d="M-35 0H30L18 20H-22Z" fill="#f5eee0" stroke="#476978" stroke-width="2"/><path d="M-8 0V-25H8V0" fill="#294f6a"/><path d="M-26 7H23" stroke="#c48752" stroke-width="4"/></g></g>
         <g id="up" class="arrow"><path d="M88 150V96m-16 18 16-18 16 18" fill="none" stroke="${C.ink}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g>
         <g id="down" class="arrow"><path d="M88 96v54m-16-18 16 18 16-18" fill="none" stroke="${C.ink}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`,
-  overlay: `<div id="clock-wrap"><div id="clock">${['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00'].map((t, i) => `<span id="c${i}">${t}</span>`).join('')}</div></div>
+  overlay: `<div id="clock-wrap"><div id="clock">${['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00'].map((t, i) => `<span id="c${i}">${t}</span>`).join('')}</div></div>
         <div id="note-wrap"><div id="note">관측 모형 · 실제 시각과 달라요</div></div>`,
   tags: [
     tag({ id: 't-pole', x: 1318, y: 196, text: '기둥', sub: '움직이지 않는 기준', to: [1318, 290] }),

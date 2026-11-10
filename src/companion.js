@@ -11,5 +11,5 @@ export function companion(s,n,step,reveal=false){
  const task=['c','d'].includes(step)?pageChallenges(n,step)[s.research[n][step]??0]:null;
  const clue=task?.clue??hints[n-1][step==='b'?1:0];
  const safe=clue.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- return `<div class="companion-tools"><details class="moa-hint"${reveal?' open':''}><summary aria-label="모아의 힌트"><img src="${asset('moa')}" alt=""><span>도움말</span></summary><div class="moa-bubble"><p>${safe}</p><button data-action="concept" data-value="${n}" class="concept-replay">개념 영상</button></div></details></div>`;
+ return `<div class="companion-tools"><details class="moa-hint"${reveal?' open data-auto-open':''}><summary aria-label="모아의 힌트"><img src="${asset('moa')}" alt=""><span>도움말</span></summary><div class="moa-bubble"><p>${safe}</p><button data-action="concept" data-value="${n}" class="concept-replay">개념 영상</button></div></details></div>`;
 }

@@ -1,6 +1,6 @@
 // Original pentatonic background score + locally hosted Kenney CC0 feedback.
 export function createAudio(getSettings) {
-  let context, musicGain, timer, nextNote = 0, beat = 0, videoQuiet = false, currentEffect;
+  let context, musicGain, timer, nextNote = 0, beat = 0, videoQuiet = false, voiceDuck = false, currentEffect;
   const effects=new Map();
   const effectNames=['click','scan','camera','drop','hint','success','retry','reward','heat'];
   const activeEffects = new Set(), activeMusic = new Set();
@@ -48,7 +48,7 @@ export function createAudio(getSettings) {
     if (!context) return;
     const volume = Math.max(0, Math.min(1, Number(settings().volume) || 0));
     musicGain.gain.cancelScheduledValues(context.currentTime);
-    musicGain.gain.setTargetAtTime(canPlayMusic() ? volume * 0.14 : 0, context.currentTime, 0.12);
+    musicGain.gain.setTargetAtTime(canPlayMusic() ? volume * 0.14 * (voiceDuck ? 0.3 : 1) : 0, context.currentTime, 0.12);
     if (settings().muted || settings().sfxEnabled === false) {
       for (const oscillator of activeEffects) { try { oscillator.stop(); } catch {} }
     }
@@ -66,5 +66,7 @@ export function createAudio(getSettings) {
   document.addEventListener('pointerdown',start,{once:true});
   document.addEventListener('keydown',start,{once:true});
   window.addEventListener('pagehide',()=>{stopEffect();window.clearInterval(timer);timer=null;for(const oscillator of activeMusic){try{oscillator.stop();}catch{}}activeMusic.clear();context?.suspend().catch(()=>{});});
-  return { start, sync, tone, effect, effectsAllowed:()=>!settings().muted&&settings().sfxEnabled!==false, quiet(value){videoQuiet=value;if(value)stopEffect();sync();} };
+  return { start, sync, tone, effect, effectsAllowed:()=>!settings().muted&&settings().sfxEnabled!==false, quiet(value){videoQuiet=value;if(value)stopEffect();sync();},
+    // 캐릭터 대사가 나오는 동안 배경음만 줄인다(효과음은 그대로).
+    duck(value){voiceDuck=!!value;sync();} };
 }

@@ -22,7 +22,7 @@ export const terrains = [
 export const creatures = [
   { id: 'crab', name: '게', trace: '작은 구멍과 옆으로 난 발자국', feature: '집게와 여러 다리로 옆으로 걸어', symbol: '🦀', x: 24, y: 62 },
   { id: 'skipper', name: '짱뚱어', trace: '물가에서 폴짝이는 움직임', feature: '눈이 위로 솟고 지느러미로 움직여', symbol: '🐟', x: 57, y: 73 },
-  { id: 'reed', name: '갈대', trace: '진흙에서 솟은 가느다란 잎', feature: '뿌리를 내리고 줄기와 잎이 자라', symbol: '🌿', x: 79, y: 39 },
+  { id: 'reed', name: '갈대', trace: '진흙에서 솟은 가느다란 잎', feature: '뿌리를 내리고 줄기와 잎이 자라', symbol: '🌿', x: 7, y: 39 },
 ];
 export const finalCases = [
   { title: '새 지구 전시의 설명을 골라 줘', problem: '친구가 “내 표본은 육지가 더 많으니 지구도 육지가 더 넓어!”라고 말했어.', stage: 1, reasons: ['몇 개의 표본만으로 지구 전체를 알 수 있어', '지구 전체의 면적 자료와 내 표본은 구분해야 해', '초록색이 예쁘니까 육지가 더 넓어'], answer: 1 },
@@ -34,4 +34,5 @@ export const finalCases = [
 export const routes = ['home', 'hub', ...chapters.flatMap(c => [`s${c.id}a`, `s${c.id}b`, `s${c.id}c`, `s${c.id}d`]), 'report', 'link', 'ending', 'certificate'];
 export const asset = name => { const relative=`${import.meta.env?.BASE_URL ?? '/'}assets/${name}.webp`; return typeof document==='undefined'?relative:new URL(relative,document.baseURI).href; };
 export function tideHeight(t) { return [28, 45, 66, 83, 66, 45, 28][t] ?? 28; }
-export function timeLabel(t) { return `${String(6 + t).padStart(2, '0')}:00`; }
+// 한 칸 = 2시간. 물이 들어오는 데 약 6시간(06→12시), 빠지는 데 약 6시간(12→18시)이 걸리는 실제 간격에 맞춘 관측 모형.
+export function timeLabel(t) { return `${String(6 + t * 2).padStart(2, '0')}:00`; }

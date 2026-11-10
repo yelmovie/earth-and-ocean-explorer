@@ -200,7 +200,7 @@ export function mountHub(canvas,s,onArrive,onPosition){
     listen(button,'pointermove',e=>{if(!padPointers.has(e.pointerId))return;const under=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-hub-direction]');padPointers.set(e.pointerId,under?.dataset.hubDirection??null);syncPads();});
     const release=e=>{padPointers.delete(e.pointerId);syncPads();};listen(button,'pointerup',release);listen(button,'pointercancel',release);listen(button,'lostpointercapture',release);
   }
-  listen(companion,'click',()=>{guideOpen=!guideOpen;if(guideOpen)message(next?`다음은 ${next.title}예요. 건물 이름을 누르면 함께 걸어가요! 방향키나 WASD로도 걸을 수 있어요.`:'다섯 장소가 다시 빛나요! 최종 보고서에서 우리가 찾은 기록을 연결해요.',true);else arrival?.classList.remove('is-visible');});
+  listen(companion,'click',()=>{guideOpen=!guideOpen;if(guideOpen)message(next?`다음은 ${next.title}${(next.title.charCodeAt(next.title.length-1)-0xac00)%28?'이에요':'예요'}. 건물 이름을 누르면 함께 걸어가요! 방향키나 WASD로도 걸을 수 있어요.`:'다섯 장소가 다시 빛나요! 최종 보고서에서 우리가 찾은 기록을 연결해요.',true);else arrival?.classList.remove('is-visible');});
   const modalObserver=new MutationObserver(()=>{if(paused()){clearInput();path=[];}});modalObserver.observe(document.body,{subtree:true,attributes:true,attributeFilter:['open','inert']});
   const observer=new ResizeObserver(size);observer.observe(wrap);size();raf=requestAnimationFrame(render);
   return{travel,dispose(){stopped=true;cancelAnimationFrame(raf);clearTimeout(arrivalTimer);clearInput();observer.disconnect();modalObserver.disconnect();listeners.forEach(remove=>remove());buriSprite.onload=buriSprite.onerror=moa.onload=moa.onerror=null;artStatus.remove();}};

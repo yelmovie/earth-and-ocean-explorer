@@ -63,7 +63,7 @@ with sync_playwright() as p:
  page.wait_for_function("document.querySelector('.is-heating')===null")
  assert page.locator('.evaporated').count()==2
  route('s4a');page.locator('[data-field="time"]').evaluate("el=>{el.value='3';el.dispatchEvent(new Event('input',{bubbles:true}))}")
- assert page.locator('.timeline output').inner_text()=='09:00'
+ assert page.locator('.timeline output').inner_text()=='12:00'
  page.locator('[data-field="time"]').dispatch_event('change')
  route('s4b');page.locator('[data-compare]').evaluate("el=>{el.value='75';el.dispatchEvent(new Event('input',{bubbles:true}))}")
  assert page.locator('.tide-wipe').evaluate("el=>el.style.getPropertyValue('--wipe')")=='75%'

@@ -426,3 +426,39 @@
   #app .challenge-page .challenge-sequence b,#app .challenge-page .challenge-tide-pair b{font-size:18px}
   #app .certificate-promise{font-size:18px!important}
 }
+
+/* 2026-11-10 실사용 점검: 1280×800 같은 짧은 화면에서 DATA LINK의 '연결 확인'과 인증서의 인쇄·지도 버튼이 스크롤 아래로 숨지 않게 */
+#app .link-page .page-heading .case-tabs{margin:0;align-self:center}
+@media(min-width:801px) and (max-height:1100px){
+  #app .link-page{padding-top:10px;padding-bottom:10px}
+  #app .link-page .page-heading{margin-bottom:10px}
+  #app .link-page .page-heading h1{margin-bottom:2px}
+  #app .link-page .work-panel h3{margin:2px 0 6px}
+  #app .link-page .evidence-options button{padding:7px 12px}
+  #app .link-page .choices{margin:6px 0;gap:6px}
+  #app .link-page .choices .choice{min-height:48px;padding-top:6px;padding-bottom:6px}
+  #app .link-page .link-actions{margin-top:6px}
+  #app .link-page #hint{margin:4px 0 0}
+  #app .link-page .case-card{min-height:0;padding:22px 24px}
+  #app .link-page .case-card h2{margin:12px 0 10px}
+  #app .link-page .case-card>.character{margin:14px auto 50px;height:170px}
+  #app .certificate-page{padding:10px 20px}
+  #app .certificate-frame{padding:16px 30px}
+  #app .certificate-seal{width:58px;height:58px;font-size:28px;margin:4px auto}
+  #app .certificate h1{margin:8px 0 4px}
+  #app .certificate-line{margin:10px auto}
+  #app .certificate-evidence{margin:10px 0}
+  #app .certificate p{line-height:1.6}
+  #app .certificate-promise{margin-top:8px}
+  #app .certificate-actions{margin:12px 0 6px}
+}
+/* 확장 도전·적용 화면: 오답 뒤 펼쳐지는 모아 도움말이 오른쪽 카드·'마지막 카드 되돌리기'를 덮지 않게 왼쪽 관찰 자료 위에 띄운다. */
+@media(min-width:801px){#app #main .learning.challenge-page .moa-bubble{position:fixed;left:clamp(16px,2vw,40px);right:auto;bottom:96px;width:min(430px,calc(38vw - 24px))}}
+#app .challenge-page .challenge-lab .visual-caption{margin-top:12px}
+/* 캐릭터 대사 '다시 듣기': 대사가 나온 화면에서만 보인다. */
+[data-action="voice-replay"][hidden]{display:none!important}
+.modal-footer .voice-replay{display:inline-flex;align-items:center;gap:6px;min-height:48px;padding:8px 16px}
+.modal-footer .voice-replay .ui-icon{width:20px;height:20px}
+/* 갈대 흔적 표시는 왼쪽 갈대밭 위에 있어 이름표가 화면 밖으로 나가지 않게 왼쪽 정렬한다. */
+#app #main .activity[data-chapter="5"] .trace[data-value="reed"] small{left:-4px;transform:none}
+#app #main .activity[data-chapter="5"] .trace[data-value="reed"] small::after{left:22px}

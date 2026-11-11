@@ -1,10 +1,10 @@
 # 2026-11-12 납품 검증 완료
 
-main의 앱 개선 소스는 `7a98ce4`다. 공개 주소는 https://yelmovie.github.io/earth-and-ocean-explorer/ 이며 main 푸시 시 GitHub Actions가 테스트·빌드 후 Pages에 배포한다.
+main의 최종 앱 소스는 `50bae2d`다. 공개 주소는 https://yelmovie.github.io/earth-and-ocean-explorer/ 이며 main 푸시 시 GitHub Actions가 테스트·빌드 후 Pages에 배포한다.
 
 단위 테스트59개, 학습400상태·일반56화면·글꼴81화면·탐사40장면, 운영 전체 완주·저장7항목·PDF 한 장·영상5편·음성39개 검증을 통과했다. 최종 점수는9.0/10이고 교사 검수·실물 학교 기기·기존 제공 이미지 이용권 증빙 조건이 남아 있다. 상세 근거는 `docs/reviews/RELEASE-REVIEW-20261111.md`, `SCORE-20261111.md`에 있다.
 
-11월12일 추가 대조에서 배포용 출처 고지의 최신화 누락을 복구하고 두 사본의 일치 테스트를 추가했다. 공개 기능 재확인과 모바일 지도 안내 겹침 후속 수정의 근거는 `docs/reviews/RECONCILIATION-20261112.md`에 있다.
+11월12일 추가 대조에서 배포용 출처 고지의 최신화 누락과 모바일 지도 안내·이름표 겹침을 복구했다. 두 고지 사본의 일치 테스트와 허브 회귀를 추가했다. `50bae2d`를 푸시·배포한 뒤 공개 파일114개 일치, 허브39상태, 사진15장과 음성 제어, 실제 전체 학습 완주·인쇄를 다시 확인했다. 근거는 `docs/reviews/RECONCILIATION-20261112.md`에 있다.
 
 검증 파일·캐시·임시폴더는 외장 SSD를 사용한다. 기존 `output/` 자료는 보존했다. 아래는 이전 작업 기록이다.
 

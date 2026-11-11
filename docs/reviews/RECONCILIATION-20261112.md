@@ -52,6 +52,14 @@
 
 빌드 파일114개를 공개 주소에서 요청했다. 고지 수정 전에는 공개 사본의 최신화 누락을 재현했다. 그 외 텍스트4개의 로컬 빌드 차이는 CRLF/LF 줄바꿈뿐이며, 공개 파일은 Git에 커밋된 파일과 바이트 단위로 일치했다. 배포 확인은 정적 파일의 커밋 원본과 생성된 JS·CSS·HTML의 빌드 결과를 기준으로 수행한다.
 
+최종 수정 커밋은 `50bae2d7f7b8dd282fb7e39c33f33e87775785cb`다. main 푸시 후 Linux의59개 단위 테스트·빌드·Pages 배포가 성공했으며 완료 시각은2026-11-12 00:16:08 KST다. [배포 실행 결과](https://github.com/yelmovie/earth-and-ocean-explorer/actions/runs/43046544232)
+
+- 공개 파일114개, 합계19,451,426바이트를 대조해 누락·내용 차이0건을 확인했다. 최신 공개 출처 고지도 위 SHA-256과 일치한다.
+- 새 브라우저에서 최종 공개 앱의 허브39상태를 재검사했다. 안내·사진·아이콘·이름표 겹침과 가로 넘침0건이다.
+- 최종 공개 앱의20활동·40확장 문항·5최종 문항을 실제 조작으로 완주했다. 새로고침·최초 예상·교사 기록 분리·초기화 취소·포커스 복원과 인증서 PDF 한 장을 확인했다.
+- 사진15장 배치와 부분/전체 새로고침, 환영 음성1배속 완주·중지·닫기·음소거·뒤로가기·허브 다시 듣기·화면 이탈 정지를 다시 실행했다. 브라우저·HTTP 오류는0건이다.
+- 최종 근거는 `reconcile-assets-final/verification.json`, `reconcile-live-hub/report.json`, `reconcile-live-journey/verification.json`, `reconcile-live-extras/verification.json`, `reconcile-deployment.json`이다. 공개375px 허브와 사진 작업대 스크린샷을 직접 열어 수정 결과를 확인했다.
+
 ## 검증 자료와 남은 범위
 
 모든 자료는 외장 SSD 프로젝트의 `artifacts/release-20261111/`에 있다. `record-reconciliation/`은 수정 전 공개 고지·출처 병합·커밋 조상 관계를, `reconcile-autoplay/`는24상태와 실제 조작 결과를 보존한다. `reconcile-layout/`에 장별 모형13그룹과 허브 수정 전후39상태, `reconcile-extras/`에 사진·음성 결과가 있다. `reconcile-assets-before/`에는 수정 전 파일 대조와 줄바꿈 차이 분석이 있다. `reconcile-unit.log`, `reconcile-build.log`에59개 테스트·빌드 성공을 기록했다.

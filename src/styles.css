@@ -513,7 +513,7 @@ button svg {
   position: absolute;
   top: 14px;
   left: 19px;
-  font-family: monospace;
+  font-family: var(--font-body);
   color: #305f60;
   line-height: 1;
   text-align: center;
@@ -585,7 +585,7 @@ button svg {
   place-items: center;
   color: #327465;
   background: #eff4e6;
-  font-family: monospace;
+  font-family: var(--font-body);
   font-size: 18px;
   flex-shrink: 0;
 }
@@ -1571,7 +1571,7 @@ input[type=range] {
   background: #fff9d9d9;
   border-radius: 7px;
   padding: 6px 9px;
-  font-family: monospace;
+  font-family: var(--font-body);
   font-weight: bold;
 }
 

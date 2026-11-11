@@ -1,3 +1,4 @@
+import {normalizeExpeditions} from './expedition-state.js';
 import { freshResearch, normalizeResearch, researchReady, pageReady } from './challenge-data.js';
 import { chapters, sites, terrains, creatures, routes, tideHeight, finalCases } from './data.js';
 export const SAVE_KEY = 'blue-planet-hq:v2';
@@ -8,7 +9,7 @@ export function freshState() {
     3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand' },
     4: { time: 0, a: null, b: null, markers: [], direction: '', concept: '' },
     5: { found: [], features: {}, selected: '', value: '', action: '' },
-  }, restoration: {}, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null };
+  }, expeditions: {}, restoration: {}, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null };
 }
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 function sanitizedDraft(n,d) {
@@ -33,6 +34,7 @@ export function normalize(raw) {
   for (const key of ['muted', 'unlockAll', 'flatGlobe']) base.settings[key] = raw.settings?.[key] === true;
   for (const key of ['bgmEnabled','sfxEnabled']) base.settings[key] = typeof raw.settings?.[key]==='boolean'?raw.settings[key]:raw.settings?.muted!==true;
   base.research = normalizeResearch(raw.research);
+  base.expeditions=normalizeExpeditions(raw.expeditions);
   if (Number.isFinite(raw.settings?.volume)) base.settings.volume = Math.max(0, Math.min(1, raw.settings.volume));
   for(let n=1;n<=5;n++)base.drafts[n]=sanitizedDraft(n,raw.drafts?.[n]);
   for(let n=1;n<=5;n++)if(Array.isArray(raw.completed)&&raw.completed.includes(n)){

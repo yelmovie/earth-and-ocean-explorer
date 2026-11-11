@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {moveProbe,nearby,normalizeExpeditions} from '../src/expedition-state.js';import {normalize,freshState} from '../src/state.js';
+test('probe stays on map and only investigates adjacent sites',()=>{assert.deepEqual(moveProbe({x:0,y:0},-1,-1),{x:0,y:0});assert.deepEqual(moveProbe({x:5,y:5},1,1),{x:5,y:5});assert.equal(nearby({x:1,y:1},{x:1,y:2}),true);assert.equal(nearby({x:1,y:1},{x:2,y:2}),false);});
+test('expedition records normalize without inventing completion',()=>{const s=freshState();s.expeditions={1:{found:[0,0,2,88],x:99,y:-5}};const r=normalize(s);assert.deepEqual(r.expeditions[1],{found:[0,2],x:5,y:0});assert.deepEqual(r.completed,[]);assert.deepEqual(normalizeExpeditions(null),{});});

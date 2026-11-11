@@ -1,3 +1,5 @@
+import {mountExpedition} from './expedition.js';
+let cleanupExpedition;
 import {mountPhotoRestoration} from './photo-restoration.js';
 import './photo-restoration.css';
 import { mountNpcGuide } from './npc-guide.js';
@@ -56,6 +58,7 @@ function previous(){let r;while(state.history.length){const candidate=state.hist
 function feedback(message,good=false){const hint=[...document.querySelectorAll('#hint, .challenge-feedback')].find(el=>el.getClientRects().length);if(hint){hint.textContent=message;hint.classList.toggle('good',good);}else{let toast=document.querySelector('#toast');if(!toast){toast=document.createElement('div');toast.id='toast';toast.setAttribute('role','status');document.body.append(toast);}toast.textContent=message;toast.className=good?'show good':'show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.className='',3600);}tone(good?660:330);}
 function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button>${state.route==='hub'?`<button class="icon-button" data-hub-hand aria-pressed="false" aria-label="손으로 지도 움직이기" title="손으로 지도 움직이기">${icon('hand')}</button><button class="icon-button" data-hub-overview aria-pressed="false" aria-label="지도 전체 보기" title="지도 전체 보기">${icon('expand')}</button>`:''}</div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group"><button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button><button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
 async function render(){
+  cleanupExpedition?.();cleanupExpedition=null;
   cleanupActivityFlow?.();cleanupActivityFlow=null;
   disposeNpc?.();
   if(state.route==='s4b'&&app.classList.contains('route-s4b'))local.tideWipe=app.querySelector('[data-compare]')?.value??local.tideWipe;
@@ -77,7 +80,7 @@ async function render(){
   document.querySelector('h1')?.setAttribute('tabindex','-1');
   if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});
   if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-buri','ending-jjang']:[];if(entry.length)speak(entry);}
-  if(r==='hub'){controller=mountHub(document.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save);mountPhotoRestoration(app.querySelector('.map-wrap'),state,save,sound);}
+  if(r==='hub'){controller=mountHub(document.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save);mountPhotoRestoration(app.querySelector('.map-wrap'),state,save,sound);cleanupExpedition=mountExpedition(app.querySelector('.map-wrap'),state,save,navigate,sound);}
   if(r==='s1a'){
     const el=document.querySelector('#globe');try{const {mountGlobe}=await import('./globe.js');if(ticket!==epoch)return;const globe=await mountGlobe(el,{flat:state.settings.flatGlobe,atmosphere:state.drafts[1].atmosphere,selected:local.site||'asia',onReady:text=>{if(ticket===epoch)document.querySelector('#globe-mode').textContent=text;}});if(ticket!==epoch){globe.dispose();return;}controller=globe;if(local.site)siteDetail(local.site);}
     catch{if(ticket===epoch){el.innerHTML='<div class="globe-unavailable">지구 그림을 불러오지 못했어.<br>관찰 지점의 설명으로 조사를 계속할 수 있어.</div>';document.querySelector('#globe-mode').textContent='텍스트 대체 관찰';if(local.site)siteDetail(local.site);}}

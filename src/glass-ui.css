@@ -56,3 +56,21 @@ body dialog::backdrop{background:rgba(12,40,50,.28)}
 @media(max-height:620px) and (min-width:700px){#app #main .learning .sample-tray{grid-template-columns:repeat(3,minmax(0,1fr))}#app #main .learning .sample-token{min-height:48px;flex-shrink:0}}
 
 #app .ending-records span{background:#28684f}
+/* Card family: one radius and consistent sibling spacing, without shrinking evidence. */
+:root{--ui-card-radius:18px;--ui-card-gap:8px;--ui-panel-gap:12px}
+#app :is(.work-panel,.observation-panel,.challenge-card,.evidence-card,.link-board,.photo-card,.record-slot,.inset,.range-field,.ending-records>div,.creature-cards article,.choice,.sample-token,.challenge-item,.challenge-bin,.challenge-option,.evidence-options button){border-radius:var(--ui-card-radius)}
+#app :is(.icon-button,.step-tabs button,.activity-playback button,.activity-playback select){border-radius:14px}
+#app :is(.evidence-grid,.ending-records){gap:var(--ui-panel-gap);align-items:stretch}
+#app .evidence-card>div:last-child{padding:16px;display:flex;flex-direction:column;flex:1;min-width:0}
+#app .evidence-card .text-button{margin-top:auto;width:100%}
+#app .evidence-art{border-radius:17px 17px 0 0}
+#app #main .learning :is(.activity,.challenge-layout){gap:var(--ui-panel-gap)}
+#app #main .learning :is(.choices,.site-grid,.sample-tray,.album-grid,.photo-slots,.creature-cards,.challenge-options){gap:var(--ui-card-gap)}
+#app :is(.choice,.site,.sample-token,.challenge-item,.challenge-bin,.challenge-option):not(.active):not(.selected):not(.collected):not(.assigned):not([aria-pressed=true]){background:rgba(255,253,245,.82)}
+@media(min-width:700px) and (min-height:621px){#app #main .learning :is(.work-panel,.observation-panel,.challenge-card){padding:12px}}
+@media(max-height:620px),(max-width:699px){:root{--ui-card-gap:4px;--ui-panel-gap:8px}#app .evidence-card>div:last-child{padding:12px}}
+/* Answer boards need only their content height; spare space reveals the scenery. */
+#app #main .learning :is(.work-panel,.observation-panel,.challenge-card){background:var(--glass-face)}
+@media(min-width:1100px) and (min-height:621px){#app #main .learning .challenge-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media(min-width:700px) and (min-height:621px){#app #main .learning .challenge-board{height:auto;max-height:100%;align-self:start}#app #main .learning .challenge-board .challenge-sort-area{flex:none}}
+@media(min-width:700px) and (min-height:621px){#app #main .learning .challenge-sort-area :is(.challenge-items,.challenge-bins){grid-auto-rows:minmax(48px,1fr);align-content:stretch}}

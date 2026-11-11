@@ -15,9 +15,9 @@ import './responsive-stages.css';
 import './glass-ui.css';
 import { showConcept, showChapterReward } from './concepts.js';
 import { mountInteractions } from './interactions.js';
-import { chapters, sites, terrains, creatures, routes, asset, finalCases, tideHeight } from './data.js';
+import { chapters, sites, terrains, creatures, routes, asset, tideHeight } from './data.js';
 import { freshState, loadState, saveState, recordPrediction, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
-import { home, hub, learning, report, link, ending, certificate, recordDetail, tideScene, esc, btn, character } from './screens.js';
+import { home, hub, learning, report, link, ending, certificate, recordDetail, tideScene, esc, character } from './screens.js';
 import { mountHub } from './hub.js';
 import { icon } from './icons.js';
 import { createAudio } from './audio.js';
@@ -214,7 +214,7 @@ document.addEventListener('click',async e=>{
   }
   if(action==='case'){state.finalDraft={caseIndex:+value,stage:null,reason:null};save();render();return;}
   if(action==='link-stage'){state.finalDraft.stage=+value;save();render();return;}
-  if(action==='check-link'){const result=linkEvidence(state,+value,state.finalDraft.stage,state.finalDraft.reason);if(result==='wrong'){state.revised++;save();feedback('상황 속 관찰과 기록의 내용을 비교해 봐. 증거와 설명이 둘 다 맞아야 연결돼.');}else if(result==='practice'){feedback('연습 연결은 맞았어! 해당 장을 조사하면 내 증거로 실제 연결할 수 있어.',true);}else{save();render();feedback(allLinked(state)?'모든 기록을 연결했어! 이제 복구된 이야기를 만나자.':'내 조사 증거로 연결했어! 다음 상황도 해결해 보자.',true);if(allLinked(state))sound('reward');}return;}
+  if(action==='check-link'){const result=linkEvidence(state,+value,state.finalDraft.stage,state.finalDraft.reason);if(result==='already-saved')return;if(result==='wrong'){state.revised++;save();feedback('상황 속 관찰과 기록의 내용을 비교해 봐. 증거와 설명이 둘 다 맞아야 연결돼.');}else if(result==='practice'){feedback('연습 연결은 맞았어! 해당 장을 조사하면 내 증거로 실제 연결할 수 있어.',true);}else{save();render();feedback(allLinked(state)?'모든 기록을 연결했어! 이제 복구된 이야기를 만나자.':'내 조사 증거로 연결했어! 다음 상황도 해결해 보자.',true);if(allLinked(state))sound('reward');}return;}
   if(action==='print'){if(!studentState&&allLinked(state))window.print();return;}
 });
 window.addEventListener('popstate',()=>{const r=location.hash.slice(1)||'home';if(canAccess(state,r))navigate(r,{back:true,push:false});else{window.history.replaceState({route:'hub'},'','#hub');navigate('hub',{back:true,push:false});}});

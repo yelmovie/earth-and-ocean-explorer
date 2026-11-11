@@ -3546,6 +3546,8 @@ input[type=range] {
   .certificate {
     box-shadow: none;
     break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .certificate-frame {
     padding: 30px;

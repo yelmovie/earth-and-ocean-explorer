@@ -104,6 +104,12 @@ test('completed pages continue directly and a badge still requires original obse
  run.state.route='s1d';run.send('challenge-finish');
  assert.deepEqual(run.calls.rewards,[1]);assert.deepEqual(run.state.completed,[1]);
  assert.equal(run.state.evidence[1].research.solved.length,8);
+ const evidence=structuredClone(run.state.evidence[1]);
+ run.send('challenge-finish');
+ assert.deepEqual(run.calls.rewards,[1],'revisiting a completed chapter must not replay its reward');
+ assert.deepEqual(run.calls.sounds.filter(name=>name==='reward'),['reward']);
+ assert.equal(run.calls.routes.at(-1),'s2a','completed practice can continue to the next chapter');
+ assert.deepEqual(run.state.evidence[1],evidence,'the first investigation record is preserved');
 });
 
 test('a previously saved complete answer can be confirmed without reentering it',()=>{

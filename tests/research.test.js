@@ -15,6 +15,20 @@ test('every chapter names a real 2022 curriculum standard and a learning objecti
   for(const c of chapters){assert.match(c.standard,/^4과06-0[1-3]$/);assert.ok(listed.includes(c.standard),c.standard);assert.ok(c.objective.length>=15,c.title);}
   assert.deepEqual([...new Set(chapters.map(c=>c.standard))],['4과06-01','4과06-02','4과06-03']);
 });
+test('every chapter records its curriculum source and pending teacher review honestly', async () => {
+  const { chapters } = await import('../src/data.js');
+  for (const chapter of chapters) {
+    assert.equal(typeof chapter.needsReview, 'boolean', chapter.title);
+    assert.ok(chapter.reviewer === null || typeof chapter.reviewer === 'string' && chapter.reviewer.trim(), chapter.title);
+    if (chapter.reviewer === null) assert.equal(chapter.needsReview, true, chapter.title);
+    assert.ok(Array.isArray(chapter.sources) && chapter.sources.length > 0, chapter.title);
+    for (const source of chapter.sources) {
+      assert.ok(typeof source.title === 'string' && source.title.trim(), chapter.title);
+      assert.equal(new URL(source.url).protocol, 'https:', chapter.title);
+      assert.ok(typeof source.section === 'string' && source.section.trim(), chapter.title);
+    }
+  }
+});
 test('a wrong complete answer points at what to recheck without revealing the answer',async()=>{
   const { mistakeHint }=await import('../src/challenge-data.js');
   for(const tasks of Object.values(challenges))for(const t of tasks){

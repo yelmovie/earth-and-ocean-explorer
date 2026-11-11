@@ -51,7 +51,7 @@
 .hub-page .hub-building-label.is-offscreen:not(.is-current):focus-visible{opacity:1}
 .hub-page .hub-building-label.is-offscreen:after{display:none}
 .hub-page .hub-building-label.is-offscreen.is-current:before{content:'';display:inline-block;width:0;height:0;margin-right:9px;border-left:12px solid #8a6a1c;border-block:7px solid transparent;vertical-align:middle;transform:rotate(var(--edge-angle))}
-.hub-page .hub-companion,.hub-page .hub-resident{position:absolute;z-index:3;width:44px;height:44px;min-width:44px;min-height:44px;padding:9px;border:2px solid #f0e3bd;border-radius:16px 16px 16px 4px;background:#fffdf0f5;color:#2f6a66;box-shadow:0 3px 0 #708d7955;transform:translate(-50%,-100%);touch-action:manipulation}
+.hub-page .hub-companion,.hub-page .hub-resident{position:absolute;z-index:3;width:48px;height:48px;min-width:48px;min-height:48px;padding:11px;border:2px solid #f0e3bd;border-radius:16px 16px 16px 4px;background:#fffdf0f5;color:#2f6a66;box-shadow:0 3px 0 #708d7955;transform:translate(-50%,-100%);touch-action:manipulation}
 @media (hover:hover) and (pointer:fine){.hub-page .hub-resident:hover:not(:disabled){transform:translate(-50%,-100%);background:#fff6d5}}
 .hub-page .hub-resident:active{transform:translate(-50%,calc(-100% + 2px))}
 .hub-page .hub-resident svg,.hub-page .hub-companion svg{width:22px;height:22px;display:block}

@@ -1,6 +1,6 @@
 # 푸른행성 조사본부 — 에셋·도구 고지
 
-검토일: 2026-10-22. 앱의 설정 > 이미지·소리·저작권 고지에서도 핵심 정보를 볼 수 있다.
+검토일 2026-11-11. 앱의 설정 > 이미지·소리·저작권 고지에서도 핵심 정보를 볼 수 있다.
 
 ## 도구·라이선스 검토
 | 대상 | 사용 범위 | 확인 결과 | 남은 확인 |
@@ -8,13 +8,13 @@
 | Vite8.3.4 | 개발·정적 빌드 | 설치 패키지 MIT | 의존 라이선스 고지 보존 |
 | Three.js0.186.1 | 지구 관찰 패널 | 설치 패키지 MIT | 원저작자 고지 보존 |
 | Web Audio / Kenney Interface Sounds | 자체 합성 BGM + CC0 효과음 9종 | Kenney 공식 배포 ZIP의 License.txt 보존, MP3 변환 | 실제 기기 음량 확인 |
-| BluePlanetDisplay / BluePlanetBody | Jua / Pretendard 파생 글꼴 | SIL OFL 1.1, 부분집합·내부 이름 변경, 원문 동봉 | 새 문구 추가 시 subset-fonts.py 재실행 |
+| 나눔스퀘어 네오 | 본문·제목·숫자·SVG 글꼴 | 네이버 공식 Regular/Bold/ExtraBold WOFF2, SIL OFL 1.1 원문·출처 동봉 | 새 문구에도 공식 원본 글꼴 사용 |
 | 제공된 배경·로고·캐릭터10종 | 기존 프로젝트의 학습·메인·엔딩 그림 | 제공된 생성형AI 이미지로 기록되어 있음 | 최초 생성 계정·상업 이용권 증빙은 제공자 확인 필요 |
 | 새 섬·시설5종 | 이 요청에서 생성·적용 | 내장 image_gen 사용, 원본·이력 보존 | 납품 주체의 계정/약관·최종 권리 증빙 확인 |
 | Pillow | 전달 포맷 변환·스프라이트 추출 | 설치된 Python 라이브러리, 서비스에 배포하지 않음 | Pillow 배포 라이선스에 따른 도구 사용 |
 | Natural Earth | 로컬 육지 경계 | Public Domain | 출처 고지 유지 |
 
-상업 납품 판정: 외부 공개 배포는 하지 않았다. 제공 이미지의 최초 생성·사용권 증빙을 확인하기 전에는 상업 이용권이 전부 검증됐다고 선언하지 않는다. 비상업 전용 사진·유료 폰트·Remotion은 추가하지 않았다.
+제공 이미지의 최초 생성 계정·사용권 증빙은 납품 주체의 확인이 필요하다. 이미지 생성 이력은 `docs/IMAGE-GENERATION.md`, 운영 배포와 최종 검증은 `docs/reviews/RELEASE-REVIEW-20261111.md`에 기록한다.
 
 ## 이미지
 - 기존 PNG: logo, terrace, ending, tide, home, observatory, characters, mudflat, coast, lab. 원본을 보존하고 동일 크기 WebP를 실행 화면에서 사용한다.
@@ -42,9 +42,9 @@
 
 ## 이번 개선의 추가 에셋 (2026-10-22)
 - 수달 모아: 내장 image_gen으로 생성. 원본 `assets/moa-original.png`, 실행용 `moa.webp`, 지도용 `moa-map.webp`. 투명 알파 확인. 생성 프롬프트는 docs/EXPERIENCE-20261022.md.
-- 개념 영상 5종: 프로젝트 자체 SVG 도해를 sharp + FFmpeg로 렌더. 각 9초 / 1280×720 / 24fps, 무음 MP4·WebM와 끝 장면 WebP. Remotion 미사용, 렌더 도구는 배포하지 않음.
+- 개념 영상 5종은 2026-11-09에 HyperFrames 자체 도해로 교체했다. 1920×1080 원본을 각 15초 / 1280×720 / 30fps로 변환했으며 효과음을 포함한 MP4·WebM와 정지 그림 WebP를 제공한다. 장면·자막 시점은 `src/concept-data.js`, 소스와 검증은 `films/earth-sea-concepts/`에 있다.
 - 효과음: https://kenney.nl/assets/interface-sounds · Kenney · CC0 1.0. 원본 `License.txt`를 `public/assets/audio/Kenney-License.txt`에 보존. 원래 파일명과 사용처는 `sources.json`. MP3 변환과 음량 정규화 수행.
-- 글꼴: Google Fonts Jua / orioncactus Pretendard v1.3.9 · SIL OFL 1.1. 원본은 assets/font-sources, 파생물은 BluePlanetDisplay/BluePlanetBody로 내부 이름까지 변경. Jua-OFL.txt와 Pretendard-OFL.txt 동봉. 폰트 단독 판매나 소유권 주장은 하지 않음.
+- 현재 글꼴은 네이버 나눔스퀘어 네오 공식 원본 WOFF2다. `public/assets/fonts/SOURCE.md`에 출처가 있으며 `NanumSquareNeo-OFL.txt`에 SIL OFL 1.1 전문을 보존한다. BluePlanetDisplay/BluePlanetBody는 CSS 별칭이다. 이전 Jua·Pretendard 파생 파일과 라이선스는 과거 영상 재현 자료로 남아 있다.
 
 ## 캐릭터 목소리 (2026-11-10)
 - 부리·짱이·모아·게·이야기 내레이터 대사 39개: 모모(로컬) Qwen3-TTS 프리셋 목소리로 생성한 AI 합성 음성 · Apache-2.0. 실제 사람 목소리를 쓰지 않음.

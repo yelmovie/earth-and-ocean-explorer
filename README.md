@@ -30,11 +30,19 @@ npm run preview
 
 Windows/exFAT에서는 preview를 종료한 뒤 다시 빌드한다. 실행 중인 preview가 dist 파일을 잡으면 빌드 정리에 실패할 수 있다.
 
-배포 파일은 dist다. 상대 base와 hash 경로를 사용해 정적 하위 폴더에 제공할 수 있다. 서버·계정·외부 API·분석 요청은 없다. 외부 공개 배포는 수행하지 않았다.
+배포 파일은 dist다. 상대 base와 hash 경로를 사용한다. 운영 주소는 https://yelmovie.github.io/earth-and-ocean-explorer/ 이며 main 푸시 시 `.github/workflows/deploy.yml`이 단위 테스트·빌드를 통과한 dist를 GitHub Pages에 배포한다. 배포 결과는 Actions와 `docs/reviews/RELEASE-REVIEW-20261111.md`에서 확인한다.
+
+운영 주소·로컬 개발 주소·미리보기 주소는 서로 다른 저장 공간을 사용한다. 학생은 같은 운영 주소와 브라우저에서 이어서 활동한다.
 
 ## 검증
 Node 단위 테스트: 저장·완료·해금·인증·40개 확장 활동·지도 30개 경로를 검사한다.
-실제 Edge 조작 검증: Python Playwright가 이미 설치된 환경에서 python -X utf8 tests/browser_smoke.py를 실행한다. Playwright는 서비스 패키지에 포함하지 않는다. 결과는 artifacts/browser-verification.json과 docs/reviews에 남긴다. 학교 실제 기기 검증과 학생 효과 검증은 별도다.
+납품 브라우저 검증은 기존 Playwright 설치를 사용한다. `PLAYWRIGHT_RUNNER`에 Playwright가 설치된 package.json의 절대 경로, `BROWSER_PATH`에 Chrome 또는 Edge 실행 파일을 지정할 수 있다. 결과는 외장 SSD의 `artifacts/`에 남긴다.
+
+- 개발 서버에서 `npm run check:layout`으로 전체 활동 배치와 자동 관측을 검사한다.
+- 빌드 미리보기에서 `node tests/release-browser.mjs`로 실제 조작 완주·새로고침·인증서 출력을 검사한다.
+- `node tests/release-safety.mjs`로 저장 보호·교사 시연 분리·다중 터치를 검사한다. `QA_STATE`는 앞 완주 검사의 `completed-state.json`을 가리킨다.
+- `node tests/release-metrics.mjs`로 첫 로딩·개념 영상·음성·동작 줄이기를 검사한다.
+- `GAME_URL`로 검증할 주소, `QA_OUTPUT`으로 외장 결과 폴더를 지정한다. 학교 실제 기기와 학생의 학습효과 확인은 별도다.
 
 ## 콘텐츠 변경
 - 장/원래 관찰: src/data.js, src/screens.js, src/state.js.
@@ -58,7 +66,7 @@ Node 단위 테스트: 저장·완료·해금·인증·40개 확장 활동·지�
 
 
 ## 모아와 함께하는 조작·개념 영상
-5장마다 9초짜리 SVG 모션 그래픽을 연결했다. 활동 하단의 **개념 영상**을 누르면 볼 수 있다. 단계 완료는 영상 없이 바로 다음 활동으로 이어지고, 장 완료는 짧은 배지 화면에서 다음 장 또는 지도를 고른다. 재생·멈춤·다시 보기, 동작 줄이기 수동 재생, 재생 실패 시 개념 그림 대체를 지원한다.
+5장마다 15초짜리 개념 영상을 연결했다. 모아의 힌트를 펼쳐 **개념 영상**을 누르면 볼 수 있다. 질문·관찰·확대·정리 장면을 직접 고르고 재생·멈춤·다시 보기를 할 수 있다. 동작 줄이기 설정에서는 수동 재생하며 재생 실패 시 개념 그림을 제공한다. 장을 처음 완료하면 배지 화면에서 다음 장 또는 지도를 고르고, 재방문에서는 다음 탐사로 이어 간다.
 
 수달 모아는 지도에서 주인공의 발자국을 따라오고, 각 단계에서는 접는 힌트로 단서를 준다. 표본 분류와 확장 카드 활동은 터치 드래그·두 번 누르기를 함께 지원한다. 실험은 슬라이더와 시간에 따른 가열, 해안은 쓸어보기와 촬영, 조석은 시간 재생과 A/B 비교선, 갯벌은 끄는 돋보기를 사용한다.
 
@@ -66,4 +74,4 @@ Node 단위 테스트: 저장·완료·해금·인증·40개 확장 활동·지�
 
 `tests/flow_polish.py`는 연타·키보드·이전 저장 재개·가열 중 이탈·타임랩스·비교선 유지 회귀를 확인한다. 변경 범위와 검증 근거는 `docs/reviews/FLOW-POLISH-20261028.md`에 기록한다.
 
-`npm run check:layout`는 Edge/설치된 Python Playwright로 전체 경로와 40개 문제를 4개 해상도로 확인한다. `npm run concepts:render`는 로컬 FFmpeg와 sharp가 필요하며, 재현 경로는 scripts/render-concepts.mjs를 참고한다. 상세 변경·에셋·검증 기록은 docs/EXPERIENCE-20261022.md에 있다.
+`npm run check:layout`은 설치된 Node Playwright로 전체 활동·40개 문제·자동 관측을 확인한다. `npm run concepts:render`는 HyperFrames·FFmpeg를 사용하며, 재현 경로는 scripts/render-concepts.mjs를 참고한다. 납품 최종 근거는 `docs/reviews/RELEASE-REVIEW-20261111.md`와 `SCORE-20261111.md`에 있다.

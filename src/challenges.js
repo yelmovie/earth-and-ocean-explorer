@@ -55,7 +55,7 @@ function interaction(task,response,key,wrong=new Set()){
  return '<div class="challenge-sort-area"><div class="challenge-items">'+task.items.map(item=>'<button class="challenge-item '+(current===item.id?'selected':'')+' '+(response?.[item.id]?'assigned':'')+(wrong.has(item.id)?' recheck':'')+'" draggable="true" data-challenge-item="'+item.id+'" data-action="challenge-pick" data-value="'+item.id+'" aria-pressed="'+(current===item.id)+'"><span>'+esc(item.label)+'</span><small>'+(wrong.has(item.id)?'다시 보기':esc(task.bins.find(b=>b.id===response?.[item.id])?.label??''))+'</small></button>').join('')+'</div><div class="challenge-bins">'+task.bins.map(bin=>button('<strong>'+esc(bin.label)+'</strong><span>'+task.items.filter(x=>response?.[x.id]===bin.id).length+'개 연결</span>','challenge-bin',bin.id,'challenge-bin',!current)).join('')+'</div></div>';
 }
 function challengeAdvance(s,n,step,tasks,task,solved,done){
- if(done)return step==='c'?button('다음 · 적용하기 →','challenge-continue','','primary'):button('탐사 배지 받기 →','challenge-finish','','primary');
+ if(done)return step==='c'?button('다음 · 적용하기 →','challenge-continue','','primary'):button(s.completed.includes(n)?(n<5?'다음 탐사로 →':'최종 보고서로 →'):'탐사 배지 받기 →','challenge-finish','','primary');
  if(!solved){
   // A saved answer from the previous version can still be confirmed once.
   if(correctResponse(task,s.research[n].answers[task.id]))return button('내 생각 확인','challenge-check','','primary');
@@ -126,6 +126,7 @@ export function handleChallenge(ctx){
  if(action==='challenge-continue'){if(pageReady(s,n,'c'))navigate('s'+n+'d');return true;}
  if(action==='challenge-finish'){
   if(!baseStageValid(s,n)){feedback('앞선 관찰과 비교를 마치면 내 탐구 배지를 받을 수 있어요.');return true;}
+  if(researchReady(s,n)&&s.completed.includes(n)){navigate(n<5?'s'+(n+1)+'a':'report');return true;}
   if(researchReady(s,n)&&completeStage(s,n)){save();ctx.sound?.('reward');ctx.finishChapter(n);}
   return true;
  }

@@ -134,6 +134,7 @@ export function linkEvidence(s, index, stage, reason) {
   const c = finalCases[index];
   if (!c || stage !== c.stage || reason !== c.answer) return 'wrong';
   if (!s.completed.includes(stage)) return 'practice';
+  if (s.links[index]?.stage === stage && s.links[index]?.reason === reason) return 'already-saved';
   s.links[index] = { stage, reason };
   if (allLinked(s) && !s.issuedAt) s.issuedAt = new Date().toISOString();
   return 'saved';

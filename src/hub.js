@@ -5,8 +5,8 @@ import { canAccess } from './state.js';
 import { separateHubLabel, hubMap, hubDoors, hubResidents, hubPointBehind, hubViewZoom, hubCoverScale, clampHubZoom, clampHubView, hubScreenToWorld, anchorHubView, glideHubView, hubSegments, hubDistance, nearestHubRoad, canStandInHub, moveHubPoint, findHubPath, createHubInput } from './hub-world.js';
 
 let seenCompleted = null;
-// Loaded with the app, so the map is ready before the first visit.
-const background=new Image();background.decoding='async';background.src=`${import.meta.env?.BASE_URL??'/'}assets/expedition-map.webp`;
+// Keep the decoded map for return visits and load it on the first map entry.
+const background=new Image();background.decoding='async';
 const rect=(c,x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),w,h);};
 function poly(c,points,color){c.fillStyle=color;c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fill();}
 function ellipse(c,x,y,rx,ry,color){c.fillStyle=color;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill();}
@@ -67,6 +67,7 @@ function explorer(c,image,x,y,t,walking,facing,reduced,height){
 }
 
 export function mountHub(canvas,s,onArrive,onPosition){
+  if(!background.src)background.src=`${import.meta.env?.BASE_URL??'/'}assets/expedition-map.webp`;
   const c=canvas.getContext('2d'),wrap=canvas.closest('.map-wrap'),input=createHubInput(),pads=new Set(),padPointers=new Map(),listeners=[];
   let pos=canStandInHub(s.mapPosition)?{...s.mapPosition}:{...hubMap.spawn};
   let friend={x:pos.x-25,y:pos.y+15};if(!canStandInHub(friend))friend=hubPointBehind(pos,27);

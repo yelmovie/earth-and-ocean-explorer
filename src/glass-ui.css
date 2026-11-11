@@ -2,13 +2,17 @@
    Only chrome gets glass. Scientific evidence, colour coding and printed output do not. */
 :root{--glass-face:rgba(255,253,245,.76);--glass-read:rgba(255,253,245,.89);--glass-line:rgba(255,255,255,.84);--glass-shadow:0 8px 24px #123f4b18}
 :is(#app,body) .topbar{background:rgba(255,253,245,.55);border-color:rgba(255,255,255,.5)}
-:is(#app,body) :is(.work-panel,.challenge-card,.evidence-card,.link-board){background:var(--glass-face);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}
+:is(#app,body) :is(.work-panel,.challenge-card,.evidence-card,.link-board){background:var(--glass-read);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}
 :is(#app,body) :is(.topbar .icon-button,.step-tabs button:not(.active),.secondary,.hub-building-label,.hub-companion,.hub-resident,.hub-quest,.arrival,.moa-bubble,.guide-mini,.friend-bubble){background:var(--glass-face);border-color:var(--glass-line);box-shadow:0 3px 12px #123f4b20}
 #app #main .learning .mission-footer{background:var(--glass-face);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}
 body dialog:is(.settings-modal,.concept-dialog,.chapter-reward),:is(#app,body) :is(.record-modal,.modal){background:var(--glass-read);border:1px solid var(--glass-line);box-shadow:0 18px 60px #123f4b30}
 body dialog::backdrop{background:rgba(12,40,50,.28)}
 @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
  :is(#app,body) :is(.topbar,.hub-quest,.arrival,.moa-bubble),#app #main .learning .mission-footer,body dialog{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ :root{--glass-face:#fffdf5;--glass-read:#fffdf5}
+ :is(#app,body) .topbar{background:#fffdf5}
 }
 /* Keep action states and focus unambiguous over all backgrounds. */
 :is(#app,body) button:is(.primary,.active,.selected,[aria-pressed=true]){border-color:rgba(12,94,94,.6)}
@@ -70,7 +74,10 @@ body dialog::backdrop{background:rgba(12,40,50,.28)}
 @media(min-width:700px) and (min-height:621px){#app #main .learning :is(.work-panel,.observation-panel,.challenge-card){padding:12px}}
 @media(max-height:620px),(max-width:699px){:root{--ui-card-gap:4px;--ui-panel-gap:8px}#app .evidence-card>div:last-child{padding:12px}}
 /* Answer boards need only their content height; spare space reveals the scenery. */
-#app #main .learning :is(.work-panel,.observation-panel,.challenge-card){background:var(--glass-face)}
+#app #main .learning :is(.work-panel,.challenge-card){background:var(--glass-read)}
+#app #main .learning .observation-panel{background:var(--glass-face)}
+#app #main .learning .panel-label{color:var(--ink)}
+#app #main .learning #globe-mode{color:var(--paper);background:var(--navy)}
 @media(min-width:1100px) and (min-height:621px){#app #main .learning .challenge-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 @media(min-width:700px) and (min-height:621px){#app #main .learning .challenge-board{height:auto;max-height:100%;align-self:start}#app #main .learning .challenge-board .challenge-sort-area{flex:none}}
 @media(min-width:700px) and (min-height:621px){#app #main .learning .challenge-sort-area :is(.challenge-items,.challenge-bins){grid-auto-rows:minmax(48px,1fr);align-content:stretch}}

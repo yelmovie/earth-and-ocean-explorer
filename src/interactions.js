@@ -34,7 +34,7 @@ export function mountInteractions(app,ctx){
  }
  on(app,'input',e=>{if(e.target.matches('input[data-field]'))preview(e.target);if(e.target.matches('[data-compare]')){app.querySelector('.tide-wipe').style.setProperty('--wipe',`${e.target.value}%`);}});
  on(app,'pointerdown',e=>{
-  if(e.button!==0)return;const source=e.target.closest('[data-challenge-item],[data-sample],[data-action="challenge-order"]');const coast=e.target.closest('.coast-view'),lens=e.target.closest('.survey-lens');
+  if(e.button!==0||drag||e.isPrimary===false)return;const source=e.target.closest('[data-challenge-item],[data-sample],[data-action="challenge-order"]');const coast=e.target.closest('.coast-view'),lens=e.target.closest('.survey-lens');
   if(!source&&!lens&&(!coast||e.target.closest('button,input,label')))return;
   drag={id:e.pointerId,x:e.clientX,y:e.clientY,source,coast,lens,startPan:d.pan,moved:false};
   (source||coast||lens).setPointerCapture?.(e.pointerId);
@@ -71,4 +71,4 @@ export function mountInteractions(app,ctx){
  return ()=>{listeners.forEach(fn=>fn());ghost?.remove();drag=null;};
 }
 
-export function tideComparison(a,b,scene){return `<div class="tide-wipe" style="--wipe:50%"><div class="tide-wipe-before">${scene(a)}</div><div class="tide-wipe-after">${scene(b)}</div><div class="wipe-line"></div><span class="wipe-label label-a">A · ${timeLabel(a)}</span><span class="wipe-label label-b">B · ${timeLabel(b)}</span></div><label class="compare-slider">비교선을 움직여 같은 기둥을 살펴봐<input type="range" min="0" max="100" value="50" data-compare aria-label="A와 B 장면 비교선"></label>`;}
+export function tideComparison(a,b,scene){return `<div class="tide-wipe" style="--wipe:50%"><div class="tide-wipe-before">${scene(a)}</div><div class="tide-wipe-after">${scene(b)}</div><div class="wipe-line"></div><span class="wipe-label label-a">A · ${timeLabel(a)}</span><span class="wipe-label label-b">B · ${timeLabel(b)}</span></div><label class="compare-slider">A·B 비교선<input type="range" min="0" max="100" value="50" data-compare aria-label="A와 B 장면 비교선"></label>`;}

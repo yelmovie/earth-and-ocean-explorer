@@ -2,13 +2,13 @@ import { createRequire } from 'node:module';
 import { mkdir, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import path from 'node:path';
-const require=createRequire('/Volumes/T7 Shield/DevCaches/playwright-runner/package.json');
+const require=createRequire(process.env.PLAYWRIGHT_RUNNER||'/Volumes/T7 Shield/DevCaches/playwright-runner/package.json');
 const {chromium}=require('playwright');
-const base=process.env.GAME_URL||'http://127.0.0.1:5335';
-const out=path.resolve('artifacts/activity-viewport');await mkdir(out,{recursive:true});
-const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+const base=process.env.GAME_URL||'http://127.0.0.1:5173';
+const out=path.resolve(process.env.QA_OUTPUT||'artifacts/activity-viewport');await mkdir(out,{recursive:true});
+const browser=await chromium.launch({executablePath:process.env.BROWSER_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
 const page=await browser.newPage({viewport:{width:1280,height:800},hasTouch:true});
-page.setDefaultTimeout(10000);page.setDefaultNavigationTimeout(10000);
+page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(60000);
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
 await page.goto(base);
@@ -39,7 +39,7 @@ const audit=()=>{
   if(de.scrollHeight>innerHeight+2)issues.push(`document height ${de.scrollHeight}/${innerHeight}`);
   if(de.scrollWidth>innerWidth+2)issues.push(`document width ${de.scrollWidth}/${innerWidth}`);
   const visible=el=>el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'&&!el.closest('details:not([open]) > :not(summary)');
-  for(const el of document.querySelectorAll('.learning button,.learning select,.learning input,.learning summary')){
+  for(const el of document.querySelectorAll('.topbar button,.learning button,.learning select,.learning input,.learning summary')){
     if(!visible(el))continue;
     const r=el.getBoundingClientRect(),label=(el.getAttribute('aria-label')||el.textContent).trim().slice(0,45);
     if(r.width<47||r.height<47)issues.push(`small target ${label} [${Math.round(r.width)}x${Math.round(r.height)}]`);
@@ -69,6 +69,12 @@ const audit=()=>{
     if(ticks[i].parentElement!==ticks[j].parentElement)continue;
     const a=ticks[i].getBoundingClientRect(),b=ticks[j].getBoundingClientRect();
     if(Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>2)issues.push('overlapping beaker scale');
+  }
+  const tide=document.querySelector('.tide-wipe-before .tide-scene');
+  if(tide){
+    const rect=tide.getBoundingClientRect();
+    const paintedHeight=Math.min(rect.height,rect.width*270/480);
+    if(paintedHeight<130)issues.push(`tide comparison too small: ${Math.round(paintedHeight)}px`);
   }
   return [...new Set(issues)];
 };

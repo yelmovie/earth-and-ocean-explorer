@@ -10,6 +10,7 @@ import './science-stages.css';
 import './field-stages.css';
 import './challenge-stages.css';
 import './responsive-stages.css';
+import './glass-ui.css';
 import { showConcept, showChapterReward } from './concepts.js';
 import { mountInteractions } from './interactions.js';
 import { chapters, sites, terrains, creatures, routes, asset, finalCases, tideHeight } from './data.js';

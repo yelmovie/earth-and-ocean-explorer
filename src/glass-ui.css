@@ -1,0 +1,58 @@
+/* 2026-11-11: illustrated scenery stays visible; readable ink stays opaque.
+   Only chrome gets glass. Scientific evidence, colour coding and printed output do not. */
+:root{--glass-face:rgba(255,253,245,.76);--glass-read:rgba(255,253,245,.89);--glass-line:rgba(255,255,255,.84);--glass-shadow:0 8px 24px #123f4b18}
+:is(#app,body) .topbar{background:rgba(255,253,245,.55);border-color:rgba(255,255,255,.5)}
+:is(#app,body) :is(.work-panel,.challenge-card,.evidence-card,.link-board){background:var(--glass-face);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}
+:is(#app,body) :is(.topbar .icon-button,.step-tabs button:not(.active),.secondary,.hub-building-label,.hub-companion,.hub-resident,.hub-quest,.arrival,.moa-bubble,.guide-mini,.friend-bubble){background:var(--glass-face);border-color:var(--glass-line);box-shadow:0 3px 12px #123f4b20}
+#app #main .learning .mission-footer{background:var(--glass-face);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}
+body dialog:is(.settings-modal,.concept-dialog,.chapter-reward),:is(#app,body) :is(.record-modal,.modal){background:var(--glass-read);border:1px solid var(--glass-line);box-shadow:0 18px 60px #123f4b30}
+body dialog::backdrop{background:rgba(12,40,50,.28)}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ :is(#app,body) :is(.topbar,.hub-quest,.arrival,.moa-bubble),#app #main .learning .mission-footer,body dialog{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+}
+/* Keep action states and focus unambiguous over all backgrounds. */
+:is(#app,body) button:is(.primary,.active,.selected,[aria-pressed=true]){border-color:rgba(12,94,94,.6)}
+:is(#app,body) :is(.modal-footer,.modal-actions,.companion-tools){gap:10px}
+@media(prefers-reduced-transparency:reduce){:root{--glass-face:#fffdf5;--glass-read:#fffdf5}:is(#app,body) .topbar{background:#fffdf5}}
+@media print{body dialog,:is(#app,body) :is(.work-panel,.challenge-card,.evidence-card,.link-board){background:#fff!important;backdrop-filter:none!important;box-shadow:none!important}}
+/* Compact rows retain 48px targets, allocating space to reading rather than chrome. */
+@media(max-height:620px) and (min-width:700px){
+ #app #main .learning .challenge-layout{grid-template-columns:minmax(0,.6fr) minmax(0,1.7fr)}
+ #app #main .learning .challenge-page-count{display:none}
+ #app #main .learning :is(.challenge-card,.work-panel){padding:4px 8px}
+ #app #main .learning .challenge-option{padding:4px 6px;font-size:17px}
+ #app #main .learning .challenge-item{font-size:17px;line-height:1.25}
+ #app #main .learning .challenge-observation .visual-caption{font-size:15px;line-height:1.2}
+}
+@media(max-width:699px){
+ #app #main .learning .challenge-layout{grid-template-rows:minmax(0,.3fr) minmax(0,1fr)}
+ #app #main .learning .challenge-option{padding:5px 7px}
+}
+#app .photo-restoration{background:var(--glass-read);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}
+@media(max-height:620px){#app .photo-restoration{width:280px}#app .photo-restoration summary{font-size:17px;white-space:nowrap;padding:8px;min-height:48px}}
+@media(max-height:620px) and (min-width:700px){
+ #app:is(.route-s2c,.route-s2d) #main .learning .challenge-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
+ #app #main .learning .challenge-observation .beaker-vessel{min-height:54px;height:54px}
+ #app #main .learning .challenge-observation .beaker-pair{gap:8px;margin:0}
+ #app #main .learning .challenge-observation .visual-caption{font-size:14px;line-height:1.15;padding:4px}
+}
+@media(max-width:699px){
+ #app.route-s2b #main .learning .activity{grid-template-rows:minmax(0,1fr) minmax(0,1fr)}
+ #app.route-s2b #main .learning .choice{font-size:17px;padding:6px;min-height:48px;line-height:1.25}
+ #app.route-s2b #main .learning .choices{gap:4px}
+}
+@media(max-height:620px) and (min-width:700px){
+ #app #main .learning :is(.challenge-card,.work-panel){padding:4px 8px}
+ #app #main .learning .challenge-observation .visual-caption{margin:0;padding:2px}
+}
+@media(max-height:620px) and (min-width:700px){
+ #app #main .learning .residue-record{padding:4px;justify-content:flex-start}
+ #app #main .learning .visual-record-label{font-size:14px;padding-bottom:4px}
+ #app #main .learning .challenge-residue{padding-top:4px;gap:8px}
+ #app #main .learning .challenge-residue>div{gap:4px;font-size:16px}
+ #app #main .learning .challenge-residue i{height:60px;min-height:0;max-height:60px;max-width:120px}
+ #app #main .learning .challenge-residue small{font-size:14px;line-height:1.2}
+}
+@media(max-height:620px) and (min-width:700px){#app #main .learning .sample-tray{grid-template-columns:repeat(3,minmax(0,1fr))}#app #main .learning .sample-token{min-height:48px;flex-shrink:0}}
+
+#app .ending-records span{background:#28684f}

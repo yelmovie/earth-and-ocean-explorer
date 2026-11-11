@@ -114,11 +114,17 @@ export function mountHub(canvas,s,onArrive,onPosition){
     labels.forEach(label=>{const id=Number(label.dataset.hubStage),door=hubDoors[id-1];if(!door)return;const point=worldToScreen({x:door.buildingX,y:door.buildingY-61});const center=worldToScreen({x:door.x,y:door.y-30}),offscreen=center.x<0||center.x>width||center.y<0||center.y>height;
       // `top` is the bottom edge because CSS translates the label up 100%.
       // Reserve the complete label height below the floating common controls.
-      const clearsChip=point.x<chip.left-70||point.x>chip.right+70,labelFloor=(chip.width&&!clearsChip?chip.bottom+10:82)+(label.offsetHeight||52);
+      const photo=wrap.querySelector('.photo-restoration')?.getBoundingClientRect();
+      const clearsChip=point.x<chip.left-70||point.x>chip.right+70;
+      const photoFloor=photo&&point.x-(label.offsetWidth||160)/2<photo.right+8?photo.bottom+10:82;
+      const labelFloor=Math.max(photoFloor,chip.width&&!clearsChip?chip.bottom+10:82)+(label.offsetHeight||52);
       const labelWidth=label.offsetWidth||160,labelHeight=label.offsetHeight||52;
-      const x=Math.max(labelWidth/2+16,Math.min(width-labelWidth/2-16,point.x));
+      let x=Math.max(labelWidth/2+16,Math.min(width-labelWidth/2-16,point.x));
       let y=Math.max(labelFloor,Math.min(height-147,point.y));
-      if(!offscreen||id===next?.id){y=separateHubLabel({x,y,width:labelWidth,height:labelHeight,minY:labelFloor,maxY:Math.max(labelFloor,height-147)},placedLabels);placedLabels.push({x,y,width:labelWidth,height:labelHeight});}
+      if(!offscreen||id===next?.id){y=separateHubLabel({x,y,width:labelWidth,height:labelHeight,minY:labelFloor,maxY:Math.max(labelFloor,height-147)},placedLabels);
+        const collides=(cx,cy)=>placedLabels.some(p=>cx-labelWidth/2<p.x+p.width/2+8&&cx+labelWidth/2+8>p.x-p.width/2&&cy-labelHeight<p.y+8&&cy+8>p.y-p.height);
+        if(collides(x,y)){for(const cx of [x-labelWidth-10,x+labelWidth+10,width/2]){if(cx<labelWidth/2+16||cx>width-labelWidth/2-16)continue;const cy=separateHubLabel({x:cx,y,width:labelWidth,height:labelHeight,minY:labelFloor,maxY:Math.max(labelFloor,height-147)},placedLabels);if(!collides(cx,cy)){x=cx;y=cy;break;}}}
+        placedLabels.push({x,y,width:labelWidth,height:labelHeight});}
       label.style.left=`${x}px`;label.style.top=`${y}px`;label.classList.toggle('is-offscreen',offscreen);if(offscreen)label.style.setProperty('--edge-angle',`${Math.atan2(center.y-height/2,center.x-width/2)}rad`);label.classList.toggle('is-current',id===next?.id);label.classList.toggle('is-done',s.completed.includes(id));label.classList.toggle('is-locked',!enabled(id-1));label.setAttribute('aria-label',`${chapters[id-1].title}. ${s.completed.includes(id)?'복구 완료':enabled(id-1)?'이동하기':'잠김. 이동해서 여는 방법 듣기'}`);
     });
     if(companion){const p=worldToScreen(friend);companion.style.left=`${Math.max(30,Math.min(width-30,p.x))}px`;companion.style.top=`${Math.max(84,Math.min(height-20,p.y-46*scale))}px`;}

@@ -42,6 +42,7 @@ Node 단위 테스트: 저장·완료·해금·인증·40개 확장 활동·지�
 - 빌드 미리보기에서 `node tests/release-browser.mjs`로 실제 조작 완주·새로고침·인증서 출력을 검사한다.
 - `node tests/release-safety.mjs`로 저장 보호·교사 시연 분리·다중 터치를 검사한다. `QA_STATE`는 앞 완주 검사의 `completed-state.json`을 가리킨다.
 - `node tests/release-metrics.mjs`로 첫 로딩·개념 영상·음성·동작 줄이기를 검사한다.
+- `node tests/hub-overlay-browser.mjs`로 초기·진행 중·완료·교사 시연의 지도 안내·사진 작업대·이름표 겹침을 검사한다. `QA_STATE`는 완주 검사의 저장 파일이다.
 - `GAME_URL`로 검증할 주소, `QA_OUTPUT`으로 외장 결과 폴더를 지정한다. 학교 실제 기기와 학생의 학습효과 확인은 별도다.
 
 ## 콘텐츠 변경

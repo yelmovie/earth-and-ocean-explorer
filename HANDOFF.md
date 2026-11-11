@@ -1,3 +1,15 @@
+# 2026-11-12 납품 검증 완료
+
+main의 앱 개선 소스는 `7a98ce4`다. 공개 주소는 https://yelmovie.github.io/earth-and-ocean-explorer/ 이며 main 푸시 시 GitHub Actions가 테스트·빌드 후 Pages에 배포한다.
+
+단위 테스트59개, 학습400상태·일반56화면·글꼴81화면·탐사40장면, 운영 전체 완주·저장7항목·PDF 한 장·영상5편·음성39개 검증을 통과했다. 최종 점수는9.0/10이고 교사 검수·실물 학교 기기·기존 제공 이미지 이용권 증빙 조건이 남아 있다. 상세 근거는 `docs/reviews/RELEASE-REVIEW-20261111.md`, `SCORE-20261111.md`에 있다.
+
+11월12일 추가 대조에서 배포용 출처 고지의 최신화 누락을 복구하고 두 사본의 일치 테스트를 추가했다. 공개 기능 재확인과 모바일 지도 안내 겹침 후속 수정의 근거는 `docs/reviews/RECONCILIATION-20261112.md`에 있다.
+
+검증 파일·캐시·임시폴더는 외장 SSD를 사용한다. 기존 `output/` 자료는 보존했다. 아래는 이전 작업 기록이다.
+
+---
+
 # 푸른행성 조사본부 인계 (2026-11-09 밤 고도화)
 
 브랜치 claude/upgrade-20261109(미배포). 개념영상 5편을 HyperFrames 「모아의 탐사 노트」(15초, 효과음, 장면 질문·관찰·확대·정리)로 교체했어. 소스는 films/earth-sea-concepts, 장면 시간은 src/concept-data.js 하나로 앱 자막과 공유, 재현은 `TMPDIR=<외장> npm run concepts:render`. 글자 하한(1024 폭 ≥14px, 큰 화면 ≥18px), hover 터치 정리, 대비 수정, 오답 뒤 "다시 보기" 안내, 장별 성취기준 데이터를 넣었고, 쓰지 않는 PNG 원본은 assets/source-png로 옮겨 배포본이 52→21MB. 문구를 바꾸면 scripts/subset-fonts.py(fonttools: DevCaches/pydeps-fonttools)로 글꼴 재생성. 근거: docs/reviews/SCORE·UPGRADE-PLAN·UPGRADE-RESULT-20261109.md.
@@ -36,11 +48,3 @@
 
 ## 2026-11-07 과학 6~16 순차 개선 · 10번
 최초 예상/증거 보존, 손상·미래형식·다중탭 저장 보호, 교사 미리보기 완전 분리, 짧은 화면 툴바 가림·48px 터치 개선. 43단위 테스트와 실제 40과제 완주·8뷰포트·저장안전 검증 통과. docs/reviews/RELEASE-REVIEW-20261107.md, SCORE-20261107.md, UPGRADE-PROMPT-20261107.md 참조. 미리보기의 변경은 새로고침하면 사라지는 임시 기록이다. 정상 학생의 과거 저장은 보존한다. 커밋·배포 안 함.
-# 2026-11-12 납품 검증 완료
-
-main의 앱 개선 소스는 `7a98ce4`다. 공개 주소는 https://yelmovie.github.io/earth-and-ocean-explorer/ 이며 main 푸시 시 GitHub Actions가 테스트·빌드 후 Pages에 배포한다.
-
-58개 단위 테스트, 학습400상태·일반56화면·글꼴81화면·탐사40장면, 운영 전체 완주·저장7항목·PDF 한 장·영상5편·음성39개 검증을 통과했다. 최종 점수는9.0/10이고 교사 검수·실물 학교 기기·기존 제공 이미지 이용권 증빙 조건이 남아 있다. 상세 근거는 `docs/reviews/RELEASE-REVIEW-20261111.md`, `SCORE-20261111.md`에 있다.
-
-검증 파일·캐시·임시폴더는 외장 SSD를 사용한다. 기존 `output/` 자료는 보존했다. 아래는 이전 작업 기록이다.
-

@@ -498,6 +498,25 @@
 #app:has(.learning){padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 #app.route-home>.topbar{padding-top:max(clamp(14px,2vw,24px),env(safe-area-inset-top,0px));padding-left:max(clamp(16px,2.4vw,32px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,2.4vw,32px),env(safe-area-inset-right,0px))}
 #app .title-screen{inset:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+
+/* Keep the map mission and photo workbench clear of the shared touch controls. */
+@media(min-width:651px) and (max-width:1100px){
+  #app .hub-page .map-wrap:has(.photo-restoration) .hub-quest{top:74px;left:auto;right:16px;transform:none;width:calc(100% - 358px);max-width:540px;min-width:0}
+}
+@media(max-width:1100px){
+  #app .hub-page .map-wrap:has(.photo-restoration[open]) .hub-quest{display:none}
+  #app .hub-page .photo-restoration[open]{max-height:calc(100dvh - 190px)}
+}
+@media(max-width:650px){
+  #app.route-hub>.topbar{padding-inline:8px;gap:3px}
+  #app.route-hub>.topbar .nav-group{gap:4px}
+  #app .hub-page .map-wrap{display:block;padding-top:74px}
+  #app.route-hub:has(.admin-label) .hub-page .map-wrap{padding-top:110px}
+  #app .hub-page #hub-map{position:absolute;inset:0}
+  #app .hub-page .map-wrap .hub-quest{position:relative;top:auto;left:auto;right:auto;transform:none;width:calc(100% - 32px);max-width:none;min-width:0;margin:0 16px 8px}
+  #app .hub-page .photo-restoration{position:relative;top:auto;left:auto;margin:0 16px}
+  #app .hub-page .photo-restoration[open]{max-height:calc(100dvh - 290px)}
+}
 @media(orientation:portrait){
   #app .title-friends{top:clamp(80px,9vh,96px)}
   #app .title-friends .buri{height:clamp(140px,20vh,180px)}

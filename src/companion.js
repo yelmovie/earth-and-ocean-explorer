@@ -1,4 +1,4 @@
-import { asset } from './data.js';
+import { asset, chapters } from './data.js';
 import { pageChallenges } from './challenge-data.js';
 const hints=[
  ['서로 먼 세 곳을 스캔해 봐. 땅이 보이는 곳과 넓은 물이 보이는 곳을 모두 찾았니?','표본 카드를 육지·바다 보관함으로 옮겨 봐. 몇 곳의 개수만으로 지구 전체 넓이를 알 수 있을까?'],
@@ -11,5 +11,5 @@ export function companion(s,n,step,reveal=false){
  const task=['c','d'].includes(step)?pageChallenges(n,step)[s.research[n][step]??0]:null;
  const clue=task?.clue??hints[n-1][step==='b'?1:0];
  const safe=clue.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- return `<div class="companion-tools"><details class="moa-hint"${reveal?' open data-auto-open':''}><summary aria-label="모아의 힌트"><img src="${asset('moa')}" alt=""><span>도움말</span></summary><div class="moa-bubble"><p>${safe}</p><button data-action="concept" data-value="${n}" class="concept-replay">개념 영상</button></div></details></div>`;
+ return `<div class="companion-tools"><details class="moa-hint"${reveal?' open data-auto-open':''}><summary aria-label="모아의 힌트"><img src="${asset('moa')}" alt=""><span>도움말</span></summary><div class="moa-bubble"><p>${safe}</p><p class="concept-recall"><strong>기억할 과학 개념</strong><br>${chapters[n-1].conceptSummary}</p><button data-action="concept" data-value="${n}" class="concept-replay">개념 영상</button></div></details></div>`;
 }

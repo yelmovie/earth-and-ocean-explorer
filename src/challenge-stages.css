@@ -423,18 +423,12 @@
   gap: 12px;
 }
 
-#app .challenge-page .challenge-residue i {
-  width: min(100%, 160px);
-  border: 5px solid #8da6a0;
-  background: radial-gradient(ellipse, #d5dcd4, #eaf0e6 68%, #b9c7be);
-  box-shadow: inset 0 3px 5px #56736833, 0 5px 3px #173f4b12;
-}
-
-#app .challenge-page .challenge-residue .has-residue::after {
-  inset: 16% 14%;
-  border: 2px dotted #b6b29b;
-  background: radial-gradient(circle, #ffffff 0 2px, transparent 3px) 0 0 / 9px 9px, #f7f3dc;
-  box-shadow: inset 0 1px 4px #b6ab8066;
+#app .challenge-page .residue-observation {
+  display: block;
+  width: min(100%, 230px);
+  height: auto;
+  min-height: 0;
+  object-fit: contain;
 }
 
 #app .challenge-page .challenge-residue small {
@@ -446,7 +440,7 @@
   margin: 0;
 }
 
-#app .challenge-page .coast-detail-model svg {
+#app .challenge-page .coast-detail-model img {
   display: block;
   width: 100%;
   height: auto;

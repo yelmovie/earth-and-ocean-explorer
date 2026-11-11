@@ -29,6 +29,41 @@ test('every chapter records its curriculum source and pending teacher review hon
     }
   }
 });
+test('chapter concepts are short, curriculum-linked and supported by science sources', async () => {
+  const { chapters } = await import('../src/data.js');
+  for (const chapter of chapters) {
+    assert.ok(chapter.keyConcepts.length >= 2 && chapter.keyConcepts.length <= 3, chapter.title);
+    assert.equal(new Set(chapter.keyConcepts).size, chapter.keyConcepts.length, chapter.title);
+    assert.ok(chapter.keyConcepts.every(term => term.trim() && term.length <= 16), chapter.title);
+    assert.ok(chapter.conceptSummary.length <= 100, chapter.title);
+    assert.match(chapter.conceptSummary, /요\.$/, chapter.title);
+    assert.ok(chapter.sources.some(source => source.section.includes(chapter.standard)), chapter.title);
+    assert.ok(chapter.sources.some(source => new URL(source.url).hostname !== 'www.goe.go.kr'), chapter.title);
+  }
+  assert.match(chapters[0].objective, /대기/);
+  assert.match(chapters[1].conceptSummary, /수증기.*증발/);
+  assert.match(chapters[1].steps[1], /증발.*남은 물질/);
+  const conservation = chapters[4].conservation;
+  assert.ok(conservation.claim && conservation.evidenceLabel && conservation.action && conservation.sharePrompt);
+  assert.match(conservation.action, /구멍.*갈대.*쓰레기/);
+  assert.match(conservation.sharePrompt, /관찰한 생물.*약속.*설명/);
+});
+test('content revisions preserve recorded character lines and final answer keys', async () => {
+  const { chapters, finalCases } = await import('../src/data.js');
+  const { VOICE_TEXT } = await import('../src/voice-ids.js');
+  for (const chapter of chapters) {
+    assert.equal(chapter.goal, VOICE_TEXT[`goal-${chapter.id}`], chapter.title);
+    assert.equal(chapter.reward, VOICE_TEXT[`reward-${chapter.id}`], chapter.title);
+  }
+  assert.deepEqual(finalCases.map(item => item.answer), [1, 2, 0, 1, 2]);
+  assert.match(finalCases[1].problem, /육지의 물과 바닷물/);
+  const unknownWater = challenges[2].find(task => task.id === 'unknown-water');
+  assert.match(unknownWater.prompt, /같은 양.*같은 조건.*모두 증발/);
+  assert.match(unknownWater.options.find(option => option.id === unknownWater.answer).label, /수 있어요/);
+  const tideMatch = challenges[4].find(task => task.id === 'tide-match');
+  assert.match(tideMatch.prompt, /중간에 방향이 바뀌지 않은/);
+  assert.match(tideMatch.clue, /중간 시각의 기록/);
+});
 test('a wrong complete answer points at what to recheck without revealing the answer',async()=>{
   const { mistakeHint }=await import('../src/challenge-data.js');
   for(const tasks of Object.values(challenges))for(const t of tasks){

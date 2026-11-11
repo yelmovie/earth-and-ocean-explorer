@@ -23,7 +23,7 @@ export const expeditions = [
   ] },
   { title: '같은 해안의 두 순간', bg: 'tide', tool: 'gauge', goal: '같은 해안에서 시간차를 두고 남긴 두 관측 기록을 모아 비교해.', nodes: [
     { x: 1, y: 1, name: '첫 관측 기록', detail: '같은 기둥 앞에서 찍은 첫 기록이야. 물이 닿은 높이를 살펴봐.' },
-    { x: 4, y: 2, name: '나중 관측 기록', detail: '같은 기둥에서 나중에 찍은 기록이야. 물 높이가 올라왔어. 물이 들어오는 밀물 변화야.' },
+    { x: 4, y: 2, name: '나중 관측 기록', detail: '이 관측 모형에서는 물이 계속 들어와 높아졌어. 같은 기둥에서 밀물의 변화를 살펴봐.' },
     { x: 2, y: 4, name: '안전한 관측소', detail: '물에 잠긴 길은 이용하지 않아. 실제 체험은 현장 안내와 물때를 확인해.' },
   ] },
   { title: '갯벌 흔적 탐사', bg: 'mudflat', tool: 'lens', goal: '생물의 집을 건드리지 않고 흔적을 관찰해.', nodes: [
@@ -60,7 +60,7 @@ export function mountExpedition(host, state, save, navigate, sound) {
       const scrollTop = dialog.scrollTop;
       const { expedition, record } = make();
       const tideComparison = stage === 4 && record.found.includes(0) && record.found.includes(1)
-        ? `<section class="ocean-tide" aria-label="같은 기둥의 물 높이 비교 모형"><strong>같은 기둥, 달라진 물 높이</strong><div>${['첫 기록', '나중 기록'].map((label, index) => `<figure><div class="ocean-tide-scene ${index ? 'later' : ''}" aria-hidden="true"><i class="ocean-tide-pole"></i><i class="ocean-tide-water"></i></div><figcaption>${label}</figcaption></figure>`).join('')}</div><p>첫 기록보다 물이 높아졌어.</p></section>`
+        ? `<section class="ocean-tide" aria-label="같은 기둥의 물 높이 비교 모형"><strong>같은 기둥, 달라진 물 높이</strong><div>${['첫 기록', '나중 기록'].map((label, index) => `<figure><div class="ocean-tide-scene ${index ? 'later' : ''}" aria-hidden="true"><i class="ocean-tide-pole"></i><i class="ocean-tide-water"></i></div><figcaption>${label}</figcaption></figure>`).join('')}</div><p>물이 계속 들어와 높아지는 밀물의 관측 모형이야.</p></section>`
         : '';
       dialog.innerHTML = `
         <header><h2>${expedition.title}</h2><button data-close aria-label="탐사 닫기">${icon('close')}</button></header>

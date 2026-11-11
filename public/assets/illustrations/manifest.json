@@ -88,5 +88,101 @@
       0,
       255
     ]
+  },
+  "coast-cave": {
+    "file": "illustrations/coast-cave.webp",
+    "width": 960,
+    "height": 720,
+    "alphaRange": [
+      255,
+      255
+    ],
+    "bytes": 197780,
+    "original": "assets/generated/20261112/coast-cave.png",
+    "sha256": "528ae292a51c04ceeae649a896bab75204336661a3cd38852e8744de9979d30a",
+    "generated": "2026-11-12",
+    "sourceType": "OpenAI built-in image_gen",
+    "observationRole": "해안 동굴의 입구와 안쪽 공간. 이 그림은 어두운 끝벽이 보이고 너머 바다가 비치지 않는 예시.",
+    "reference": null
+  },
+  "coast-arch": {
+    "file": "illustrations/coast-arch.webp",
+    "width": 960,
+    "height": 720,
+    "alphaRange": [
+      255,
+      255
+    ],
+    "bytes": 186562,
+    "original": "assets/generated/20261112/coast-arch.png",
+    "sha256": "af41d252fab00dc4c375b382b478a20177fd96da7928000145b07fb2664cd1a7",
+    "generated": "2026-11-12",
+    "sourceType": "OpenAI built-in image_gen",
+    "observationRole": "가운데가 뚫려 반대편의 밝은 바다와 하늘이 보이는 해안 아치.",
+    "reference": null
+  },
+  "coast-cliff": {
+    "file": "illustrations/coast-cliff.webp",
+    "width": 960,
+    "height": 720,
+    "alphaRange": [
+      255,
+      255
+    ],
+    "bytes": 159148,
+    "original": "assets/generated/20261112/coast-cliff.png",
+    "sha256": "411057479dc0f026a3f2a759af12da1f303cb8f8f11b67296d10547340845bb8",
+    "generated": "2026-11-12",
+    "sourceType": "OpenAI built-in image_gen",
+    "observationRole": "바닷가의 가파르고 단단한 바위 면. 모래사장과 구분할 표면과 모양.",
+    "reference": null
+  },
+  "coast-sand": {
+    "file": "illustrations/coast-sand.webp",
+    "width": 960,
+    "height": 720,
+    "alphaRange": [
+      255,
+      255
+    ],
+    "bytes": 183242,
+    "original": "assets/generated/20261112/coast-sand.png",
+    "sha256": "e1cf251f9a4a8268b5dceb6b99ed89b6aef455109b88acca607e8918f5671e21",
+    "generated": "2026-11-12",
+    "sourceType": "OpenAI built-in image_gen",
+    "observationRole": "모래 알갱이로 이루어진 완만한 해변과 얕은 물의 경계.",
+    "reference": null
+  },
+  "residue-salt": {
+    "file": "illustrations/residue-salt.webp",
+    "width": 640,
+    "height": 640,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "bytes": 98800,
+    "original": "assets/generated/20261112/residue-salt.png",
+    "sha256": "f2dae216967cc6f8e9040362acdcb19475d456045621364d6144fd82cdd4ebca",
+    "generated": "2026-11-12",
+    "sourceType": "OpenAI built-in image_gen",
+    "observationRole": "같은 유리 그릇 바닥에 흰 결정이 뚜렷하게 남은 확대 관찰 그림.",
+    "reference": null
+  },
+  "residue-clear": {
+    "file": "illustrations/residue-clear.webp",
+    "width": 640,
+    "height": 640,
+    "alphaRange": [
+      0,
+      255
+    ],
+    "bytes": 45158,
+    "original": "assets/generated/20261112/residue-clear.png",
+    "sha256": "009085db070700ca8acd0f5eeb05f8d828c60a2c0bc200e60faad82ce49b0608",
+    "generated": "2026-11-12",
+    "sourceType": "OpenAI built-in image_gen",
+    "observationRole": "residue-salt 원본을 참조해 용기 형태를 유지하고 결정 더미를 제거한 관찰 그림. 이번 표본의 남은 물질이 적음.",
+    "reference": "assets/generated/20261112/residue-salt.png"
   }
 }

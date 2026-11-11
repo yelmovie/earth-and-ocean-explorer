@@ -6,7 +6,7 @@ export function freshState() {
   return { version: 2, contentVersion: 3, research: freshResearch(), route: 'home', resume: 'hub', history: [], settings: { muted: false, bgmEnabled: true, sfxEnabled: true, volume: 0.35, unlockAll: false, flatGlobe: false }, drafts: {
     1: { samples: [], atmosphere: false, classifications: {}, conclusion: '' },
     2: { fresh: 40, sea: 60, heatFresh: 1, heatSea: 2, prediction: '', firstPrediction: '', prepared: false, heated: false, seenBefore: false, seenAfter: false, view: 'before', residue: '', reason: '' },
-    3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand' },
+    3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand', photoVersion: 2 },
     4: { time: 0, a: null, b: null, markers: [], direction: '', concept: '' },
     5: { found: [], features: {}, selected: '', value: '', action: '' },
   }, expeditions: {}, restoration: {}, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null };
@@ -23,7 +23,13 @@ function sanitizedDraft(n,d) {
   }
   if(n===1)out.samples=out.samples.filter(id=>sites.some(s=>s.id===id));
   if(n===2){for(const k of ['fresh','sea'])if(![20,40,60].includes(out[k]))out[k]=40;for(const k of ['heatFresh','heatSea'])if(![1,2].includes(out[k]))out[k]=1;}
-  if(n===3){out.photos=out.photos.filter(id=>terrains.some(s=>s.id===id));out.pan=Math.max(0,Math.min(100,out.pan));if(!terrains.some(t=>t.id===out.target))out.target='sand';}
+  if(n===3){
+    out.photos=out.photos.filter(id=>terrains.some(s=>s.id===id));
+    out.pan=Math.max(0,Math.min(100,out.pan));
+    if(!terrains.some(t=>t.id===out.target))out.target='sand';
+    // Saved coordinates belong to the photo version used when they were placed.
+    out.photoVersion=d.photoVersion===2?2:1;
+  }
   if(n===4)out.time=Math.max(0,Math.min(6,Math.round(out.time)));
   if(n===5)out.found=out.found.filter(id=>creatures.some(s=>s.id===id));
   return out;
@@ -97,6 +103,33 @@ export function previewState(student) {
   preview.settings.unlockAll = true;
   return preview;
 }
+export function tideIntervalDirection(a, b) {
+  if (!Number.isInteger(a) || !Number.isInteger(b) || a < 0 || b > 6 || a >= b) return null;
+  const direction = Math.sign(tideHeight(b) - tideHeight(a));
+  if (!direction) return null;
+  for (let time = a + 1; time <= b; time++) {
+    if (Math.sign(tideHeight(time) - tideHeight(time - 1)) !== direction) return null;
+  }
+  return direction > 0 ? 'up' : 'down';
+}
+
+export function recordTideObservation(s, slot, time) {
+  if (!['a', 'b'].includes(slot) || !Number.isInteger(time) || time < 0 || time > 6) return 'invalid';
+  const draft = s.drafts[4];
+  if (slot === 'b') {
+    if (!Number.isInteger(draft.a)) return 'choose-a';
+    if (time <= draft.a) return 'not-later';
+    if (!tideIntervalDirection(draft.a, time)) return 'turns';
+  }
+  if (draft[slot] === time) return 'saved';
+  draft[slot] = time;
+  if (slot === 'a' && draft.b !== null && !tideIntervalDirection(time, draft.b)) draft.b = null;
+  draft.markers = [];
+  draft.direction = '';
+  draft.concept = '';
+  return 'saved';
+}
+
 export function aReady(s, n) {
   const d = s.drafts[n];
   if (n === 1) return new Set(d.samples).size >= 3 && d.atmosphere && ['육지', '바다'].every(t => d.samples.some(id => sites.find(v => v.id === id)?.type === t));
@@ -125,6 +158,8 @@ export function canAccess(s, route) {
 export function stageValid(s,n) { return baseStageValid(s,n)&&researchReady(s,n); }
 export function evidenceFor(s, n) { return { title: chapters[n - 1].evidence, data: structuredClone(s.drafts[n]), contentVersion:3, research:structuredClone(s.research[n]) }; }
 export function completeStage(s, n) {
+  // Archived evidence keeps its original endpoint comparison; new records need one continuous direction.
+  if (n === 4 && !(s.completed.includes(4) && s.evidence[4]) && !tideIntervalDirection(s.drafts[4].a, s.drafts[4].b)) return false;
   if (!stageValid(s, n)) return false;
   if (!s.completed.includes(n)) s.completed.push(n);
   if (!s.evidence[n]) s.evidence[n] = evidenceFor(s, n); return true;

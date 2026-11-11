@@ -59,3 +59,11 @@
 ## 공개 배포와 고지 사본
 
 운영 주소는 [푸른행성 조사본부](https://yelmovie.github.io/earth-and-ocean-explorer/)다. 저장소의 `assets/CREDITS.md`와 배포용 `public/assets/CREDITS.md`는 같은 내용을 유지한다. 공개 배포에서는 `assets/CREDITS.md`로 제공한다.
+
+## 2026-11-12 해안과 증발 결과 관찰 그림
+
+- 내장 OpenAI image_gen으로 해안 4종과 그릇 바닥 2종을 개별 생성했다. 원본은 외장 SSD 프로젝트의 assets/generated/20261112/에 보존했다.
+- coast-cave·coast-arch·coast-cliff·coast-sand는 960×720 WebP다. residue-salt·residue-clear는 640×640 투명 WebP다. SHA-256, 크기, 바이트 수와 알파 범위는 public/assets/illustrations/manifest.json에 기록했다.
+- 해안은 학습용 재현 그림이다. 동굴과 아치의 비교는 표시한 예시의 관찰 특징을 다룬다. 그릇 그림은 이번 가열 실험의 결과를 확대한 예시이며 실제 성분·염분을 정량 측정한 자료가 아니다.
+- 새 해안 사진은 photoVersion 2 기록에서 사용한다. 이전 핀 좌표가 있는 기록은 기존 사진을 표시한다.
+- 생성 플랫폼과 납품 계정의 이용 조건·권리 증빙은 납품 주체가 확인한다. 제작 범위와 프롬프트 요지는 docs/IMAGE-GENERATION.md에 기록했다.

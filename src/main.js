@@ -16,7 +16,7 @@ import './glass-ui.css';
 import { showConcept, showChapterReward } from './concepts.js';
 import { mountInteractions } from './interactions.js';
 import { chapters, sites, terrains, creatures, routes, asset, tideHeight } from './data.js';
-import { freshState, loadState, saveState, recordPrediction, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
+import { freshState, loadState, saveState, recordPrediction, recordTideObservation, tideIntervalDirection, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
 import { home, hub, learning, report, link, ending, certificate, recordDetail, tideScene, esc, character } from './screens.js';
 import { mountHub } from './hub.js';
 import { icon } from './icons.js';
@@ -25,7 +25,7 @@ import { createVoice, hasVoice } from './voice.js';
 import { VOICE_TEXT } from './voice-ids.js';
 import { settingsContent as copy } from './settingsContent.js';
 import { handleChallenge, mountChallenges } from './challenges.js';
-import { mountActivityFlow, startActivityHeating } from './activity-flow.js';
+import { mountActivityFlow, startActivityHeating, stageGuide } from './activity-flow.js';
 let cleanupActivityFlow;
 
 const app=document.querySelector('#app');
@@ -56,6 +56,47 @@ function navigate(route,{back=false,push=true}={}){
 }
 function previous(){let r;while(state.history.length){const candidate=state.history.pop();if(candidate!==state.route&&canAccess(state,candidate)){r=candidate;break;}}navigate(r||'hub',{back:true});}
 function feedback(message,good=false){const hint=[...document.querySelectorAll('#hint, .challenge-feedback')].find(el=>el.getClientRects().length);if(hint){hint.textContent=message;hint.classList.toggle('good',good);}else{let toast=document.querySelector('#toast');if(!toast){toast=document.createElement('div');toast.id='toast';toast.setAttribute('role','status');document.body.append(toast);}toast.textContent=message;toast.className=good?'show good':'show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.className='',3600);}tone(good?660:330);}
+function restoreLinkDraft(){
+  if(state.finalDraft.stage!==null||state.finalDraft.reason!==null)return;
+  const saved=state.links[state.finalDraft.caseIndex];
+  if(saved){state.finalDraft.stage=saved.stage;state.finalDraft.reason=saved.reason;}
+}
+function syncLinkGuidance(){
+  if(state.route!=='link')return;
+  const index=state.finalDraft.caseIndex,saved=state.links[index],complete=allLinked(state);
+  const linked=Boolean(saved)&&saved.stage===state.finalDraft.stage&&saved.reason===state.finalDraft.reason;
+  const ready=state.finalDraft.stage!==null&&state.finalDraft.reason!==null;
+  const check=app.querySelector('[data-action="check-link"]'),hint=app.querySelector('#hint');
+  const next=app.querySelector('[data-link-next],.link-actions [data-action="case"]');
+  const ending=app.querySelector('.link-actions [data-action="go"][data-value="ending"]');
+  app.querySelectorAll('.next-target').forEach(element=>element.classList.remove('next-target'));
+  if(check){
+    check.disabled=linked||!ready;
+    check.setAttribute('aria-describedby','hint');
+    check.classList.toggle('is-ready',ready&&!linked);
+    check.textContent=linked?'✓ 연결 완료':'연결 확인';
+  }
+  let target;
+  if(complete&&linked){
+    if(hint)hint.textContent='다섯 상황 연결 완료! 복구된 이야기 보기를 눌러요.';
+    target=ending;
+  }else if(linked){
+    if(hint)hint.textContent='이 상황을 연결했어요. 남은 상황을 이어 풀어요.';
+    target=next;
+  }else if(state.finalDraft.stage===null){
+    if(hint)hint.textContent='1. 상황을 읽고 알맞은 내 조사 기록을 골라요.';
+    target=app.querySelector('.evidence-options');
+  }else if(state.finalDraft.reason===null){
+    if(hint)hint.textContent='2. 이 기록이 상황을 설명하는 까닭을 골라요.';
+    target=app.querySelector('[data-field="linkReason"]')?.closest('.choices');
+  }else{
+    if(hint)hint.textContent='증거와 이유를 골랐어요. 연결 확인을 눌러요.';
+    target=check;
+  }
+  target?.classList.add('next-target');
+  next?.classList.toggle('is-ready',linked&&!complete);
+  ending?.classList.toggle('is-ready',complete&&linked);
+}
 function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button>${state.route==='hub'?`<button class="icon-button" data-hub-hand aria-pressed="false" aria-label="손으로 지도 움직이기" title="손으로 지도 움직이기">${icon('hand')}</button><button class="icon-button" data-hub-overview aria-pressed="false" aria-label="지도 전체 보기" title="지도 전체 보기">${icon('expand')}</button>`:''}</div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group"><button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button><button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
 async function render(){
   cleanupExpedition?.();cleanupExpedition=null;
@@ -64,6 +105,7 @@ async function render(){
   if(state.route==='s4b'&&app.classList.contains('route-s4b'))local.tideWipe=app.querySelector('[data-compare]')?.value??local.tideWipe;
   const focused=document.activeElement?.closest('[data-action],[data-field]');const focusSelector=focused?.dataset.action?`[data-action="${CSS.escape(focused.dataset.action)}"][data-value="${CSS.escape(focused.dataset.value??'')}"]${focused.dataset.field?`[data-field="${CSS.escape(focused.dataset.field)}"]`:''}`:focused?.dataset.field?`[data-field="${CSS.escape(focused.dataset.field)}"]`:null;
   cleanupInteractions?.();cleanupInteractions=null;cleanupChallenges?.();cleanupChallenges=null;controller?.dispose();controller=null;const ticket=++epoch;const r=state.route,m=/^s([1-5])([abcd])$/.exec(r);
+  if(r==='link')restoreLinkDraft();
   let content=r==='home'?home(state):r==='hub'?hub(state):m?learning(state,+m[1],m[2]):r==='report'?report(state):r==='link'?link(state,{caseIndex:state.finalDraft.caseIndex,linkStage:state.finalDraft.stage,linkReason:state.finalDraft.reason}):r==='ending'?ending(state):certificate(state);
   const bg=r==='home'?'home':m?chapters[+m[1]-1].asset:r==='ending'?'ending':'terrace';
   app.className=`app route-${r}`;app.style.setProperty('--scene',`url("${asset(bg)}")`);
@@ -75,6 +117,7 @@ async function render(){
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
   cleanupActivityFlow=mountActivityFlow(app,context());
+  syncLinkGuidance();
   const taskProgress=app.querySelector('.challenge-progress');
   if(taskProgress)app.querySelector('.challenge-board-heading')?.replaceChildren(taskProgress);
   document.querySelector('h1')?.setAttribute('tabindex','-1');
@@ -187,6 +230,9 @@ document.addEventListener('click',async e=>{
   if(action==='reset-ask'){const confirmation=document.querySelector('#reset-confirm');confirmation.hidden=false;confirmation.scrollIntoView({block:'nearest'});confirmation.querySelector('[data-action="reset-cancel"]').focus();return;}
   if(action==='reset-cancel'){document.querySelector('#reset-confirm').hidden=true;document.querySelector('[data-action="reset-ask"]').focus();return;}
   if(action==='reset-confirm'){const sounds={muted:state.settings.muted,volume:state.settings.volume,bgmEnabled:state.settings.bgmEnabled,sfxEnabled:state.settings.sfxEnabled};state=freshState();Object.assign(state.settings,sounds);warning='';if(studentState)state.settings.unlockAll=true;save({reset:true});audioPlayer.sync();closeSettings();navigate('home');return;}
+  if(n===4&&['next','complete'].includes(action)&&!tideIntervalDirection(d.a,d.b)){
+    feedback('1. 관찰에서 물이 한 방향으로 변하는 두 순간을 다시 골라요.');return;
+  }
   if(handleChallenge({...context(),action,value,button,event:e}))return;
   if(action==='concept'){voice.stop();playConcept(+value);return;}
   if(action==='voice-replay'){if(lastVoice)voice.play(lastVoice);return;}
@@ -195,26 +241,43 @@ document.addEventListener('click',async e=>{
   if(action==='choose'){updateField(button.dataset.field,value);tone();return;}
   if(action==='site'){observeSite(value);return;}
   if(action==='rotate'){controller?.rotate?.(+value);return;}
-  if(action==='atmosphere'){d.atmosphere=true;save();render();feedback('지구를 둘러싼 공기인 대기를 관찰했어. 구름만 대기인 것은 아니야.',true);return;}
+  if(action==='atmosphere'){d.atmosphere=true;save();render();feedback(aReady(state,1)?stageGuide(state)[0]:'지구를 둘러싼 공기인 대기를 관찰했어. 구름만 대기인 것은 아니야.',true);return;}
   if(action==='next'){
     if(n===2)d.prepared=d.fresh===d.sea&&d.heatFresh===d.heatSea&&Boolean(d.prediction);
     if(!aReady(state,n)){const hints=['세 곳 이상에서 육지·바다를 모두 스캔하고 대기를 관찰해 줘.','물의 양과 가열 세기를 각각 같게 맞추고 예상을 골라 줘.','네 가지 지형을 모두 촬영해 줘.','A보다 나중 시각을 B에 저장해. 물 높이가 서로 달라야 비교할 수 있어.','세 생물 모두 보이는 특징을 골라 도감에 기록해 줘.'];feedback(hints[n-1]);return;}save();navigate(`s${n}b`);return;
   }
   if(action==='heat'){startActivityHeating();return;}
   if(action==='experiment-view'){if(value==='before')d.seenBefore=true;else d.seenAfter=true;d.view=value;save();render();return;}
-  if(action==='target'){const terrain=terrains.find(t=>t.id===value);if(!terrain)return;d.target=value;const fresh=!d.photos.includes(value);if(fresh)d.photos.push(value);save();render();if(fresh){feedback(d.photos.length===4?'사진 네 장 완성! 앨범에서 특징을 비교해 보자.':`${terrain.name} 촬영 완료 · ${d.photos.length} / 4`,true);sound('camera');document.querySelector('.coast-view')?.classList.add('photo-captured');}return;}
+  if(action==='target'){const terrain=terrains.find(t=>t.id===value);if(!terrain)return;d.target=value;const fresh=!d.photos.includes(value);if(fresh)d.photos.push(value);save();render();if(fresh){feedback(d.photos.length===4?stageGuide(state)[0]:`${terrain.name} 촬영 완료 · ${d.photos.length} / 4`,true);sound('camera');document.querySelector('.coast-view')?.classList.add('photo-captured');}return;}
   if(action==='pin'){sound('drop');const r=button.getBoundingClientRect();d.pins[value]={x:e.detail===0?50:Math.min(95,Math.max(5,(e.clientX-r.left)/r.width*100)),y:e.detail===0?50:Math.min(95,Math.max(5,(e.clientY-r.top)/r.height*100))};save();render();return;}
-  if(action==='tide-save'){d[value]=d.time;save();render();return;}
+  if(action==='tide-save'){
+    const result=recordTideObservation(state,value,d.time);
+    if(result==='saved'){save();render();return;}
+    const messages={
+      'choose-a':'A부터 먼저 담아요. 그런 다음 시간을 움직여 B를 골라요.',
+      'not-later':'A보다 나중 시각을 B에 담아요.',
+      turns:'물이 한 방향으로 변하는 두 순간을 골라요. 시간을 다시 살펴봐요.',
+    };
+    feedback(messages[result]||'서로 다른 물 높이를 골라 A와 B에 담아요.');return;
+  }
   if(action==='marker'){if(!d.markers.includes(value))d.markers.push(value);save();render();return;}
   if(action==='creature'){sound('scan');d.selected=value;save();render();return;}
-  if(action==='observe-feature'){const creature=creatures.find(c=>c.id===button.dataset.creature);if(!creature||d.selected!==creature.id)return;const id=creature.id;if(d.features[id]===value&&(value!==creature.feature||d.found.includes(id)))return;d.features[id]=value;if(value!==creature.feature){d.found=d.found.filter(found=>found!==id);state.revised++;save();render();feedback('확대해서 본 생김새와 움직임을 다시 살펴봐. 알맞은 특징을 다시 골라 줘.');return;}if(!d.found.includes(id))d.found.push(id);save();render();feedback(d.found.length===3?'세 생물의 도감 완성! 이제 갯벌을 지킬 방법을 생각해 보자.':`${creature.name} 기록 완료! 다른 흔적도 찾아봐.`,true);return;}
+  if(action==='observe-feature'){const creature=creatures.find(c=>c.id===button.dataset.creature);if(!creature||d.selected!==creature.id)return;const id=creature.id;if(d.features[id]===value&&(value!==creature.feature||d.found.includes(id)))return;d.features[id]=value;if(value!==creature.feature){d.found=d.found.filter(found=>found!==id);state.revised++;save();render();feedback('확대해서 본 생김새와 움직임을 다시 살펴봐. 알맞은 특징을 다시 골라 줘.');return;}if(!d.found.includes(id))d.found.push(id);save();render();feedback(d.found.length===3?stageGuide(state)[0]:`${creature.name} 기록 완료! 다른 흔적도 찾아봐.`,true);return;}
   if(action==='complete'){
     if(!aReady(state,n)){feedback('연습 화면이야. 앞의 관찰을 완료해야 실제 증거로 저장할 수 있어.');return;}
     if(!completeStage(state,n)){state.revised++;save();const hints=['내 표본을 모두 분류한 뒤, 전체 면적 자료와 구분한 설명을 골라 줘.','가열 전후를 확인해. 어느 쪽에 흔적이 더 남았고, 그 물질은 어디에서 왔을까?','사진 네 장에 핀과 알맞은 특징을 연결하고 두 바위의 차이를 비교해 줘.','기둥과 바위를 모두 비교해. A에서 B로 물 높이가 어떻게 변했는지 살펴봐.','직접 관찰한 생물의 집과 연결되는 가치·보호 행동을 골라 줘.'];feedback(hints[n-1]);openWrongStep(n);return;}save();navigate('hub');feedback(chapters[n-1].reward,true);return;
   }
-  if(action==='case'){state.finalDraft={caseIndex:+value,stage:null,reason:null};save();render();return;}
+  if(action==='case'){const linked=state.links[+value];state.finalDraft={caseIndex:+value,stage:linked?.stage??null,reason:linked?.reason??null};save();render();return;}
   if(action==='link-stage'){state.finalDraft.stage=+value;save();render();return;}
-  if(action==='check-link'){const result=linkEvidence(state,+value,state.finalDraft.stage,state.finalDraft.reason);if(result==='already-saved')return;if(result==='wrong'){state.revised++;save();feedback('상황 속 관찰과 기록의 내용을 비교해 봐. 증거와 설명이 둘 다 맞아야 연결돼.');}else if(result==='practice'){feedback('연습 연결은 맞았어! 해당 장을 조사하면 내 증거로 실제 연결할 수 있어.',true);}else{save();render();feedback(allLinked(state)?'모든 기록을 연결했어! 이제 복구된 이야기를 만나자.':'내 조사 증거로 연결했어! 다음 상황도 해결해 보자.',true);if(allLinked(state))sound('reward');}return;}
+  if(action==='check-link'){
+    if(state.finalDraft.stage===null||state.finalDraft.reason===null){syncLinkGuidance();return;}
+    const result=linkEvidence(state,+value,state.finalDraft.stage,state.finalDraft.reason);
+    if(result==='already-saved'){syncLinkGuidance();return;}
+    if(result==='wrong'){state.revised++;save();feedback('상황 속 관찰과 기록의 내용을 비교해 봐. 증거와 설명이 둘 다 맞아야 연결돼.');}
+    else if(result==='practice'){feedback('연습 연결은 맞았어! 해당 장을 조사하면 내 증거로 실제 연결할 수 있어.',true);}
+    else{save();render();tone(660);if(allLinked(state))sound('reward');}
+    return;
+  }
   if(action==='print'){if(!studentState&&allLinked(state))window.print();return;}
 });
 window.addEventListener('popstate',()=>{const r=location.hash.slice(1)||'home';if(canAccess(state,r))navigate(r,{back:true,push:false});else{window.history.replaceState({route:'hub'},'','#hub');navigate('hub',{back:true,push:false});}});

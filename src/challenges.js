@@ -1,13 +1,15 @@
 import { companion } from './companion.js';
 import { chapters, asset } from './data.js';
 import { pageChallenges, correctResponse, pageReady, researchReady, mistakeHint } from './challenge-data.js';
-import { baseStageValid, completeStage } from './state.js';
+import { aReady, baseStageValid, completeStage, tideIntervalDirection } from './state.js';
 import { icon } from './icons.js';
 import { specimen } from './specimens.js';
+import { illustration } from './illustrations.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const button=(text,action,value='',cls='',disabled=false)=>'<button class="'+cls+'" data-action="'+action+'" data-value="'+esc(value)+'" '+(disabled?'disabled':'')+'>'+text+'</button>';
+const button=(text,action,value='',cls='',disabled=false)=>'<button class="'+cls+'" data-action="'+action+'" data-value="'+esc(value)+'"'+(cls.includes('primary')?' aria-describedby="challenge-guidance"':'')+' '+(disabled?'disabled':'')+'>'+text+'</button>';
 const selected=new Map();const errors=new Set();const revealHint=new Set();// 오답 직후 한 번만 도움말을 펼친다(다음 조작 때 다시 덮지 않게).
 const ids=s=>{const m=/^s([1-5])([cd])$/.exec(s.route);if(!m)return null;const n=+m[1],step=m[2],r=s.research[n],tasks=pageChallenges(n,step),task=tasks[r[step]??0];return {n,step,r,tasks,task,key:n+'-'+task.id};};
+const needsTideReview=(s,n)=>n===4&&!s.completed.includes(n)&&s.drafts[n].a!==null&&s.drafts[n].b!==null&&!tideIntervalDirection(s.drafts[n].a,s.drafts[n].b);
 function visual(task,n){
  if(task.art==='ratio')return '<div class="ratio-grid" role="img" aria-label="지구 전체 면적을 같은 크기의 칸으로 단순화한 비교 그림. 물결 무늬는 바다, 점 무늬는 육지예요.">'+Array.from({length:20},(_,i)=>'<i aria-hidden="true" class="'+(i<14?'sea':'land')+'"></i>').join('')+'<p><span class="legend-sea">바다 · 물결</span><span class="legend-land">육지 · 점</span></p></div><p class="visual-caption">같은 크기의 칸으로 전체 넓이를 비교한 모형이에요.</p>';
  if(['incoming','outgoing','tide'].includes(task.art)){
@@ -24,11 +26,11 @@ function visual(task,n){
  }
  if(task.art==='residue'){
   const unknown=task.id==='unknown-water';
-  return '<div class="residue-record"><span class="visual-record-label">가열 뒤의 관찰 기록</span><div class="challenge-residue">'+(unknown?[['표본 A',true],['표본 B',false]]:[['육지의 물',false],['바닷물',true]]).map(([label,residue])=>'<div><span>'+label+'</span><i class="'+(residue?'has-residue':'')+'" role="img" aria-label="'+(residue?'흰 물질이 뚜렷하게 남은 그릇':'남은 물질이 거의 보이지 않는 그릇')+'"></i><small>'+(residue?'흰 흔적이 더 뚜렷해요':'거의 남지 않았어요')+'</small></div>').join('')+'</div></div><p class="visual-caption">물은 줄어들고, 녹아 있던 물질은 그릇에 남을 수 있어요.</p>';
+  return '<div class="residue-record"><span class="visual-record-label">이번 실험 · 그릇 바닥 확대</span><div class="challenge-residue">'+(unknown?[['표본 A',true],['표본 B',false]]:[['육지의 물',false],['바닷물',true]]).map(([label,residue])=>'<div><span>'+label+'</span><img class="residue-observation" src="'+illustration(residue?'residue-salt':'residue-clear')+'" alt="'+(residue?'가열한 그릇 바닥에 흰 알갱이가 뚜렷하게 남은 관찰 그림':'이번 표본의 그릇 바닥에 남은 물질이 적게 보이는 관찰 그림')+'" width="640" height="640" decoding="async"><small>'+(residue?'흰 흔적이 더 뚜렷해요':'이번 표본은 적게 남았어요')+'</small></div>').join('')+'</div></div><p class="visual-caption">물은 줄어들고, 녹아 있던 물질은 그릇에 남을 수 있어요.</p>';
  }
  if(['arch','cliff'].includes(task.art)){
   const arch=task.art==='arch';
-  return '<figure class="coast-detail-model"><svg viewBox="0 0 380 260" role="img" aria-label="'+(arch?'바위의 뚫린 공간 너머로 하늘과 바다가 보이는 해안':'단단한 바위 면이 높고 가파르게 서 있는 해안')+'"><rect width="380" height="260" fill="#cfe8ed"/><path d="M0 134q90-9 190 3t190-6V260H0Z" fill="#65b4bc"/><path d="M0 173q90-6 190 8t190-5" stroke="#e1f3eb" stroke-width="5" fill="none"/><path d="M0 218Q150 195 380 222V260H0Z" fill="#d3bd92"/>'+(arch?'<path d="M62 214 72 107 100 72 146 58 198 65 247 90 264 218Z" fill="#928c77"/><path d="M62 214 72 107 100 72 146 58 129 92 109 218Z" fill="#b2aa8c"/><path d="M130 222V139q0-39 34-40t39 42v81Z" fill="#cfe8ed"/><path d="M130 150q33-4 73 0v72h-73Z" fill="#65b4bc"/><path d="M131 180q33 4 72 0" fill="none" stroke="#e1f3eb" stroke-width="4"/><path d="m98 100 21-5m97 12 25 9m-149 40 17-3m102 30 42 9" stroke="#716f61" stroke-width="4"/>':'<path d="M0 49 79 28 153 43 222 22 249 57 245 206 193 222 128 205 76 217 0 200Z" fill="#a29e85"/><path d="m79 28 20 167 29 10-5-169zm74 15 12 165 28 14-2-193zm69-21 27 35-4 149-25 9Z" fill="#7c8276"/><path d="M0 49 79 28 153 43 222 22 249 57 216 66 154 61 78 49 0 67Z" fill="#a7bb86"/><path d="m39 91 49-4m27 46 43 5m40-38 45-8m-91 95 32-6" stroke="#6e796f" stroke-width="4"/>')+'<path d="M281 219h38m7-21h37M278 155h25" fill="none" stroke="#dff1e6" stroke-width="3"/></svg><figcaption>재료와 모양을 살펴보는 해안 모형</figcaption></figure>';
+  return '<figure class="coast-detail-model"><img src="'+illustration(arch?'coast-arch':'coast-cliff')+'" alt="'+(arch?'바위의 뚫린 공간 너머로 하늘과 바다가 보이는 해안':'단단한 바위 면이 높고 가파르게 서 있는 해안')+'"><figcaption>재료와 모양을 살펴보는 학습용 그림</figcaption></figure>';
  }
  return '<div class="challenge-art" style="background-image:url('+asset(chapters[n-1].asset)+')" role="img" aria-label="'+esc(chapters[n-1].short)+' 탐사 장면"></div>';
 }
@@ -43,10 +45,10 @@ function responseComplete(task,response){
  return task.items.every(item=>task.bins.some(bin=>bin.id===response?.[item.id]));
 }
 function progressText(task,response){
- if(task.type==='choice')return '답을 고르면 바로 확인돼요.';
- if(task.type==='multi'){const count=response?.length??0;return count>task.answer.length?'두 가지만 남겨 주세요. 선택한 답을 다시 누르면 취소돼요.':count+' / '+task.answer.length+'개 선택 · 두 가지를 고르면 바로 확인돼요.';}
- if(task.type==='order')return (response?.length??0)+' / '+task.items.length+'장 배치 · 모두 놓으면 바로 확인돼요.';
- return task.items.filter(item=>response?.[item.id]).length+' / '+task.items.length+'개 연결 · 강조된 카드의 알맞은 곳을 눌러요.';
+ if(task.type==='choice')return '자료를 보고 답 한 가지를 눌러요. 바로 확인돼요.';
+ if(task.type==='multi'){const count=response?.length??0;return count>task.answer.length?task.answer.length+'개만 남겨요. 선택한 답을 다시 누르면 취소돼요.':count+' / '+task.answer.length+'개 선택 · '+(task.answer.length-count)+'개 더 골라요.';}
+ if(task.type==='order')return (response?.length??0)+' / '+task.items.length+'장 배치 · 다음에 올 카드를 눌러요.';
+ return task.items.filter(item=>response?.[item.id]).length+' / '+task.items.length+'개 연결 · 강조된 카드의 자리를 골라요.';
 }
 function interaction(task,response,key,wrong=new Set()){
  if(task.type==='choice'||task.type==='multi')return '<div class="challenge-options">'+task.options.map((o,i)=>{const chosen=task.type==='multi'?(response??[]).includes(o.id):response===o.id;return '<button class="challenge-option '+(chosen?'selected':'')+(wrong.has(o.id)?' recheck':'')+'" data-action="challenge-answer" data-value="'+esc(o.id)+'" aria-pressed="'+chosen+'"><span class="option-key">'+(i+1)+'</span><span>'+esc(o.label)+'</span>'+(task.type==='multi'?icon(chosen?'check':'circle'):'')+'</button>';}).join('')+'</div>';
@@ -55,19 +57,33 @@ function interaction(task,response,key,wrong=new Set()){
  return '<div class="challenge-sort-area"><div class="challenge-items">'+task.items.map(item=>'<button class="challenge-item '+(current===item.id?'selected':'')+' '+(response?.[item.id]?'assigned':'')+(wrong.has(item.id)?' recheck':'')+'" draggable="true" data-challenge-item="'+item.id+'" data-action="challenge-pick" data-value="'+item.id+'" aria-pressed="'+(current===item.id)+'"><span>'+esc(item.label)+'</span><small>'+(wrong.has(item.id)?'다시 보기':esc(task.bins.find(b=>b.id===response?.[item.id])?.label??''))+'</small></button>').join('')+'</div><div class="challenge-bins">'+task.bins.map(bin=>button('<strong>'+esc(bin.label)+'</strong><span>'+task.items.filter(x=>response?.[x.id]===bin.id).length+'개 연결</span>','challenge-bin',bin.id,'challenge-bin',!current)).join('')+'</div></div>';
 }
 function challengeAdvance(s,n,step,tasks,task,solved,done){
- if(done)return step==='c'?button('다음 · 적용하기 →','challenge-continue','','primary'):button(s.completed.includes(n)?(n<5?'다음 탐사로 →':'최종 보고서로 →'):'탐사 배지 받기 →','challenge-finish','','primary');
+ const readyClass='primary is-ready next-target';
+ if(done){
+  if(step==='c')return button('다음 · 적용하기 →','challenge-continue','',readyClass);
+  if(needsTideReview(s,n))return button('관찰 다시 하기 →','go','s4a',readyClass);
+  if(!baseStageValid(s,n))return button(aReady(s,n)?'비교 이어 하기 →':'관찰 이어 하기 →','go','s'+n+(aReady(s,n)?'b':'a'),readyClass);
+  return button(s.completed.includes(n)?(n<5?'다음 탐사로 →':'최종 보고서로 →'):'탐사 배지 받기 →','challenge-finish','',readyClass);
+ }
  if(!solved){
   // A saved answer from the previous version can still be confirmed once.
-  if(correctResponse(task,s.research[n].answers[task.id]))return button('내 생각 확인','challenge-check','','primary');
+  if(correctResponse(task,s.research[n].answers[task.id]))return button('내 생각 확인','challenge-check','',readyClass);
   return button(responseComplete(task,s.research[n].answers[task.id])?'답을 고쳐 봐요':'답을 완성해요','challenge-next','','primary',true);
  }
- if(s.research[n][step]<3)return button('다음 문제 →','challenge-next','','primary');
- return button('남은 문제 풀기 →','challenge-task',tasks.findIndex(t=>!s.research[n].solved.includes(t.id)),'primary');
+ if(s.research[n][step]<3)return button('다음 문제 →','challenge-next','',readyClass);
+ return button('남은 문제 풀기 →','challenge-task',tasks.findIndex(t=>!s.research[n].solved.includes(t.id)),readyClass);
+}
+function successGuide(s,n,step){
+ if(!pageReady(s,n,step))return s.research[n][step]<3?'해결했어요! 다음 문제를 눌러요.':'해결했어요! 남은 문제 풀기를 눌러요.';
+ if(step==='c')return '도전 4문제 완료! 다음 · 적용하기를 눌러요.';
+ if(needsTideReview(s,n))return '적용 4문제 완료! 관찰에서 두 순간을 다시 골라요.';
+ if(!baseStageValid(s,n))return '적용 4문제 완료! 앞의 '+(aReady(s,n)?'비교':'관찰')+'를 이어 가요.';
+ if(s.completed.includes(n))return n<5?'이번 장 완료! 다음 탐사로를 눌러요.':'다섯 장 완료! 최종 보고서로를 눌러요.';
+ return '적용 4문제 완료! 탐사 배지 받기를 눌러요.';
 }
 export function challengeScreen(s,n,step){
  const r=s.research[n],tasks=pageChallenges(n,step),task=tasks[r[step]??0],key=n+'-'+task.id,solved=r.solved.includes(task.id)&&correctResponse(task,r.answers[task.id]),done=pageReady(s,n,step),practice=!baseStageValid(s,n),hint=!solved&&errors.has(key)?mistakeHint(task,r.answers[task.id]):null,wrong=new Set(hint?.wrong??[]);
- const status=solved?icon('check')+' 근거를 연결했어요! '+(done?'네 문제를 모두 해결했어요.':'다음 문제로 이어 가요.'):errors.has(key)?(hint?esc(hint.text)+' ':'다시 관찰해 볼까요? ')+'단서를 보고 답을 고치면 바로 확인돼요.':progressText(task,r.answers[task.id]);
- return '<section class="learning challenge-page"><div class="page-heading"><div><p class="eyebrow">'+chapters[n-1].title+' · '+(step==='c'?'확장 도전':'새 상황에 적용')+'</p><h1>'+esc(task.title)+'</h1><p>'+esc(task.prompt)+'</p></div><nav class="step-tabs" aria-label="탐사 단계">'+['a','b','c','d'].map((p,i)=>button((i+1)+'. '+['관찰','비교','도전','적용'][i],'go','s'+n+p,p===step?'active':'',!s.settings.unlockAll&&(p==='d'&&!pageReady(s,n,'c')))).join('')+'</nav></div>'+(practice?'<div class="practice-banner">연습 · 관찰과 비교를 마치면 내 기록으로 저장돼요.</div>':'')+'<nav class="challenge-progress" aria-label="현재 활동의 문제">'+tasks.map((t,i)=>button((r.solved.includes(t.id)?icon('check'):(i+1))+'<span>'+esc(t.title)+'</span>','challenge-task',i,i===(r[step]??0)?'active':'')).join('')+'</nav><div class="challenge-layout"><aside class="challenge-card challenge-observation"><span class="tag">관찰 자료</span>'+visual(task,n)+'</aside><div class="challenge-board challenge-card"><div class="challenge-board-heading"><span class="tag">'+(step==='c'?'도전':'적용')+' '+((r[step]??0)+1)+' / 4</span><span>'+(task.type==='multi'?'두 가지 선택':task.type==='order'?'순서 만들기':task.type==='match'?'특징 연결':task.type==='sort'?'분류하기':'근거로 판단')+'</span></div>'+interaction(task,r.answers[task.id],key,wrong)+'</div></div><footer class="mission-footer"><div class="challenge-feedback '+(solved?'good':'')+'" role="status">'+status+'</div>'+companion(s,n,step,revealHint.delete(key))+'<p class="challenge-page-count">'+icon('book')+' 이번 장의 확장 기록 <b>'+r.solved.length+' / 8</b></p>'+challengeAdvance(s,n,step,tasks,task,solved,done)+'</footer></section>';
+ const status=solved?icon('check')+' '+successGuide(s,n,step):errors.has(key)?(hint?esc(hint.text)+' ':'다시 관찰해 볼까요? ')+'단서를 보고 답을 고치면 바로 확인돼요.':progressText(task,r.answers[task.id]);
+ return '<section class="learning challenge-page"><div class="page-heading"><div><p class="eyebrow"><span class="chapter-label">'+chapters[n-1].title+' · '+(step==='c'?'확장 도전':'새 상황에 적용')+'</span><span class="concept-keywords">'+(chapters[n-1].keyConcepts??[]).map(word=>'<mark>'+esc(word)+'</mark>').join('')+'</span></p><h1>'+esc(task.title)+'</h1><p>'+esc(task.prompt)+'</p></div><nav class="step-tabs" aria-label="탐사 단계">'+['a','b','c','d'].map((p,i)=>button((i+1)+'. '+['관찰','비교','도전','적용'][i],'go','s'+n+p,p===step?'active':'',!s.settings.unlockAll&&(p==='d'&&!pageReady(s,n,'c')))).join('')+'</nav></div>'+(practice?'<div class="practice-banner">연습 · 관찰과 비교를 마치면 내 기록으로 저장돼요.</div>':'')+'<nav class="challenge-progress" aria-label="현재 활동의 문제">'+tasks.map((t,i)=>button((r.solved.includes(t.id)?icon('check'):(i+1))+'<span>'+esc(t.title)+'</span>','challenge-task',i,i===(r[step]??0)?'active':'')).join('')+'</nav><div class="challenge-layout"><aside class="challenge-card challenge-observation"><span class="tag">관찰 자료</span>'+visual(task,n)+'</aside><div class="challenge-board challenge-card"><div class="challenge-board-heading"><span class="tag">'+(step==='c'?'도전':'적용')+' '+((r[step]??0)+1)+' / 4</span><span>'+(task.type==='multi'?'두 가지 선택':task.type==='order'?'순서 만들기':task.type==='match'?'특징 연결':task.type==='sort'?'분류하기':'근거로 판단')+'</span></div>'+interaction(task,r.answers[task.id],key,wrong)+'</div></div><footer class="mission-footer"><div id="challenge-guidance" class="challenge-feedback '+(solved?'good':'')+'" role="status">'+status+'</div>'+companion(s,n,step,revealHint.delete(key))+'<p class="challenge-page-count">'+icon('book')+' 이번 장의 확장 기록 <b>'+r.solved.length+' / 8</b></p>'+challengeAdvance(s,n,step,tasks,task,solved,done)+'</footer></section>';
 }
 export function handleChallenge(ctx){
  const {action,value,state:s,save,render,feedback,navigate}=ctx;
@@ -109,7 +125,7 @@ export function handleChallenge(ctx){
   r.solved=r.solved.filter(id=>id!==task.id);errors.delete(key);
   const ready=responseComplete(task,r.answers[task.id]),correct=ready?check():false;
   save();render();
-  if(ready)feedback(correct?'관찰 근거를 연결했어요!':(mistakeHint(task,r.answers[task.id])?.text??'관찰 단서를 보고 고쳐 봐요.')+' 선택을 바꾸면 바로 확인돼요.',correct);
+  if(ready)feedback(correct?successGuide(s,n,step):(mistakeHint(task,r.answers[task.id])?.text??'관찰 단서를 보고 고쳐 봐요.')+' 선택을 바꾸면 바로 확인돼요.',correct);
   else if(['challenge-bin','challenge-drop','challenge-order'].includes(action))ctx.sound?.('drop');
   else if(action==='challenge-answer')ctx.sound?.('click');
   return true;
@@ -117,7 +133,7 @@ export function handleChallenge(ctx){
  if(action==='challenge-check'){
   if(!responseComplete(task,r.answers[task.id])){feedback('답을 모두 고르면 바로 확인돼요.');return true;}
   if(r.solved.includes(task.id)&&correctResponse(task,r.answers[task.id]))return true;
-  const correct=check();save();render();feedback(correct?'관찰 근거를 연결했어요!':'관찰 단서를 보고 답을 고쳐 봐요.',correct);return true;
+  const correct=check();save();render();feedback(correct?successGuide(s,n,step):'관찰 단서를 보고 답을 고쳐 봐요.',correct);return true;
  }
  if(action==='challenge-next'){
   if(r.solved.includes(task.id)&&correctResponse(task,r.answers[task.id])){selected.delete(key);r[step]=Math.min(3,r[step]+1);save();render();}
@@ -125,6 +141,7 @@ export function handleChallenge(ctx){
  }
  if(action==='challenge-continue'){if(pageReady(s,n,'c'))navigate('s'+n+'d');return true;}
  if(action==='challenge-finish'){
+  if(needsTideReview(s,n)){feedback('1. 관찰에서 물이 한 방향으로 변하는 두 순간을 다시 골라요.');return true;}
   if(!baseStageValid(s,n)){feedback('앞선 관찰과 비교를 마치면 내 탐구 배지를 받을 수 있어요.');return true;}
   if(researchReady(s,n)&&s.completed.includes(n)){navigate(n<5?'s'+(n+1)+'a':'report');return true;}
   if(researchReady(s,n)&&completeStage(s,n)){save();ctx.sound?.('reward');ctx.finishChapter(n);}

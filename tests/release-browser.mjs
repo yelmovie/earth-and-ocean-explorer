@@ -16,7 +16,7 @@ const browser = await chromium.launch({
   executablePath: process.env.BROWSER_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   headless: true,
 });
-const report = { base, journey: [], safety: {}, errors: [], requests: [] };
+const report = { base, journey: [], guidance: { challengeActions: 0 }, safety: {}, errors: [], requests: [] };
 const key = 'blue-planet-hq:v2';
 try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, hasTouch: true });
@@ -68,6 +68,12 @@ try {
           }
         }
         await page.locator('.challenge-feedback.good').waitFor();
+        const advance=page.locator('.mission-footer > .primary');
+        assert.equal(await advance.isEnabled(),true);
+        assert.match(await advance.getAttribute('class'),/is-ready.*next-target/);
+        assert.equal(await advance.getAttribute('aria-describedby'),'challenge-guidance');
+        assert.match(await page.locator('.challenge-feedback').innerText(),/다음|남은|배지|이어/);
+        report.guidance.challengeActions++;
         report.journey.push(task.id);
       }
       if (step === 'c') await click('challenge-continue');
@@ -89,16 +95,32 @@ try {
   await route('hub');
   await page.goto(`${base}/#s1a`, { waitUntil: 'domcontentloaded' });
   await route('s1a');
+  assert.equal(await page.locator('[data-action="next"]').isDisabled(),true);
+  assert.equal(await page.locator('[data-action="next"]').getAttribute('aria-describedby'),'hint');
   await page.waitForFunction(() => document.querySelector('#globe-mode')?.textContent !== '준비 중');
   for (const id of ['asia', 'pacific', 'africa']) await click('site', id);
   await click('atmosphere');
+  assert.equal(await page.locator('[data-action="next"]').isEnabled(),true);
+  assert.match(await page.locator('#hint').innerText(),/관찰 완료/);
+  assert.equal((await saved()).drafts[1].samples.length,3);
+  report.guidance.threeGlobeSamples=true;
   await click('next');
   await route('s1b');
   for (const id of ['asia', 'pacific', 'africa']) {
     await page.locator(`[data-sample="${id}"]`).click();
     await page.locator(`[data-sample-bin="${sites.find(site => site.id === id).type}"]`).click();
   }
+  assert.equal(await page.locator('[data-action="complete"]').isDisabled(),true);
+  await choose('conclusion', 'sample');
+  const explanationLabel=await page.locator('[data-action="complete"]').innerText();
+  assert.equal(await page.locator('[data-action="complete"]').isEnabled(),true);
+  await click('complete');
+  await route('s1b');
+  await page.waitForTimeout(50);
+  assert.match(await page.locator('#hint').innerText(),/표본|면적/,'confirmation feedback must survive the activity guidance microtask');
   await choose('conclusion', 'global');
+  assert.equal(await page.locator('[data-action="complete"]').innerText(),explanationLabel,'button text must not disclose correctness');
+  report.guidance.wrongExplanationReview=true;
   await click('complete');
   await extensions(1);
 
@@ -157,12 +179,31 @@ try {
   await shot('report');
   await click('go', 'link');
   await route('link');
+  assert.equal(await page.locator('[data-action="check-link"]').isDisabled(),true);
+  assert.match(await page.locator('#hint').innerText(),/기록을 골라/);
   for (const [index, item] of finalCases.entries()) {
     await click('case', index);
     await click('link-stage', item.stage);
+    assert.equal(await page.locator('[data-action="check-link"]').isDisabled(),true);
     await choose('linkReason', item.answer);
+    assert.equal(await page.locator('[data-action="check-link"]').isEnabled(),true);
     await click('check-link', index);
+    assert.equal(await page.locator('[data-action="check-link"]').isDisabled(),true);
+    assert.match(await page.locator('.link-actions .next-target').innerText(),/상황|이야기/);
   }
+  await click('case',0);
+  assert.equal(await page.locator('[data-action="link-stage"].selected').getAttribute('data-value'),String(finalCases[0].stage));
+  assert.equal(await page.locator('[data-field="linkReason"].selected').getAttribute('data-value'),String(finalCases[0].answer));
+  assert.equal(await page.locator('[data-action="check-link"]').isDisabled(),true);
+  const savedLinks=structuredClone((await saved()).links);
+  const alternative=finalCases[0].reasons.findIndex((_,index)=>index!==finalCases[0].answer);
+  await choose('linkReason',alternative);
+  assert.equal(await page.locator('[data-action="check-link"]').isEnabled(),true);
+  await click('check-link',0);
+  assert.deepEqual((await saved()).links,savedLinks,'reviewing a changed answer preserves earned evidence');
+  await choose('linkReason',finalCases[0].answer);
+  assert.equal(await page.locator('[data-action="check-link"]').isDisabled(),true);
+  report.guidance.finalEvidenceSteps=true;
   await click('go', 'ending');
   await route('ending');
   await click('go', 'certificate');

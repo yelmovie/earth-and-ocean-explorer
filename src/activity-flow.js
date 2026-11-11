@@ -1,5 +1,5 @@
 import { sites, terrains, creatures, timeLabel } from './data.js';
-import { aReady } from './state.js';
+import { aReady, recordTideObservation, tideIntervalDirection } from './state.js';
 import { icon } from './icons.js';
 
 const playable = new Set(['s1a', 's2a', 's2b', 's3a', 's4a', 's4b', 's5a']);
@@ -8,17 +8,39 @@ const playback = { route: '', playing: false, speed: 1, heating: false, progress
 let activeHeat;
 export function activityControls(route) {
   if (!playable.has(route)) return '';
-  return `<div class="activity-playback" aria-label="실험 자동재생"><button type="button" data-autoplay aria-pressed="false">${icon('play')}<span>자동재생</span></button><label><span class="sr-only">재생 속도</span><select data-playback-speed aria-label="재생 속도">${[0.5,1,2,3].map(speed=>`<option value="${speed}" ${speed===playback.speed?'selected':''}>${speed}배속</option>`).join('')}</select></label></div>`;
+  return `<div class="activity-playback" aria-label="자동 관찰 도구"><button type="button" data-autoplay aria-pressed="false">${icon('play')}<span>자동재생</span></button><label><span class="sr-only">재생 속도</span><select data-playback-speed aria-label="재생 속도">${[0.5,1,2,3].map(speed=>`<option value="${speed}" ${speed===playback.speed?'selected':''}>${speed}배속</option>`).join('')}</select></label></div>`;
 }
 export function startActivityHeating() { activeHeat?.(); }
+
+// Readiness means the learner can submit an explanation, including a wrong one.
+export function activityReady(state) {
+  const match=/^s([1-5])([ab])$/.exec(state.route);
+  if(!match)return false;
+  const n=Number(match[1]),d=state.drafts[n];
+  if(n===4&&!tideIntervalDirection(d.a,d.b))return false;
+  if(match[2]==='a'){
+    const candidate=n===2?{...state,drafts:{...state.drafts,2:{...d,prepared:true}}}:state;
+    return aReady(candidate,n);
+  }
+  if(!aReady(state,n))return false;
+  if(n===1)return d.samples.every(id=>['육지','바다'].includes(d.classifications[id]))&&Boolean(d.conclusion);
+  if(n===2)return d.heated&&d.seenBefore&&d.seenAfter&&Boolean(d.residue&&d.reason);
+  if(n===3)return terrains.every(t=>d.pins[t.id]&&d.features[t.id])&&Boolean(d.compare);
+  if(n===4)return d.markers.includes('pole')&&d.markers.includes('rock')&&Boolean(d.direction&&d.concept);
+  return Boolean(d.value&&d.action);
+}
 
 export function stageGuide(state) {
   const route=state.route,n=Number(route[1]),d=state.drafts[n];
   if(!d)return null;
   const choice=field=>`[data-field="${field}"]`;
+  if(activityReady(state))return [route.endsWith('a')?'관찰 완료! 다음 · 비교하기를 눌러요.':'선택을 마쳤어요. 설명 확인 · 다음을 눌러요.','.mission-footer > .primary'];
+  if(route.endsWith('b')&&!aReady(state,n))return ['앞의 관찰을 먼저 마쳐요. 위의 1. 관찰을 눌러요.',`[data-action="go"][data-value="s${n}a"]`];
+  if(route==='s4b'&&!tideIntervalDirection(d.a,d.b))return ['1. 관찰에서 물이 한 방향으로 변하는 두 순간을 다시 골라요.','[data-action="go"][data-value="s4a"]'];
   if(route==='s1a') {
+    if(d.samples.length>=3&&!d.atmosphere)return ['세 곳 이상 관찰했어요. 대기 관찰을 눌러요.','[data-action="atmosphere"]'];
     const next=sites.find(site=>!d.samples.includes(site.id));
-    if(next)return [`${next.name}을 눌러 관찰해요. 자동재생으로 차례로 볼 수도 있어요.`,`[data-action="site"][data-value="${next.id}"]`];
+    if(next)return [d.samples.length<3?`관찰 ${d.samples.length} / 3곳. ${next.name}을 눌러요.`:'땅과 물을 모두 찾을 수 있도록 다른 지점도 관찰해요.',`[data-action="site"][data-value="${next.id}"]`];
     if(!d.atmosphere)return ['대기 관찰을 눌러 지구를 둘러싼 공기를 살펴봐요.','[data-action="atmosphere"]'];
   }
   if(route==='s1b') {
@@ -32,31 +54,41 @@ export function stageGuide(state) {
   }
   if(route==='s2b') {
     if(!d.heated)return ['자동재생 또는 가열하기를 눌러 물의 변화를 관찰해요.','[data-action="heat"]'];
+    if(!d.seenBefore)return ['가열 전을 눌러 처음 모습을 확인해요.','[data-action="experiment-view"][data-value="before"]'];
+    if(!d.seenAfter)return ['가열 후를 눌러 남은 흔적을 확인해요.','[data-action="experiment-view"][data-value="after"]'];
     if(!d.residue)return ['두 그릇의 바닥을 비교하고 관찰한 결과를 골라요.',choice('residue')];
     if(!d.reason)return ['남은 물질이 어디에서 왔는지 설명을 골라요.',choice('reason')];
   }
-  if(route==='s3a'&&!aReady(state,3))return ['장면의 ＋를 눌러 네 지형을 촬영해요.','[data-action="target"]:not(.selected)'];
+  if(route==='s3a'){
+    const next=terrains.find(t=>!d.photos.includes(t.id));
+    if(next)return [`촬영 ${d.photos.length} / 4장. 남은 ＋를 눌러요.`,`[data-action="target"][data-value="${next.id}"]`];
+  }
   if(route==='s3b') {
     const next=terrains.find(t=>!d.pins[t.id]||!d.features[t.id]);
     if(next)return !d.pins[next.id]?[`${next.name} 사진에서 특징이 보이는 곳을 눌러요.`,`[data-action="pin"][data-value="${next.id}"]`]:[`${next.name} 사진에 알맞은 특징을 골라요.`,choice(`features.${next.id}`)];
     if(!d.compare)return ['동굴과 구멍 난 바위의 차이를 골라요.',choice('compare')];
   }
-  if(route==='s4a'&&!aReady(state,4))return d.a===null?['앞선 시각을 A에 담아요. 자동재생으로 두 순간을 기록할 수도 있어요.','[data-action="tide-save"][data-value="a"]']:['시간을 움직여 물 높이가 다른 나중 순간을 B에 담아요.',choice('time')];
+  if(route==='s4a'){
+    if(d.a===null)return ['지금 시각을 A에 담아요. 다음에 시간을 움직여요.','[data-action="tide-save"][data-value="a"]'];
+    if(tideIntervalDirection(d.a,d.time))return ['이 순간을 B에 담기를 눌러 두 기록을 완성해요.','[data-action="tide-save"][data-value="b"]'];
+    if(d.a===6)return ['시간을 앞으로 돌려 A를 다시 담아요. B는 더 나중 시각이어야 해요.',choice('time')];
+    return ['시간을 움직여 A보다 나중의 다른 물 높이를 골라요.',choice('time')];
+  }
   if(route==='s4b') {
-    if(d.markers.length<2)return ['비교선을 움직이고 기둥과 바위를 각각 확인해요.','[data-compare]'];
+    if(d.markers.length<2)return ['비교선을 움직인 뒤 기둥 확인과 바위 확인을 눌러요.','[data-action="marker"]:not(.selected)'];
     if(!d.direction)return ['A에서 B로 물 높이가 어떻게 변했는지 골라요.',choice('direction')];
     if(!d.concept)return ['관찰한 변화의 이름을 골라요.',choice('concept')];
   }
   if(route==='s5a') {
     if(d.selected&&!d.found.includes(d.selected))return ['확대한 생물에서 보이는 특징을 직접 골라요.','[data-action="observe-feature"]'];
     const next=creatures.find(c=>!d.found.includes(c.id));
-    if(next)return ['갯벌의 흔적을 눌러 생물을 확대해요.',`[data-action="creature"][data-value="${next.id}"]`];
+    if(next)return [`생물 ${d.found.length} / 3종 기록. 남은 흔적을 눌러요.`,`[data-action="creature"][data-value="${next.id}"]`];
   }
   if(route==='s5b') {
     if(!d.value)return ['관찰한 생물들의 집인 갯벌의 가치를 골라요.',choice('value')];
     if(!d.action)return ['생물의 집을 지킬 보호 약속을 골라요.',choice('action')];
   }
-  return ['선택을 마쳤으면 다음 버튼을 눌러 이어 가요.','.mission-footer > .primary'];
+  return ['관찰 자료를 살펴보고 아직 고르지 않은 곳을 채워요.','.activity'];
 }
 
 export function mountActivityFlow(app,ctx) {
@@ -70,8 +102,19 @@ export function mountActivityFlow(app,ctx) {
   const clear=()=>{clearTimeout(timer);timer=null;};
   function guide(message) {
     app.querySelectorAll('.next-target').forEach(el=>el.classList.remove('next-target'));
-    const [text,target]=stageGuide(state),hint=app.querySelector('#hint');
+    const [text,target]=playback.heating
+      ?[playback.playing?'물의 변화를 관찰해요. 가열이 끝나면 결과를 골라요.':'잠시 멈췄어요. 이어보기를 눌러요.',playback.playing?'#experiment-visual':'[data-autoplay]']
+      :stageGuide(state);
+    const hint=app.querySelector('#hint');
     if(hint)hint.textContent=message||text;
+    const advance=app.querySelector('.mission-footer > .primary');
+    if(advance){
+      const ready=activityReady(state)&&!playback.heating;
+      advance.disabled=!ready;
+      advance.setAttribute('aria-describedby','hint');
+      advance.classList.toggle('is-ready',ready);
+      if(route.endsWith('b'))advance.textContent='설명 확인 · 다음 →';
+    }
     const el=app.querySelector(target);
     // Choice groups receive an outline as a whole, never an answer hint.
     (el?.closest('.choices')||el)?.classList.add('next-target');
@@ -125,12 +168,12 @@ export function mountActivityFlow(app,ctx) {
       if(target)click(`[data-action="target"][data-value="${target.id}"]`);
       else {stop('네 지형을 촬영했어요. 다음 · 비교하기를 눌러요.');return;}
     } else if(route==='s4a') {
-      if(playback.phase===0){d.time=0;d.a=0;d.b=null;playback.phase=1;save();render();return;}
+      if(playback.phase===0){d.time=0;recordTideObservation(state,'a',0);playback.phase=1;save();render();return;}
       const t=Math.min(3,d.time+1);d.time=t;
       const input=app.querySelector('[data-field="time"]');if(input)input.value=t;
       app.querySelector('.tide-live').innerHTML=tideScene(t);app.querySelector('.timeline output').textContent=timeLabel(t);
       app.querySelector('.tide-work .panel-label').textContent=`${timeLabel(t)} · 같은 해안의 관측 모형`;
-      if(t===3){d.b=3;playback.playing=false;playback.phase=0;save();render();return;}save();
+      if(t===3){recordTideObservation(state,'b',3);playback.playing=false;playback.phase=0;save();render();return;}save();
     } else if(route==='s4b') {
       const positions=[0,25,50,75,100,75,50],value=positions[playback.phase++];
       if(value===undefined){playback.phase=0;stop('같은 기둥과 바위를 확인하고 변화와 이름을 직접 골라요.');return;}
@@ -150,9 +193,10 @@ export function mountActivityFlow(app,ctx) {
   function schedule() {clear();if(playback.playing&&!disposed)timer=setTimeout(tick,playback.heating?60:1400/playback.speed);}
   on(button,'click',()=>{if(playback.playing)stop('잠시 멈췄어요. 재생 버튼을 누르면 이어져요.');else{playback.playing=true;last=performance.now();sync();schedule();}});
   on(speed,'change',()=>{playback.speed=Number(speed.value);last=performance.now();schedule();});
-  on(app,'click',e=>{if(automatic||e.target.closest('[data-autoplay],.activity-playback'))return;if(playback.playing)stop();queueMicrotask(()=>{if(!disposed)guide();});},{capture:true});
+  on(app,'click',e=>{if(automatic||e.target.closest('[data-autoplay],.activity-playback'))return;if(playback.playing)stop();if(e.target.closest('[data-action="next"],[data-action="complete"],[data-action="tide-save"]'))return;queueMicrotask(()=>{if(!disposed)guide();});},{capture:true});
   on(app,'pointerdown',e=>{if(e.target.closest('input[data-field],[data-compare],.survey-lens,.coast-view')&&playback.playing)stop();});
   on(app,'input',e=>{if(!automatic&&e.target.matches('[data-field],[data-compare]')){if(route==='s4a')playback.phase=0;if(playback.playing)stop();}});
+  on(app,'change',e=>{if(e.target.matches('[data-field]'))queueMicrotask(()=>{if(!disposed)guide();});});
   on(document,'visibilitychange',()=>{if(document.hidden)stop();});
   activeHeat=heat;guide();sync();schedule();
   return ()=>{disposed=true;clear();listeners.forEach(off=>off());activeHeat=null;};

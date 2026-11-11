@@ -114,6 +114,31 @@ try {
   assert.equal(await page.locator('.drag-ghost').count(), 0);
   results.multitouchDragOwnership = true;
 
+  const legacy = structuredClone(completed);
+  delete legacy.finalDraft;
+  delete legacy.drafts[3].photoVersion;
+  for (const [chapter, evidence] of Object.entries(legacy.evidence)) {
+    evidence.contentVersion = 2;
+    delete evidence.research;
+    delete legacy.research[chapter];
+  }
+  delete legacy.evidence[3].data.photoVersion;
+  await fixture(legacy);
+  await page.evaluate(() => location.hash = 'link');
+  await page.locator('#app.route-link').waitFor();
+  assert.equal(await page.locator('[data-action="link-stage"].selected').getAttribute('data-value'), String(legacy.links[0].stage));
+  assert.equal(await page.locator('[data-field="linkReason"].selected').getAttribute('data-value'), String(legacy.links[0].reason));
+  assert.equal(await page.locator('[data-action="check-link"]').isDisabled(), true);
+  await page.evaluate(() => location.hash = 's3b');
+  await page.locator('#app.route-s3b').waitFor();
+  assert.match(await page.locator('.photo-image').first().getAttribute('style'), /assets\/coast\.webp/);
+  assert.deepEqual((await saved()).evidence[3].data.pins, legacy.evidence[3].data.pins);
+  await page.evaluate(() => location.hash = 'certificate');
+  await page.locator('#app.route-certificate').waitFor();
+  assert.match(await page.locator('.certificate').innerText(), /확장 활동 0개/);
+  assert.equal((await saved()).issuedAt, legacy.issuedAt);
+  results.legacyEvidenceDisplay = true;
+
   const future = { ...freshState(), version: 999 };
   await fixture(future);
   await page.locator('.storage-warning').waitFor();

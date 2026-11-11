@@ -425,6 +425,7 @@
   #app .hub-page .hub-quest p,#app .report-page .text-button,#app .link-page b,#app .link-page small,#app .ending-page small,#app .certificate-frame p,#app .certificate-frame b,#app .certificate-frame small,#app .certificate-evidence span{font-size:18px}
   #app .challenge-page .challenge-sequence b,#app .challenge-page .challenge-tide-pair b{font-size:18px}
   #app .certificate-promise{font-size:18px!important}
+  #app .link-page .choice-dot{font-size:18px}
 }
 
 /* 2026-11-10 실사용 점검: 1280×800 같은 짧은 화면에서 DATA LINK의 '연결 확인'과 인증서의 인쇄·지도 버튼이 스크롤 아래로 숨지 않게 */
@@ -521,4 +522,100 @@
   #app .title-friends{top:clamp(80px,9vh,96px)}
   #app .title-friends .buri{height:clamp(140px,20vh,180px)}
   #app .title-friends .jjang{height:clamp(90px,13vh,120px)}
+}
+
+/* Concepts stay beside the chapter name and remain distinct from controls. */
+#app .concept-keywords {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-inline-start: 8px;
+  vertical-align: middle;
+}
+#app .concept-keywords mark {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: #f5e3a9;
+  color: #354d42;
+  font: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+}
+#app .concept-recall {
+  padding: 10px 12px;
+  border-inline-start: 4px solid #bd8134;
+  border-radius: 4px;
+  background: #f8edcf;
+  color: #304c46;
+}
+#app #main .learning .coast-detail-model > img {
+  flex: 1;
+  width: 100%;
+  height: 0;
+  min-height: 0;
+  object-fit: contain;
+  background: #e7eee5;
+}
+#app #main .learning .challenge-residue {
+  flex: 1;
+  min-height: 0;
+}
+#app #main .learning .challenge-residue > div {
+  min-height: 0;
+}
+#app #main .learning .residue-observation {
+  flex: 1;
+  height: 0;
+  min-height: 60px;
+}
+#app .link-page .next-target {
+  outline: 3px solid #bd8134;
+  outline-offset: 3px;
+}
+#app .primary.is-ready {
+  box-shadow: 0 3px 0 #123f4b, 0 0 0 2px #fff5d4;
+}
+#app .photo-restoration summary svg {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+#app .photo-work label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+@media (max-width: 600px) {
+  #app .concept-keywords { margin-inline-start: 0; }
+}
+@media (min-width: 700px) and (max-height: 500px) {
+  #app .learning .chapter-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  #app .learning .concept-keywords {
+    margin-inline-start: 0;
+  }
+  #app .learning .concept-keywords mark {
+    padding-block: 0;
+  }
+}
+@media (max-width: 699px) {
+  #app #main .learning .mission-footer:has(.activity-playback) {
+    grid-template-columns: minmax(180px, 1fr) minmax(0, .85fr);
+  }
+  #app #main .learning .activity-playback button {
+    flex-shrink: 0;
+  }
+  #app #main .learning .mission-footer > .primary {
+    white-space: normal;
+  }
+  #app #main .learning .experiment:has(.experiment-fields) .beaker-pair {
+    min-height: 64px;
+  }
 }

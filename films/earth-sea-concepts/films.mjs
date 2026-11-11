@@ -69,7 +69,7 @@ const film2 = {
     tag({ id: 'f-fresh', x: 640, y: 380, text: '육지의 물' }),
     tag({ id: 'f-sea', x: 1240, y: 380, text: '바닷물' }),
     tag({ id: 't-same', x: 940, y: 930, text: '같은 양 · 같은 세기 · 같은 시간' }),
-    tag({ id: 't-none', x: zoomed([640, 700])[0], y: 560, text: '거의 남지 않음', to: zoomed([640, 826]) }),
+    tag({ id: 't-none', x: zoomed([640, 700])[0], y: 560, text: '이번 표본은 적게 남음', to: zoomed([640, 826]) }),
     tag({ id: 't-salt', x: zoomed([1240, 700])[0], y: 560, text: '흰 물질이 남음', to: zoomed([1240, 818]) }),
   ],
   timeline: `

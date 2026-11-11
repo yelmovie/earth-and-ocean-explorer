@@ -26,6 +26,10 @@ test('all 40 activities validate through their meaningful inputs without confirm
    run.visit(n,index);solve(run,task);
    assert.ok(run.state.research[n].solved.includes(task.id),task.id);
    assert.ok(correctResponse(task,run.state.research[n].answers[task.id]),task.id);
+   const screen=challengeScreen(run.state,n,index<4?'c':'d');
+   assert.match(screen,/class="primary is-ready next-target"/,'solved tasks show the next available action');
+   assert.match(screen,/aria-describedby="challenge-guidance"/);
+   assert.match(run.calls.feedback.at(-1)[0],/다음|남은|이어|배지/,'success feedback keeps the next-step instruction');
    assert.equal(run.state.research[n][index<4?'c':'d'],index%4,'reading and next-question timing stay under player control');
   }
   assert.equal(run.state.research[n].solved.length,8);
@@ -118,4 +122,23 @@ test('a previously saved complete answer can be confirmed without reentering it'
  assert.match(challengeScreen(run.state,1,'c'),/data-action="challenge-check"/);
  run.send('challenge-check');assert.ok(run.state.research[1].solved.includes(task.id));
  assert.doesNotMatch(challengeScreen(run.state,1,'c'),/data-action="challenge-check"/);
+});
+
+test('completed practice leads back to missing observation or comparison instead of an unavailable badge',()=>{
+ const run=session();
+ challenges[1].forEach((task,index)=>{run.visit(1,index);solve(run,task);});
+ assert.match(challengeScreen(run.state,1,'d'),/data-action="go" data-value="s1a"[^>]*>관찰 이어 하기/);
+ Object.assign(run.state.drafts[1],{samples:['asia','pacific','africa'],atmosphere:true});
+ assert.match(challengeScreen(run.state,1,'d'),/data-action="go" data-value="s1b"[^>]*>비교 이어 하기/);
+ assert.deepEqual(run.state.completed,[]);
+});
+
+test('a legacy unfinished tide draft with a turning interval offers an observation repair action',()=>{
+ const run=session();
+ challenges[4].forEach((task,index)=>{run.visit(4,index);solve(run,task);});
+ Object.assign(run.state.drafts[4],{a:0,b:4,markers:['pole','rock'],direction:'up',concept:'in'});
+ assert.match(challengeScreen(run.state,4,'d'),/data-action="go" data-value="s4a"[^>]*>관찰 다시 하기/);
+ run.send('challenge-finish');
+ assert.match(run.calls.feedback.at(-1)[0],/한 방향/);
+ assert.deepEqual(run.calls.rewards,[]);
 });

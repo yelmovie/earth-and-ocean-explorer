@@ -42,3 +42,13 @@ test('the tide clip states it is a model, not real tide times', () => {
   assert.match(films[4].overlay, /관측 모형/);
   assert.match(conceptCues[4].at(-1)[1], /모형/);
 });
+
+test('the water clip compares remaining substances within the shown experiment', () => {
+  const observation = conceptCues[2].find(([time]) => time === 8)[1];
+  assert.match(observation, /이번 실험/);
+  assert.match(observation, /흰 물질.*더 뚜렷하게/);
+  assert.doesNotMatch(observation, /육지의 물은 거의 남지/);
+  const filmLabels = films[2].tags.map(tag => tag.html).join(' ');
+  assert.match(filmLabels, /이번 표본은 적게 남음/);
+  assert.doesNotMatch(filmLabels, /거의 남지 않음/);
+});

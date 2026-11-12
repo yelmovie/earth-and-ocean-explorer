@@ -3,7 +3,8 @@ let cleanupExpedition;
 import {mountPhotoRestoration} from './photo-restoration.js';
 import './photo-restoration.css';
 import { mountNpcGuide } from './npc-guide.js';
-let disposeNpc;
+import { openNpcScene } from './npc-scene.js';
+let disposeNpc, closeResidentScene;
 import './styles.css';
 import './settings.css';
 import './diagnostics.js';
@@ -101,7 +102,7 @@ function header(){const silent=state.settings.muted||(state.settings.bgmEnabled=
 async function render(){
   cleanupExpedition?.();cleanupExpedition=null;
   cleanupActivityFlow?.();cleanupActivityFlow=null;
-  disposeNpc?.();
+  disposeNpc?.();closeResidentScene?.();closeResidentScene=null;
   if(state.route==='s4b'&&app.classList.contains('route-s4b'))local.tideWipe=app.querySelector('[data-compare]')?.value??local.tideWipe;
   const focused=document.activeElement?.closest('[data-action],[data-field]');const focusSelector=focused?.dataset.action?`[data-action="${CSS.escape(focused.dataset.action)}"][data-value="${CSS.escape(focused.dataset.value??'')}"]${focused.dataset.field?`[data-field="${CSS.escape(focused.dataset.field)}"]`:''}`:focused?.dataset.field?`[data-field="${CSS.escape(focused.dataset.field)}"]`:null;
   cleanupInteractions?.();cleanupInteractions=null;cleanupChallenges?.();cleanupChallenges=null;controller?.dispose();controller=null;const ticket=++epoch;const r=state.route,m=/^s([1-5])([abcd])$/.exec(r);
@@ -112,7 +113,7 @@ async function render(){
   const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
   app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">교사 미리보기 · 체험 내용은 저장되지 않아요</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
   app.querySelectorAll('.learning [data-note]').forEach(note=>app.querySelector('.moa-bubble')?.append(note));
-  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{src:import.meta.env.BASE_URL+'assets/audio/voices/welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{if(value)voice.stop();audioPlayer.quiet(value);},title:'부리 목소리 듣기',note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
+  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:import.meta.env.BASE_URL+'assets/dialogue/buri.webp',src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{if(value)voice.stop();audioPlayer.quiet(value);},title:'부리 목소리 듣기',note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
@@ -200,7 +201,27 @@ document.addEventListener('keydown',e=>{
 const autoHints=new WeakSet();
 document.addEventListener('toggle',e=>{if(!e.target.matches?.('.moa-hint'))return;const m=/^s([1-5])([ab])$/.exec(state.route),id=m&&`hint-${m[1]}${m[2]}`;if(!e.target.open){if(id&&lastVoice?.[0]===id)voice.stop();return;}if(e.target.hasAttribute('data-auto-open')&&!autoHints.has(e.target)){autoHints.add(e.target);return;}sound('hint');if(id)speak(id);},true);
 // 탐사 지도: 모아 안내·주민 말풍선 글과 같은 대사를 읽는다(지도 코드가 띄운 글을 그대로 찾아 읽음).
-document.addEventListener('click',e=>{if(!e.target.closest?.('[data-hub-guide],[data-hub-resident]'))return;queueMicrotask(()=>{const box=document.querySelector('#arrival');const text=box?.classList.contains('is-visible')?box.textContent.replace(/^[^:]{1,6}: /,''):'';const id=voiceIdOf(text);if(id)speak(id);else voice.stop();});});
+document.addEventListener('click',e=>{
+  const trigger=e.target.closest?.('[data-hub-guide],[data-hub-resident]');
+  if(!trigger)return;
+  queueMicrotask(()=>{
+    if(state.route!=='hub'||!trigger.isConnected)return;
+    const box=document.querySelector('#arrival');
+    const text=box?.classList.contains('is-visible')?box.textContent.replace(/^[^:]{1,6}: /,''):'';
+    const who=trigger.matches('[data-hub-guide]')?'moa':trigger.dataset.hubResident;
+    const id=who==='moa'?'hub-guide-'+(chapters.find(ch=>!state.completed.includes(ch.id))?.id??'done'):voiceIdOf(text);
+    if(id&&['moa','jjang','crab'].includes(who)){
+      const base=import.meta.env.BASE_URL;
+      const names={moa:'수달 모아',jjang:'갯벌 길잡이 짱이',crab:'갯벌의 게 친구'};
+      closeResidentScene?.();voice.stop();
+      closeResidentScene=openNpcScene({
+        name:names[who],portrait:base+'assets/dialogue/'+who+'.webp',
+        src:base+'assets/audio/voices/el-'+id+'.mp3',text:VOICE_TEXT[id],trigger,
+        enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:v=>audioPlayer.quiet(v)
+      });
+    }else if(id)speak(id);else voice.stop();
+  });
+});
 // 도움말 말풍선이 카드·되돌리기 버튼을 덮어도 막히지 않게, 말풍선 글이나 다른 곳을 누르면 접는다.
 document.addEventListener('pointerdown',e=>{for(const hint of document.querySelectorAll('.moa-hint[open]'))if(!hint.querySelector('summary').contains(e.target)&&!e.target.closest?.('.moa-bubble button'))hint.open=false;},true);
 document.addEventListener('input',e=>{if(e.target.dataset.setting!=='volume')return;state.settings.volume=Number(e.target.value)/100;syncSettingControls();});

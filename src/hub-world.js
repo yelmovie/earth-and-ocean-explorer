@@ -1,3 +1,4 @@
+import {assistMapStep} from './map-controls.js';
 // Shared geometry for drawing, touch navigation, collision and independent tests.
 // Coordinates refer to the 960 × 540 island. Feet, rather than sprite centres, move.
 export const hubMap = { width: 960, height: 540, radius: 6, roadRadius: 20, spawn: { x: 459, y: 242 } };
@@ -45,16 +46,7 @@ function slideOnRoad(point) {
   return { x:road.point.x+(point.x-road.point.x)*ratio,y:road.point.y+(point.y-road.point.y)*ratio };
 }
 export function moveHubPoint(start,delta) {
-  let point={...start};
-  const count=Math.max(1,Math.ceil(Math.hypot(delta.x,delta.y)/4));
-  for(let i=0;i<count;i++){
-    const dx=delta.x/count,dy=delta.y/count,next={x:point.x+dx,y:point.y+dy},slid=slideOnRoad(next);
-    if(canStandInHub(next))point=next;
-    else if(canStandInHub(slid)&&hubDistance(point,slid)<=Math.hypot(dx,dy)*1.5)point=slid;
-    else if(canStandInHub({x:point.x+dx,y:point.y}))point={x:point.x+dx,y:point.y};
-    else if(canStandInHub({x:point.x,y:point.y+dy}))point={x:point.x,y:point.y+dy};
-  }
-  return point;
+  return assistMapStep(start,delta,canStandInHub);
 }
 export function findHubPath(from,to) {
   if(!canStandInHub(from))return [];

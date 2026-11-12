@@ -1,3 +1,4 @@
+import {bindDirectionPad} from './map-controls.js';
 import './hub.css';
 import { chapters } from './data.js';
 import { illustration } from './illustrations.js';
@@ -177,7 +178,7 @@ export function mountHub(canvas,s,onArrive,onPosition){
     const elapsed=t-startedAt;if(newlyCompleted.length&&!reduced&&elapsed<3600){for(const id of newlyCompleted){const door=hubDoors[id-1];c.strokeStyle=`rgba(255,242,163,${Math.max(0,1-elapsed/3600)})`;c.lineWidth=2;c.beginPath();c.ellipse(door.x,door.y,20+elapsed/80,10+elapsed/200,0,0,Math.PI*2);c.stroke();}}
     const fog=Math.max(0,.1*(1-s.completed.length/5));if(fog)rect(c,0,0,960,540,`rgba(30,68,87,${fog})`);overlays();
   }
-  const keydown=e=>{if(paused()||e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,select,textarea'))return;if(input.press(e.key,e.code)){e.preventDefault();guideOpen=false;if(!e.repeat)nudge();}else if((e.code==='Enter'||e.code==='Space')&&e.target===canvas){e.preventDefault();const i=hubDoors.findIndex(door=>hubDistance(pos,door)<35);if(i>=0)enter(i);else message('건물 이름을 누르면 부리와 수달 모아가 함께 걸어가요.');}};
+  const keydown=e=>{if(paused()||e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,select,textarea,[contenteditable]:not([contenteditable="false"])'))return;if(input.press(e.key,e.code)){e.preventDefault();guideOpen=false;if(!e.repeat)nudge();}else if((e.code==='Enter'||e.code==='Space')&&e.target===canvas){e.preventDefault();const i=hubDoors.findIndex(door=>hubDistance(pos,door)<35);if(i>=0)enter(i);else message('건물 이름을 누르면 부리와 수달 모아가 함께 걸어가요.');}};
   const suspend=()=>{clearInput();path=[];};
   listen(window,'keydown',keydown);listen(window,'keyup',e=>input.release(e.key,e.code));listen(window,'blur',suspend);listen(document,'visibilitychange',suspend);
   const local=e=>{const box=canvas.getBoundingClientRect();return{x:e.clientX-box.left,y:e.clientY-box.top};};
@@ -219,12 +220,10 @@ export function mountHub(canvas,s,onArrive,onPosition){
   for(const resident of residents)listen(resident.cue,'click',()=>message(`${resident.name}: ${s.completed.includes(resident.chapter)?resident.after:resident.before}`));
   listen(canvas,'click',e=>{if(paused())return;const box=canvas.getBoundingClientRect(),point={x:(e.clientX-box.left+camera.x)/scale,y:(e.clientY-box.top+camera.y)/scale};const door=hubDoors.find(d=>Math.abs(point.x-d.buildingX)<54&&Math.abs(point.y-d.buildingY)<66);if(door){travel(door.id-1);return;}const road=nearestHubRoad(point);target=null;manualIntent=true;path=findHubPath(pos,road.point);canvas.focus({preventScroll:true});});
   const syncPads=()=>{pads.clear();for(const direction of padPointers.values())if(direction)pads.add(direction);for(const button of wrap.querySelectorAll('[data-hub-direction]'))button.classList.toggle('is-held',pads.has(button.dataset.hubDirection));};
-  for(const button of wrap.querySelectorAll('[data-hub-direction]')){
-    const direction=button.dataset.hubDirection;
-    listen(button,'pointerdown',e=>{e.preventDefault();if(paused())return;button.setPointerCapture?.(e.pointerId);padPointers.set(e.pointerId,direction);syncPads();path=[];nudge();canvas.focus({preventScroll:true});});
-    listen(button,'pointermove',e=>{if(!padPointers.has(e.pointerId))return;const under=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-hub-direction]');padPointers.set(e.pointerId,under?.dataset.hubDirection??null);syncPads();});
-    const release=e=>{padPointers.delete(e.pointerId);syncPads();};listen(button,'pointerup',release);listen(button,'pointercancel',release);listen(button,'lostpointercapture',release);
-  }
+  const directionPad=bindDirectionPad(wrap,'[data-hub-direction]',b=>b.dataset.hubDirection,{blocked:paused,
+    press:d=>{padPointers.set(-1,d);syncPads();path=[];nudge();canvas.focus({preventScroll:true});},release:()=>{padPointers.delete(-1);syncPads();},
+    tap:d=>{padPointers.set(-1,d);syncPads();nudge();padPointers.delete(-1);syncPads();}
+  });listeners.push(directionPad.destroy);
   listen(companion,'click',()=>{guideOpen=!guideOpen;if(guideOpen)message(next?`다음은 ${next.title}${(next.title.charCodeAt(next.title.length-1)-0xac00)%28?'이에요':'예요'}. 건물 이름을 누르면 함께 걸어가요! 방향키나 WASD로도 걸을 수 있어요.`:'다섯 장소가 다시 빛나요! 최종 보고서에서 우리가 찾은 기록을 연결해요.',true);else arrival?.classList.remove('is-visible');});
   const modalObserver=new MutationObserver(()=>{if(paused()){clearInput();path=[];}});modalObserver.observe(document.body,{subtree:true,attributes:true,attributeFilter:['open','inert']});
   const observer=new ResizeObserver(size);observer.observe(wrap);size();raf=requestAnimationFrame(render);

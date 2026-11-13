@@ -1,7 +1,4 @@
-import {mountExpedition} from './expedition.js';
 let cleanupExpedition;
-import {mountPhotoRestoration} from './photo-restoration.js';
-import './photo-restoration.css';
 import { mountNpcGuide } from './npc-guide.js';
 import { openNpcScene } from './npc-scene.js';
 let disposeNpc, closeResidentScene;
@@ -19,7 +16,6 @@ import { mountInteractions } from './interactions.js';
 import { chapters, sites, terrains, creatures, routes, asset, tideHeight } from './data.js';
 import { freshState, loadState, saveState, recordPrediction, recordTideObservation, tideIntervalDirection, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
 import { home, hub, learning, report, link, ending, certificate, recordDetail, tideScene, esc, character } from './screens.js';
-import { mountHub } from './hub.js';
 import { icon } from './icons.js';
 import { createAudio } from './audio.js';
 import { createVoice, hasVoice } from './voice.js';
@@ -124,7 +120,28 @@ async function render(){
   document.querySelector('h1')?.setAttribute('tabindex','-1');
   if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});
   if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-buri','ending-jjang']:[];if(entry.length)speak(entry);}
-  if(r==='hub'){controller=mountHub(document.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save);mountPhotoRestoration(app.querySelector('.map-wrap'),state,save,sound);cleanupExpedition=mountExpedition(app.querySelector('.map-wrap'),state,save,navigate,sound);}
+  if(r==='hub'){
+    const wrap=app.querySelector('.map-wrap'),next=chapters.find(c=>!state.completed.includes(c.id)&&canAccess(state,`s${c.id}a`));
+    const status=document.createElement('section');status.className='hub-load-status';status.setAttribute('role','status');
+    status.textContent='탐사 지도를 준비하고 있어…';wrap.append(status);
+    let timeout;
+    try{
+      const [{mountHub},{mountPhotoRestoration},{mountExpedition}]=await Promise.race([
+        Promise.all([import('./hub.js'),import('./photo-restoration.js'),import('./expedition.js'),import('./photo-restoration.css')]),
+        new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('map timeout')),10000);})
+      ]);
+      if(ticket!==epoch)return;
+      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>tone(kind==='finish'?350:kind==='contact'?260:n===1?580:440)});
+      mountPhotoRestoration(wrap,state,save,sound);
+      if(state.completed.length||state.settings.unlockAll)cleanupExpedition=mountExpedition(wrap,state,save,navigate,sound);
+      status.remove();
+    }catch{
+      if(ticket!==epoch)return;
+      status.textContent='탐사 지도를 불러오지 못했어. 기록은 그대로야.';
+      const retry=document.createElement('button');retry.className='btn';retry.textContent='다시 열기';retry.onclick=()=>location.reload();status.append(retry);
+      if(next){const start=document.createElement('button');start.className='btn primary';start.textContent=next.id===1?'첫 관찰 시작':'다음 관찰 시작';start.onclick=()=>navigate(`s${next.id}a`);status.append(start);}
+    }finally{clearTimeout(timeout);}
+  }
   if(r==='s1a'){
     const el=document.querySelector('#globe');try{const {mountGlobe}=await import('./globe.js');if(ticket!==epoch)return;const globe=await mountGlobe(el,{flat:state.settings.flatGlobe,atmosphere:state.drafts[1].atmosphere,selected:local.site||'asia',onReady:text=>{if(ticket===epoch)document.querySelector('#globe-mode').textContent=text;}});if(ticket!==epoch){globe.dispose();return;}controller=globe;if(local.site)siteDetail(local.site);}
     catch{if(ticket===epoch){el.innerHTML='<div class="globe-unavailable">지구 그림을 불러오지 못했어.<br>관찰 지점의 설명으로 조사를 계속할 수 있어.</div>';document.querySelector('#globe-mode').textContent='텍스트 대체 관찰';if(local.site)siteDetail(local.site);}}

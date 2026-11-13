@@ -147,7 +147,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone}={}){
   }
   const encounters=mountMapEncounters({host:wrap,stages:s.settings.unlockAll?[]:mapVillainStages.filter(stage=>s.completed.includes(Number(stage.id))),
     progress:s.mapHits,onSave:patch=>{s.mapHits={...s.mapHits,...patch};onPosition?.();},
-    art:{left:import.meta.env.BASE_URL+'assets/map-encounter/map-villain-left.webp',frames:6,nativeFacing:1},palette:'#44cfea',reach:82,contact:23,
+    art:{left:import.meta.env.BASE_URL+'assets/map-encounter/map-villain-poses-left.webp',frames:6,nativeFacing:1},palette:'#44cfea',reach:82,contact:23,
     blocked:()=>stopped||entered||overview||hand||target!==null||guideOpen||paused(),reduced:()=>reduced,tone:encounterTone});
   function clearInput(){input.clear();pads.clear();padPointers.clear();wrap.querySelectorAll('.is-held').forEach(button=>button.classList.remove('is-held'));previous=0;}
   function syncNext(){if(nextButton){nextButton.disabled=target!==null;nextButton.setAttribute('aria-busy',String(target!==null));}}

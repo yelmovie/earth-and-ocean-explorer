@@ -401,3 +401,9 @@ body dialog.chapter-reward{width:min(760px,calc(100vw - 40px))}
   #app .teacher-pad p{display:none}
   #app .teacher-skip{max-width:calc(100vw - 40px)}
 }
+
+/* First-screen text only; reading and evidence screens keep the full family. */
+@font-face{font-family:"Blue Planet Title";src:url("/assets/fonts/title-400.woff2") format("woff2");font-style:normal;font-weight:100 500;font-display:swap;}
+@font-face{font-family:"Blue Planet Title";src:url("/assets/fonts/title-700.woff2") format("woff2");font-style:normal;font-weight:600 700;font-display:swap;}
+@font-face{font-family:"Blue Planet Title";src:url("/assets/fonts/title-800.woff2") format("woff2");font-style:normal;font-weight:800 900;font-display:swap;}
+#app .title-screen{--font-heading:"Blue Planet Title",system-ui,sans-serif;--font-body:"Blue Planet Title",system-ui,sans-serif;font-family:var(--font-body)}

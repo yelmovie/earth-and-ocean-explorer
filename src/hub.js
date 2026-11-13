@@ -145,7 +145,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone}={}){
     image.decoding='async';image.src=url;reactionAtlases[role]=image;
    }
   }
-  const encounters=mountMapEncounters({host:wrap,stages:s.settings.unlockAll?[]:mapVillainStages.filter(stage=>s.completed.includes(Number(stage.id))),
+  const encounters=mountMapEncounters({requiredFoes:5,host:wrap,clearStage:()=>newlyCompleted.at(-1),stages:s.settings.unlockAll?[]:mapVillainStages.filter(stage=>s.completed.includes(Number(stage.id))),
     progress:s.mapHits,onSave:patch=>{s.mapHits={...s.mapHits,...patch};onPosition?.();},
     art:{left:import.meta.env.BASE_URL+'assets/map-encounter/map-villain-poses-left.webp',frames:6,nativeFacing:1},palette:'#44cfea',reach:82,contact:23,
     blocked:()=>stopped||entered||overview||hand||target!==null||guideOpen||paused(),reduced:()=>reduced,tone:encounterTone});

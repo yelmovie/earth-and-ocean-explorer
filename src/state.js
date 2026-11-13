@@ -1,3 +1,4 @@
+import {normalizeMapHits} from './map-encounters.js';
 import {normalizeExpeditions} from './expedition-state.js';
 import { freshResearch, normalizeResearch, researchReady, pageReady } from './challenge-data.js';
 import { chapters, sites, terrains, creatures, routes, tideHeight, finalCases } from './data.js';
@@ -9,7 +10,7 @@ export function freshState() {
     3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand', photoVersion: 2 },
     4: { time: 0, a: null, b: null, markers: [], direction: '', concept: '' },
     5: { found: [], features: {}, selected: '', value: '', action: '' },
-  }, expeditions: {}, restoration: {}, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null };
+  }, expeditions: {}, restoration: {}, mapHits: {}, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null };
 }
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 function sanitizedDraft(n,d) {
@@ -48,6 +49,7 @@ export function normalize(raw) {
     const legacy=raw.evidence?.[n]?.contentVersion!==3;
     if(baseStageValid(candidate,n)&&(legacy||researchReady({...base,research:normalizeResearch({[n]:raw.evidence?.[n]?.research})},n))){base.completed.push(n);base.evidence[n]=legacy?{title:chapters[n-1].evidence,data:structuredClone(candidate.drafts[n]),contentVersion:2}: {...evidenceFor(candidate,n),research:structuredClone(normalizeResearch({[n]:raw.evidence[n].research})[n])};}
   }
+  base.mapHits=normalizeMapHits(raw.mapHits,base.completed.map(String));
   base.restoration = Object.fromEntries(base.completed.map(n=>[n,Array.isArray(raw.restoration?.[n])?[...new Set(raw.restoration[n].filter(i=>[0,1,2].includes(i)))]:[]]));
   for (let i = 0; i < finalCases.length; i++) if (object(raw.links?.[i])) {
     const l = raw.links[i]; if (l.stage === finalCases[i].stage && l.reason === finalCases[i].answer && base.completed.includes(l.stage)) base.links[i] = { stage: l.stage, reason: l.reason };

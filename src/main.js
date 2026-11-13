@@ -1,6 +1,6 @@
 let cleanupExpedition;
 import { mountNpcGuide } from './npc-guide.js';
-import { openNpcScene } from './npc-scene.js';
+import { showChapterReward } from './chapter-reward.js';
 let disposeNpc, closeResidentScene;
 import './styles.css';
 import './settings.css';
@@ -11,7 +11,7 @@ import './field-stages.css';
 import './challenge-stages.css';
 import './responsive-stages.css';
 import './glass-ui.css';
-import { showConcept, showChapterReward } from './concepts.js';
+const loadConcepts = () => import('./concepts.js');
 import { mountInteractions } from './interactions.js';
 import { chapters, sites, terrains, creatures, routes, asset, tideHeight } from './data.js';
 import { freshState, loadState, saveState, recordPrediction, recordTideObservation, tideIntervalDirection, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
@@ -20,7 +20,8 @@ import { icon } from './icons.js';
 import { createAudio } from './audio.js';
 import { createVoice, hasVoice } from './voice.js';
 import { VOICE_TEXT } from './voice-ids.js';
-import { settingsContent as copy } from './settingsContent.js';
+let copy;
+const loadSettings = async () => copy ??= (await import('./settingsContent.js')).settingsContent;
 import { handleChallenge, mountChallenges } from './challenges.js';
 import { mountActivityFlow, startActivityHeating, stageGuide } from './activity-flow.js';
 let cleanupActivityFlow;
@@ -38,7 +39,7 @@ const voice=createVoice({enabled:()=>!state.settings.muted&&state.settings.sfxEn
 let lastVoice=null,voiceRoute=null;
 const voiceIdOf=text=>Object.keys(VOICE_TEXT).find(id=>VOICE_TEXT[id]===text);
 function speak(ids,{replayHost}={}){const list=[].concat(ids).filter(hasVoice);if(!list.length)return false;lastVoice=list;document.querySelector('[data-action="voice-replay"]')?.removeAttribute('hidden');if(replayHost&&!replayHost.querySelector('[data-action="voice-replay"]')){const b=document.createElement('button');b.type='button';b.className='secondary voice-replay';b.dataset.action='voice-replay';b.innerHTML=`${icon('sound')}<span>다시 듣기</span>`;replayHost.prepend(b);}return voice.play(list);}
-const playConcept=(n,options={})=>showConcept(n,{audio:audioPlayer,...options});
+const playConcept=(n,options={})=>openOptional(loadConcepts,({showConcept})=>showConcept(n,{audio:audioPlayer,...options}));
 const context=()=>({state,save,render,feedback,navigate,sound,tideScene,finishChapter:n=>{const shown=showChapterReward(n,{navigate,completed:state.completed.length});const dialog=document.querySelector('.chapter-reward[open]');if(shown&&dialog){speak(`reward-${n}`,{replayHost:dialog.querySelector('.modal-footer')});dialog.addEventListener('close',()=>voice.stop(),{once:true});}return shown;}});
 function save(options){if(studentState){const status=document.querySelector('#save-status');if(status)status.textContent='미리보기 · 저장하지 않음';return;}warning=saveState(storage,state,options);const status=document.querySelector('#save-status');if(status)status.textContent=warning?'저장 확인 필요':'자동 저장됨';if(!warning)document.querySelector('.storage-warning')?.remove();else if(!document.querySelector('.storage-warning')){const p=document.createElement('div');p.className='storage-warning';p.setAttribute('role','alert');p.textContent=warning;app.prepend(p);}}
 function routeName(r){const m=/^s([1-5])([abcd])$/.exec(r);return m?`${chapters[+m[1]-1].title} · ${({a:'관찰',b:'연결',c:'도전',d:'적용'}[m[2]])}`:({home:'시작 화면',hub:'탐사 지도',report:'최종 보고서',link:'DATA LINK',ending:'2D 엔딩',certificate:'조사원 인증서'}[r]||'탐사 지도');}
@@ -110,7 +111,7 @@ async function render(){
   const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
   app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">교사 미리보기 · 체험 내용은 저장되지 않아요</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
   app.querySelectorAll('.learning [data-note]').forEach(note=>app.querySelector('.moa-bubble')?.append(note));
-  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:import.meta.env.BASE_URL+'assets/dialogue/buri.webp',src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{if(value)voice.stop();audioPlayer.quiet(value);},title:'부리 목소리 듣기',note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
+  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:import.meta.env.BASE_URL+'assets/dialogue/buri.webp',src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{if(value)voice.stop();audioPlayer.quiet(value);},title:'부리 목소리 듣기',onError:()=>feedback('대화를 불러오지 못했어. 다시 눌러 줘.'),note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
@@ -165,6 +166,12 @@ function openWrongStep(n){if(n!==2&&n!==4)return;const d=state.drafts[n],rise=ti
 function updateField(field,value){const m=/^s([1-5])/.exec(state.route);if(field==='linkReason'){state.finalDraft.reason=+value;save();render();return;}if(!m)return;const n=+m[1],d=state.drafts[n],[key,sub]=field.split('.');if(!Object.hasOwn(d,key))return;if(typeof d[key]==='number')value=+value;if(key==='features')sound('click');if(n===2&&key==='prediction')recordPrediction(state,value);else if(sub)d[key][sub]=value;else d[key]=value;save();if(key==='time'||key==='pan'){render();}else if(['fresh','sea','heatFresh','heatSea'].includes(key)){d.prepared=false;d.heated=false;d.seenBefore=false;d.seenAfter=false;d.view='before';save();render();}else if(document.activeElement?.tagName!=='SELECT')render();}
 const paragraphs=lines=>lines.map(line=>`<p>${esc(line)}</p>`).join('');
 const details=(title,content)=>`<details><summary>${esc(title)}</summary><div class="settings-details-content">${content}</div></details>`;
+async function openOptional(load, open, valid = () => true){
+  const ticket=epoch;
+  const isCurrent=()=>ticket===epoch&&valid();
+  try{const module=await load();if(isCurrent())open(module);}
+  catch{if(isCurrent())feedback('불러오지 못했어. 다시 눌러 줘.');}
+}
 function settings(){
   if(document.querySelector('dialog[open]'))return;
   focusBeforeModal=document.activeElement;
@@ -222,7 +229,7 @@ document.addEventListener('toggle',e=>{if(!e.target.matches?.('.moa-hint'))retur
 document.addEventListener('click',e=>{
   const trigger=e.target.closest?.('[data-hub-guide],[data-hub-resident]');
   if(!trigger)return;
-  queueMicrotask(()=>{
+  queueMicrotask(async()=>{
     if(state.route!=='hub'||!trigger.isConnected)return;
     const box=document.querySelector('#arrival');
     const text=box?.classList.contains('is-visible')?box.textContent.replace(/^[^:]{1,6}: /,''):'';
@@ -231,6 +238,9 @@ document.addEventListener('click',e=>{
     if(id&&['moa','jjang','crab'].includes(who)){
       const base=import.meta.env.BASE_URL;
       const names={moa:'수달 모아',jjang:'갯벌 길잡이 짱이',crab:'갯벌의 게 친구'};
+      let openNpcScene;
+      try{({openNpcScene}=await import('./npc-scene.js'));}catch{if(trigger.isConnected)speak(id);return;}
+      if(state.route!=='hub'||!trigger.isConnected)return;
       closeResidentScene?.();voice.stop();
       closeResidentScene=openNpcScene({
         name:names[who],portrait:base+'assets/dialogue/'+who+'.webp',
@@ -257,7 +267,7 @@ document.addEventListener('click',async e=>{
   if(action==='go'||action==='home'){tone();navigate(action==='home'?'home':value);return;}
   if(action==='back'){previous();return;}
   if(action==='sound'){const enable=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);if(!enable)voice.stop();state.settings.muted=!enable;state.settings.bgmEnabled=enable;state.settings.sfxEnabled=enable;save();audioPlayer.sync();render();if(enable)tone();return;}
-  if(action==='settings'){settings();return;}
+  if(action==='settings'){await openOptional(loadSettings,settings,()=>button.isConnected);return;}
   if(action==='toggle-setting'){if(!['bgmEnabled','sfxEnabled'].includes(value))return;state.settings[value]=state.settings[value]===false;if(value==='sfxEnabled'&&state.settings.sfxEnabled===false)voice.stop();state.settings.muted=false;save();syncSettingControls();return;}
   if(action==='toggle-unlock'){if(studentState){state=studentState;studentState=null;}else{studentState=state;state=previewState(studentState);}save();button.setAttribute('aria-pressed',String(state.settings.unlockAll));button.innerHTML=`${icon(state.settings.unlockAll?'unlock':'lock')}<span>${esc(state.settings.unlockAll?copy.unlocked:copy.unlock)}</span>`;if(!canAccess(state,state.route)){state.route='hub';state.resume='hub';save();window.history.replaceState({route:'hub'},'','#hub');}window.history.replaceState({route:state.route},'','#'+state.route);audioPlayer.sync();return;}
   if(action==='view-record'){const dialog=document.createElement('dialog');dialog.className='settings-modal record-modal';dialog.setAttribute('aria-label',chapters[+value-1].evidence);dialog.innerHTML=`<div class="modal-head"><h2>${chapters[+value-1].evidence}</h2><button data-action="close-record" class="icon-button" aria-label="기록 닫기">${icon('close')}</button></div><div class="settings-body">${recordDetail(state,+value)}</div>`;document.body.append(dialog);dialog.showModal();dialog.querySelector('button').setAttribute('aria-label','기록 닫기');dialog.addEventListener('close',()=>{dialog.remove();button.focus();});return;}

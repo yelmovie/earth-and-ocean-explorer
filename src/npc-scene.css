@@ -9,8 +9,6 @@ dialog.npc-stage-dialog{inset:0;width:100vw;height:100dvh;max-width:none;max-hei
 .npc-stage-panel h2{position:absolute;top:0;left:clamp(16px,3vw,32px);transform:translateY(-69%);margin:0;padding:7px 16px;border:1px solid #ba995d;border-radius:9px;background:#1a4b60;color:#fff0c7;font-size:clamp(15px,2vw,20px);line-height:1.3}
 .npc-stage-panel .npc-stage-caption{margin:0;color:#183849;font-size:clamp(16px,2.2vw,23px);line-height:1.55;word-break:keep-all;overflow-wrap:anywhere;max-height:35dvh;overflow:auto}
 .npc-stage-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
-.npc-stage-button{min-height:44px;min-width:44px;padding:7px 13px;border:1px solid #b2a887;border-radius:9px;background:#fffbec;color:#234a5b;font:inherit;font-size:15px;cursor:pointer}
-.npc-stage-button:focus-visible{outline:3px solid #08778a;outline-offset:2px}
 .npc-stage-primary{margin-left:auto;background:#f2d493;border-color:#ab8950;font-weight:750}
 .npc-stage-status{font-size:13px;color:#765d38}.npc-stage-status:empty{display:none}
 @media(max-height:550px){.npc-stage{bottom:max(10px,env(safe-area-inset-bottom))}.npc-stage-portrait{width:min(34vw,46dvh,250px)}.npc-stage-panel{padding-top:17px;padding-bottom:7px}.npc-stage-panel .npc-stage-caption{font-size:clamp(15px,2vw,19px);line-height:1.4}.npc-stage-actions{margin-top:5px}}

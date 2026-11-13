@@ -1,21 +1,8 @@
 import './concept-focus.css';
 import { chapters } from './data.js';
-import { icon } from './icons.js';
 import { CONCEPT_SECONDS, conceptCues, conceptTerms, conceptSceneLabels } from './concept-data.js';
 export { conceptCues, conceptTerms };
 
-// Completion is already saved by the caller. This short celebration never
-// holds progress behind media playback and leaves the next destination explicit.
-export function showChapterReward(n,{navigate,completed}={}){
- if(document.querySelector('dialog[open]'))return false;
- const chapter=chapters[n-1],next=n<5?`s${n+1}a`:'report',focus=document.activeElement;
- const dialog=document.createElement('dialog');dialog.className='settings-modal chapter-reward';dialog.setAttribute('aria-labelledby','reward-title');
- dialog.innerHTML=`<div class="modal-head"><p class="eyebrow">CHAPTER ${String(n).padStart(2,'0')} · 탐사 완료</p><button class="icon-button" data-reward-close aria-label="배지 닫기">×</button></div><div class="settings-body"><div class="chapter-badge" aria-hidden="true">${icon('award')}</div><h2 id="reward-title">${chapter.evidence} 복구!</h2><p>${chapter.reward}</p><div class="reward-records"><span>관찰과 비교 완료</span><span>도전·적용 8 / 8</span></div><p class="reward-progress">본부의 기록 <b>${completed} / 5</b> 복구</p><div class="reward-track" aria-hidden="true">${chapters.map(c=>`<i class="${c.id<=completed?'filled':''}"></i>`).join('')}</div></div><footer class="modal-footer"><button class="secondary" data-reward-route="hub">탐사 지도</button><button class="primary" data-reward-route="${next}">${n<5?'다음 조사 · '+chapters[n].title:'다섯 기록 연결하기'} →</button></footer>`;
- let destination=null;
- dialog.addEventListener('click',event=>{const button=event.target.closest('[data-reward-route], [data-reward-close]');if(!button)return;destination=button.dataset.rewardRoute??null;dialog.close();});
- dialog.addEventListener('close',()=>{dialog.remove();if(destination)navigate(destination);else if(focus?.isConnected)focus.focus();},{once:true});
- document.body.append(dialog);dialog.showModal();dialog.querySelector('.primary').focus({preventScroll:true});return true;
-}
 const base=()=>`${import.meta.env.BASE_URL}assets/concepts/`;
 export function emphasize(text,terms){let rest=text,result='';const escape=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));while(rest){const hit=terms.map(term=>({term,index:rest.indexOf(term)})).filter(x=>x.index>=0).sort((a,b)=>a.index-b.index||b.term.length-a.term.length)[0];if(!hit){result+=escape(rest);break;}result+=escape(rest.slice(0,hit.index))+`<mark class="concept-keyword">${escape(hit.term)}</mark>`;rest=rest.slice(hit.index+hit.term.length);}return result;}
 export function conceptMarkup(n){return `<div class="concept-player"><video playsinline preload="metadata" poster="${base()}chapter-${n}.webp" aria-label="${chapters[n-1].short} 개념 영상"><source src="${base()}chapter-${n}.webm" type="video/webm"><source src="${base()}chapter-${n}.mp4" type="video/mp4"></video><img class="concept-poster" src="${base()}chapter-${n}.webp" alt="${chapters[n-1].short} 개념 모형" hidden><div class="concept-caption" aria-live="off">${emphasize(conceptCues[n][0][1],conceptTerms[n])}</div><div class="concept-timeline"><i></i></div></div><div class="concept-controls"><button type="button" data-concept="play">영상 재생</button><button type="button" data-concept="replay">처음부터</button><span>${CONCEPT_SECONDS}초 · 개념 모형</span></div><div class="concept-focus"><small>기억할 낱말</small>${conceptTerms[n].map(term=>`<strong>${term}</strong>`).join('')}</div><nav class="concept-chapters" aria-label="개념 장면 선택">${conceptCues[n].map((cue,i)=>`<button type="button" data-concept="seek" data-cue-index="${i}" ${i===0?'aria-current="step"':''}>${i+1} · ${conceptSceneLabels[i]}</button>`).join('')}</nav>`;}

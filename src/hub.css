@@ -63,3 +63,7 @@
 @media(max-height:600px){.hub-page .hub-quest p{display:none}.hub-page .hub-quest{top:8px;padding:6px 14px}.route-hub:has(.admin-label) .hub-page .hub-quest{top:44px}.hub-page .hub-quest small{font-size:16px;margin-bottom:4px}}
 @media(max-width:900px){.hub-page .hub-quest{left:calc(50% + 62px);width:calc(100% - 380px);min-width:240px}}
 .hub-page .map-wrap.is-overview .hub-quest{display:none}
+
+
+.hub-page .hub-view-tools{position:absolute;z-index:6;right:28px;bottom:111px;display:flex;align-items:center;gap:8px}
+@media(max-height:620px),(max-width:900px){.hub-page .hub-view-tools{right:16px;bottom:88px}}

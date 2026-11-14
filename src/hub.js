@@ -114,7 +114,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone}={}){
   let path=[],target=null,raf=0,previous=0,stopped=false,facing=1,entered=false,manualIntent=false,arrivalTimer=0;
   let width=960,height=540,scale=1,zoom=1,view={x:480,y:270},camera={x:0,y:0},lastView=null,guideOpen=false;
   // Dragging frees the camera; walking again hands it back to Buri.
-  const touches=new Map(),controls='.hub-dpad,.hub-next,.hub-final,.hub-quest';
+  const touches=new Map(),controls='.hub-dpad,.hub-next,.hub-final,.hub-quest,.hub-view-tools';
   let hand=false,free=null,beforeOverview=null,grab=null,pinch=null,glide=null,dragged=false,overview=false,wasMoving=false,guide=[],guideAt=0;
   const handButton=document.querySelector('[data-hub-hand]'),overviewButton=document.querySelector('[data-hub-overview]');
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -406,4 +406,4 @@ body dialog.chapter-reward{width:min(760px,calc(100vw - 40px))}
 @font-face{font-family:"Blue Planet Title";src:url("/assets/fonts/title-400.woff2") format("woff2");font-style:normal;font-weight:100 500;font-display:swap;}
 @font-face{font-family:"Blue Planet Title";src:url("/assets/fonts/title-700.woff2") format("woff2");font-style:normal;font-weight:600 700;font-display:swap;}
 @font-face{font-family:"Blue Planet Title";src:url("/assets/fonts/title-800.woff2") format("woff2");font-style:normal;font-weight:800 900;font-display:swap;}
-body.title-font{--font-heading:"Blue Planet Title",system-ui,sans-serif;--font-body:"Blue Planet Title",system-ui,sans-serif;font-family:var(--font-body)}
+body.title-font{--font-heading:"Blue Planet Title","NanumSquareNeo","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;--font-body:"Blue Planet Title","NanumSquareNeo","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;font-family:var(--font-body)}

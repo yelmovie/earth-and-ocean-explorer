@@ -33,10 +33,11 @@ export function page(film) {
     <meta name="viewport" content="width=${W}, height=${H}" />
     <script src="assets/vendor/gsap.min.js"></script>
     <style>
-      @font-face { font-family: 'Jua'; src: url('assets/fonts/Jua-Regular.ttf') format('truetype'); font-display: block; }
+      @font-face{font-family:'NanumSquareNeo';src:url('assets/fonts/NanumSquareNeoTTF-bRg.woff2') format('woff2');font-style:normal;font-weight:400;font-display:block}
+      @font-face{font-family:'NanumSquareNeo';src:url('assets/fonts/NanumSquareNeoTTF-cBd.woff2') format('woff2');font-style:normal;font-weight:700;font-display:block}
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { width: ${W}px; height: ${H}px; overflow: hidden; background: ${C.note}; }
-      #root { position: relative; width: ${W}px; height: ${H}px; overflow: hidden; font-family: 'Jua', sans-serif; color: ${C.ink}; background: ${C.note}; }
+      #root { position: relative; width: ${W}px; height: ${H}px; overflow: hidden; font-family: 'NanumSquareNeo', sans-serif; color: ${C.ink}; background: ${C.note}; }
       #cam { position: absolute; left: 0; top: 0; width: ${W}px; height: ${H}px; transform-origin: 0 0; }
       #bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
       #lines { position: absolute; inset: 0; width: ${W}px; height: ${H}px; pointer-events: none; }

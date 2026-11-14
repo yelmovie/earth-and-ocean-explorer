@@ -7,7 +7,7 @@ GOAL:    활동을 마친 아이가 영상 한 번으로 "그래서 ~구나"를 
 OUTPUT:  HyperFrames 0.9.26, 1920×1080 30 fps 원본(TMPDIR) → 앱 1280×720 H.264+AAC mp4(faststart) / VP9+Opus webm, 마지막 장면 WebP 포스터
 TIME:    편당 15 s(450 frames). 장면 경계 0 / 3.5 / 8 / 11.5 s = 앱 자막·장면 버튼(src/concept-data.js)과 같음
 LOOK:    바탕 = 게임 배경 그림 그대로(관측소·실험실·해안·밀물썰물 해안·갯벌). 잉크 #173f4b, 종이 #fffdf5/#fbf6e6,
-         강조 #b26a00(결론 한 낱말만), 바다 #379eaf, 육지 #9ebf75, 핀 #efbd6e. 글꼴 Jua(OFL, assets/fonts).
+         강조 #b26a00(결론 한 낱말만), 바다 #379eaf, 육지 #9ebf75, 핀 #efbd6e. 글꼴 나눔스퀘어 네오(OFL, assets/fonts).
          이름표 44 px(보조 30 px), 질문 52 px, 결론 68 px. 그림자 0 10px 18px rgba(23,63,75,.2).
 OBJECTS: 모아(게임 안내 수달), 게·짱뚱어·갈대(게임 도감 그림), 지도(public/assets/land.geojson), 비커·가열판(게임 실험 화면 모양),
          기둥·바위·배·물(src/screens.js tideScene 좌표 ×4). 해안 지형 위치는 src/data.js terrains 좌표.

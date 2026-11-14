@@ -9,7 +9,7 @@ const dialogue=[
   ["게랑 짱뚱어가 사는 갯벌을 찾아냈어? 내 표찰은 빈 땅이라 써 놨는데!", "게 발자국이 내 비밀 표시보다 많다니!", "앗, 가려 둔 발자국이 보였어!", "내 표찰 대신 생물 도감이 붙었잖아!", "흥, 갯벌 주민들의 집은 건드리지 않을게!"],
 ];
 export const mapVillainStages=hubDoors.map((door,i)=>({
- id:mapEncounterIds[i],...hubPointBehind(door,42),name:'물때 교란 부표',
+ id:mapEncounterIds[i],...hubPointBehind(door,[73,70,72,82,76][i]),name:'물때 교란 부표',
  lines:dialogue[i].slice(0,2),prop:['flag','label','arrow','ruler','wave'][i],
  hit:dialogue[i].slice(2,4),finish:dialogue[i][4],
 }));

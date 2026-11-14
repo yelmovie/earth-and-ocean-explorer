@@ -13,8 +13,10 @@ test('all twenty learning pages expose chapter concepts and a plain-language rec
     state.route = `s${chapter.id}${step}`;
     const html = learning(state, chapter.id, step);
     for (const term of chapter.keyConcepts) assert.ok(html.includes(`<mark>${term}</mark>`));
-    assert.ok(html.includes(chapter.conceptSummary));
-    assert.ok(html.includes('기억할 과학 개념'));
+    assert.ok(!html.includes(chapter.conceptSummary), 'the hint leaves the conclusion for the learner');
+    state.completed.push(chapter.id);
+    assert.ok(learning(state, chapter.id, step).includes(chapter.conceptSummary));
+    state.completed.pop();
   }
 });
 test('new coast albums use individual observations while old pins keep their original image', () => {

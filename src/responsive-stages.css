@@ -422,7 +422,7 @@
 }
 @media (min-width:1600px) and (min-height:900px){
   #app .hub-page .hub-building-label small,#app .evidence-art>b,#app .link-status,#app .ending-page .eyebrow,#app .certificate-frame .eyebrow,#app .certificate-seal small{font-size:18px}
-  #app .hub-page .hub-quest p,#app .report-page .text-button,#app .link-page b,#app .link-page small,#app .ending-page small,#app .certificate-frame p,#app .certificate-frame b,#app .certificate-frame small,#app .certificate-evidence span{font-size:18px}
+  #app .report-page .text-button,#app .link-page b,#app .link-page small,#app .ending-page small,#app .certificate-frame p,#app .certificate-frame b,#app .certificate-frame small,#app .certificate-evidence span{font-size:18px}
   #app .challenge-page .challenge-sequence b,#app .challenge-page .challenge-tide-pair b{font-size:18px}
   #app .certificate-promise{font-size:18px!important}
   #app .link-page .choice-dot{font-size:18px}
@@ -501,11 +501,7 @@
 #app .title-screen{inset:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 
 /* Keep the map mission and photo workbench clear of the shared touch controls. */
-@media(min-width:651px) and (max-width:1100px){
-  #app .hub-page .map-wrap:has(.photo-restoration) .hub-quest{top:74px;left:auto;right:16px;transform:none;width:calc(100% - 358px);max-width:540px;min-width:0}
-}
 @media(max-width:1100px){
-  #app .hub-page .map-wrap:has(.photo-restoration[open]) .hub-quest{display:none}
   #app .hub-page .photo-restoration[open]{max-height:calc(100dvh - 190px)}
 }
 @media(max-width:650px){
@@ -514,7 +510,6 @@
   #app .hub-page .map-wrap{display:block;padding-top:74px}
   #app.route-hub:has(.admin-label) .hub-page .map-wrap{padding-top:110px}
   #app .hub-page #hub-map{position:absolute;inset:0}
-  #app .hub-page .map-wrap .hub-quest{position:relative;top:auto;left:auto;right:auto;transform:none;width:calc(100% - 32px);max-width:none;min-width:0;margin:0 16px 8px}
   #app .hub-page .photo-restoration{position:relative;top:auto;left:auto;margin:0 16px}
   #app .hub-page .photo-restoration[open]{max-height:calc(100dvh - 290px)}
 }

@@ -2699,21 +2699,6 @@ input[type=range] {
   filter: drop-shadow(0 3px 4px #173f4b22);
 }
 
-.reward-stars {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 22px 0 12px;
-  color: #97601b;
-}
-
-.reward-stars svg {
-  width: 34px;
-  height: 34px;
-  fill: var(--gold);
-}
-
 .reward-dialog h3 {
   margin: 12px 0;
   font-size: 24px;

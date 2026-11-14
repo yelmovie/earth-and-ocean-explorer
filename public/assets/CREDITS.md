@@ -20,7 +20,7 @@
 - 기존 PNG: logo, terrace, ending, tide, home, observatory, characters, mudflat, coast, lab. 원본을 보존하고 동일 크기 WebP를 실행 화면에서 사용한다.
 - expedition-map.webp: 2026-10-22 내장 image_gen 생성 섬, 원본 expedition-map.png는 `assets/source-png/`에 보존하며 배포에서 제외한다. 학습용 가상 탐사 지도다.
 - facility-1~5.webp: 새 생성 시설 시트에서 분리한 관측소·실험실·해안 초소·수위 관측탑·생태 시설. 원본 references/generated/facilities-atlas.png, sourceCrop과 pivot은 public/assets/facilities-manifest.json.
-- 지도 부리와 홈·이야기·최종 미션·엔딩의 부리/짱이: 2026-10-28 내장 image_gen으로 개별 생성한 투명 일러스트. 기존 캐릭터 시트를 정체성 참고로 사용했다. 지도 수달 모아는 기존 생성 이미지를 유지한다.
+- 지도 부리와 홈·이야기·최종 미션·엔딩의 부리/짱이: 2026-10-28 내장 image_gen으로 개별 생성한 투명 일러스트. 기존 캐릭터 시트를 정체성 참고로 사용했다.
 - 게·짱뚱어·갈대 관찰 그림: 2026-10-28 내장 image_gen 생성. 실제 사진이나 종 동정 자료가 아닌 학습용 관찰 일러스트다. UI·수치와 연동되는 과학 도해는 프로젝트 자체 CSS/SVG/Canvas다.
 - `home-deck.jpg`는 2026-10-29 Canva 이미지 생성(generate-image)으로 만든 바닷가 연구소 데크 타이틀 배경(1920×1080)이다. 원본은 `assets/generated/20261029/home-seaside-deck.jpg`에 보존한다. 납품 전 Canva 계정의 AI 생성물 이용 조건을 확인한다.
 - 장면은 현장 사진이 아닌 학습용 재현이다. 위치·날씨·크기·생물의 공간 배치는 과학 사실의 증거로 삼지 않는다.
@@ -42,7 +42,7 @@
 
 
 ## 이번 개선의 추가 에셋 (2026-10-22)
-- 수달 모아: 내장 image_gen으로 생성. 원본 `assets/moa-original.png`, 실행용 `moa.webp`, 지도용 `moa-map.webp`. 투명 알파 확인. 생성 프롬프트는 docs/EXPERIENCE-20261022.md.
+- 동행 캐릭터 모아의 이전 그림과 생성 기록은 `assets/moa-original.png`, `docs/EXPERIENCE-20261022.md`에 보존한다.
 - 개념 영상 5종은 2026-11-09에 HyperFrames 자체 도해로 교체했다. 1920×1080 원본을 각 15초 / 1280×720 / 30fps로 변환했으며 효과음을 포함한 MP4·WebM와 정지 그림 WebP를 제공한다. 장면·자막 시점은 `src/concept-data.js`, 소스와 검증은 `films/earth-sea-concepts/`에 있다.
 - 효과음: https://kenney.nl/assets/interface-sounds · Kenney · CC0 1.0. 원본 `License.txt`를 `public/assets/audio/Kenney-License.txt`에 보존. 원래 파일명과 사용처는 `sources.json`. MP3 변환과 음량 정규화 수행.
 - 현재 글꼴은 네이버 나눔스퀘어 네오 공식 원본 WOFF2다. `public/assets/fonts/SOURCE.md`에 출처가 있으며 `NanumSquareNeo-OFL.txt`에 SIL OFL 1.1 전문을 보존한다. BluePlanetDisplay/BluePlanetBody는 이전 부분집합 글꼴의 이름이다. 이전 Jua·Pretendard 파생 파일과 라이선스는 과거 영상 재현 자료로 남아 있다.

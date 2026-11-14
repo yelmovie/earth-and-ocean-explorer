@@ -111,7 +111,7 @@ async function render(){
   const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
   app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">교사 미리보기 · 체험 내용은 저장되지 않아요</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
   app.querySelectorAll('.learning [data-note]').forEach(note=>app.querySelector('.moa-bubble')?.append(note));
-  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:import.meta.env.BASE_URL+'assets/dialogue/buri.webp',src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{if(value)voice.stop();audioPlayer.quiet(value);},title:'부리 목소리 듣기',onError:()=>feedback('대화를 불러오지 못했어. 다시 눌러 줘.'),note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
+  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:asset('dialogue/buri'),src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{if(value)voice.stop();audioPlayer.quiet(value);},title:'부리 목소리 듣기',onError:()=>feedback('대화를 불러오지 못했어. 다시 눌러 줘.'),note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
@@ -243,7 +243,7 @@ document.addEventListener('click',e=>{
       if(state.route!=='hub'||!trigger.isConnected)return;
       closeResidentScene?.();voice.stop();
       closeResidentScene=openNpcScene({
-        name:names[who],portrait:base+'assets/dialogue/'+who+'.webp',
+        name:names[who],portrait:asset('dialogue/'+who),
         src:base+'assets/audio/voices/el-'+id+'.mp3',text:VOICE_TEXT[id],trigger,
         enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:v=>audioPlayer.quiet(v)
       });

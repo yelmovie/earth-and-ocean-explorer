@@ -40,7 +40,7 @@ async function measure() {
       return { left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width, height: box.height };
     };
     return {
-      quest: rect(document.querySelector('.hub-quest')),
+      titleChip: !!document.querySelector('.hub-quest'),
       photo: rect(document.querySelector('.photo-restoration')),
       icons: [...document.querySelectorAll('.topbar button')].map(rect).filter(Boolean),
       labels: [...document.querySelectorAll('.hub-building-label')].map(element => ({ text: element.textContent, rect: rect(element) })).filter(label => label.rect),
@@ -58,14 +58,9 @@ async function check(width, height, state, open) {
   report.checks.push(result);
   await page.screenshot({ path: path.join(out, `${width}-${state}-${open ? 'open' : 'closed'}.png`) });
   assert.equal(result.overflow, 0, 'Document must remain within the viewport');
-  if (open) assert.equal(result.quest, null, 'Opening photo work should fold its neighboring mission');
-  if (result.quest) {
-    assert.ok(result.quest.left >= 0 && result.quest.right <= width, 'Mission must fit the viewport');
-    assert.ok(!overlaps(result.quest, result.photo), 'Mission overlaps photo work');
-  }
+  assert.equal(result.titleChip, false, 'The map should not have a visible heading chip');
   for (const [index, icon] of result.icons.entries()) {
     assert.ok(icon.width >= 48 && icon.height >= 48, 'Header controls need 48px touch targets');
-    assert.ok(!overlaps(icon, result.quest), 'Header control overlaps mission');
     assert.ok(!overlaps(icon, result.photo), 'Header control overlaps photo work');
     for (const other of result.icons.slice(index + 1)) assert.ok(!overlaps(icon, other), 'Header controls overlap');
   }
@@ -75,7 +70,7 @@ async function check(width, height, state, open) {
     }
   }
   for (const label of result.labels) {
-    for (const [name, obstacle] of [['mission', result.quest], ['photo work', result.photo], ...result.icons.map(icon => ['header', icon])]) {
+    for (const [name, obstacle] of [['photo work', result.photo], ...result.icons.map(icon => ['header', icon])]) {
       assert.ok(!overlaps(label.rect, obstacle), `${label.text} overlaps ${name}`);
     }
   }
@@ -122,7 +117,7 @@ try {
       await page.evaluate(value => localStorage.setItem('blue-planet-hq:v2', JSON.stringify(value)), fixture);
       await page.goto(base + '#hub');
       await page.reload();
-      await page.waitForSelector('.hub-quest');
+      await page.waitForSelector('.hub-next');
       await page.evaluate(() => document.fonts.ready);
       await page.waitForFunction(() => [...document.querySelectorAll('.hub-building-label')].every(label => label.style.left));
       await check(width, height, state, false);
@@ -137,7 +132,7 @@ try {
       await page.locator('[data-pin="0"]').tap();
       assert.equal(await page.locator('.restoration-photo-pin.placed').count(), 1);
       await page.locator('[data-fold]').tap();
-      assert.ok((await measure()).quest, 'Folding photo work should restore the mission');
+      assert.equal(await page.locator('.photo-restoration').evaluate(panel => panel.open), false, 'Folding photo work should close its panel');
       if (state === 'completed') await checkMapMovement(width, height, state);
     }
   }

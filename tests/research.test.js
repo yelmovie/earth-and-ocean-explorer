@@ -69,11 +69,11 @@ test('a wrong complete answer points at what to recheck without revealing the an
   for(const tasks of Object.values(challenges))for(const t of tasks){
     if(['sort','match'].includes(t.type)){
       const wrong=Object.fromEntries(t.items.map((x,i)=>[x.id,i===0?t.bins.find(b=>b.id!==x.answer).id:x.answer]));
-      const h=mistakeHint(t,wrong);assert.deepEqual(h.wrong,[t.items[0].id],t.id);assert.ok(h.text.includes(t.items[0].label));
+      const h=mistakeHint(t,wrong);assert.deepEqual(h.wrong,[],t.id);assert.match(h.text,/칸의 기준과 비교/);
       for(const bin of t.bins)assert.ok(!h.text.includes(bin.label)||t.items[0].label.includes(bin.label),`${t.id} hint does not name the right bin`);
       assert.equal(mistakeHint(t,Object.fromEntries(t.items.map(x=>[x.id,x.answer]))),null);
     }
-    if(t.type==='multi'){const bad=t.options.find(o=>!t.answer.includes(o.id)).id;const h=mistakeHint(t,[t.answer[0],bad]);assert.deepEqual(h.wrong,[bad]);assert.match(h.text,/1개/);}
-    if(t.type==='order'){const swapped=[...t.answer];[swapped[0],swapped[1]]=[swapped[1],swapped[0]];assert.match(mistakeHint(t,swapped).text,/^1번째/);}
+    if(t.type==='multi'){const bad=t.options.find(o=>!t.answer.includes(o.id)).id;const h=mistakeHint(t,[t.answer[0],bad]);assert.deepEqual(h.wrong,[]);assert.match(h.text,/관찰한 근거/);}
+    if(t.type==='order'){const swapped=[...t.answer];[swapped[0],swapped[1]]=[swapped[1],swapped[0]];assert.match(mistakeHint(t,swapped).text,/두 카드 사이/);}
   }
 });

@@ -9,7 +9,7 @@ const hints=[
 ];
 export function companion(s,n,step,reveal=false){
  const task=['c','d'].includes(step)?pageChallenges(n,step)[s.research[n][step]??0]:null;
- const clue=task?.clue??hints[n-1][step==='b'?1:0];
+ const clue=task?.type==='order'?'놓은 카드를 다시 눌러 읽어요. 이 장면이 일어나려면 앞 카드에서 무엇이 되어 있어야 하는지 비교해요.':task?.type==='multi'?'고른 보기마다 관찰 기록에서 뒷받침하는 부분을 찾아요. 기록으로 확인할 수 있는 것과 짐작한 것을 나눠 봐요.':task?.type==='sort'||task?.type==='match'?'자료 카드를 다시 눌러요. 카드와 내가 고른 칸의 기준을 나란히 비교해요.':task?'질문의 자료와 보기를 다시 읽어요. 어느 문장이 실제로 본 내용과 이어지는지 찾아봐요.':hints[n-1][step==='b'?1:0];
  const safe=clue.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- return `<div class="companion-tools"><details class="moa-hint"${reveal?' open data-auto-open':''}><summary aria-label="모아의 힌트"><img src="${asset('moa')}" alt=""><span>도움말</span></summary><div class="moa-bubble"><p>${safe}</p><p class="concept-recall"><strong>기억할 과학 개념</strong><br>${chapters[n-1].conceptSummary}</p><button data-action="concept" data-value="${n}" class="concept-replay">개념 영상</button></div></details></div>`;
+ return `<div class="companion-tools"><details class="moa-hint"${reveal?' open data-auto-open':''}><summary aria-label="모아의 힌트"><img src="${asset('moa')}" alt=""><span>도움말</span></summary><div class="moa-bubble"><p>${safe}</p>${s.completed.includes(n)?`<p><b>기억할 과학 개념</b> ${chapters[n-1].conceptSummary}</p><button data-action="concept" data-value="${n}" class="concept-replay">개념 영상 다시 보기</button>`: ''}</div></details></div>`;
 }

@@ -4,6 +4,7 @@ import { tideScene } from '../src/screens.js';
 import { tideHeight } from '../src/data.js';
 import { freshState } from '../src/state.js';
 import { challengeScreen } from '../src/challenges.js';
+import { PAGE_SIZE } from '../src/challenge-data.js';
 
 test('tide illustration is static while all seven water levels remain model-driven',()=>{
   const scenes=Array.from({length:7},(_,t)=>tideScene(t));
@@ -20,7 +21,7 @@ test('tide illustration is static while all seven water levels remain model-driv
 });
 test('tide evidence challenges reuse the terrain without baking water or labels into the asset',()=>{
   const s=freshState();s.settings.unlockAll=true;
-  for(const step of ['c','d'])for(let index=0;index<4;index++){
+  for(const step of ['c','d'])for(let index=0;index<PAGE_SIZE;index++){
     s.route=`s4${step}`;s.research[4][step]=index;
     const html=challengeScreen(s,4,step);
     if(html.includes('challenge-tide-pair')){

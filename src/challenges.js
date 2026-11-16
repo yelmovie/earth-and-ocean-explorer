@@ -1,6 +1,6 @@
 import { companion } from './companion.js';
 import { chapters, asset } from './data.js';
-import { pageChallenges, correctResponse, pageReady, researchReady, mistakeHint } from './challenge-data.js';
+import { pageChallenges, correctResponse, pageReady, researchReady, mistakeHint, PAGE_SIZE, CHAPTER_TASKS } from './challenge-data.js';
 import { aReady, baseStageValid, completeStage, tideIntervalDirection } from './state.js';
 import { icon } from './icons.js';
 import { specimen } from './specimens.js';
@@ -10,7 +10,19 @@ const button=(text,action,value='',cls='',disabled=false)=>'<button class="'+cls
 const selected=new Map();const errors=new Set();const revealHint=new Set();// 오답 직후 한 번만 도움말을 펼친다(다음 조작 때 다시 덮지 않게).
 const ids=s=>{const m=/^s([1-5])([cd])$/.exec(s.route);if(!m)return null;const n=+m[1],step=m[2],r=s.research[n],tasks=pageChallenges(n,step),task=tasks[r[step]??0];return {n,step,r,tasks,task,key:n+'-'+task.id};};
 const needsTideReview=(s,n)=>n===4&&!s.completed.includes(n)&&s.drafts[n].a!==null&&s.drafts[n].b!==null&&!tideIntervalDirection(s.drafts[n].a,s.drafts[n].b);
+const scenes={
+ atmosphere:'우주에서 본 지구. 파란 바다와 육지 둘레를 얇게 빛나는 공기층이 감싸고 있어요',
+ island:'탐사선에서 본 작은 섬. 흙과 바위, 풀이 있는 땅을 바다가 둘러싸고 있어요',
+ 'salt-field':'바닷물을 얕게 가두어 증발시키는 염전. 물이 줄어든 자리에 하얀 소금이 쌓여 있어요',
+ 'coast-material':'해안 바닥을 가까이 본 모습. 고운 모래, 둥근 자갈, 층이 진 단단한 바위가 나란히 있어요',
+ 'coast-safety':'울타리가 있는 안전한 해안 탐사길과 파도가 치는 미끄러운 바위',
+ 'cliff-new':'처음 보는 해안. 바다에서 곧게 솟은 높고 가파른 바위 면에 새들이 앉아 있어요',
+ 'tide-safety':'물이 들어오기 시작한 갯벌. 물길을 따라 바닷물이 차오르고 나무 탐사길이 해안으로 이어져요',
+ 'mudflat-protect':'갯벌 관찰 데크. 돋보기와 관찰 노트가 있고, 아래에는 게 구멍과 갈대가 그대로 있어요',
+ 'mudflat-life':'생물이 가득한 갯벌. 구멍 앞의 게들, 눈이 솟은 짱뚱어, 작은 고둥 자국과 왜가리가 보여요',
+};
 function visual(task,n){
+ if(scenes[task.art])return '<figure class="challenge-scene"><img src="'+illustration('challenge-'+task.art)+'" alt="'+scenes[task.art]+'" width="1200" height="900" decoding="async"></figure><p class="visual-caption">'+scenes[task.art]+'.</p>';
  if(task.art==='ratio')return '<div class="ratio-grid" role="img" aria-label="지구 전체 면적을 같은 크기의 칸으로 단순화한 비교 그림. 물결 무늬는 바다, 점 무늬는 육지예요.">'+Array.from({length:20},(_,i)=>'<i aria-hidden="true" class="'+(i<14?'sea':'land')+'"></i>').join('')+'<p><span class="legend-sea">바다 · 물결</span><span class="legend-land">육지 · 점</span></p></div><p class="visual-caption">같은 크기의 칸으로 전체 넓이를 비교한 모형이에요.</p>';
  if(['incoming','outgoing','tide'].includes(task.art)){
   const outgoing=task.art==='outgoing',same=task.id==='same-level',three=task.id==='time-order';
@@ -59,7 +71,7 @@ function interaction(task,response,key,wrong=new Set()){
 function challengeAdvance(s,n,step,tasks,task,solved,done){
  const readyClass='primary is-ready next-target';
  if(done){
-  if(step==='c')return button('다음 · 적용하기 →','challenge-continue','',readyClass);
+  if(step==='c')return button('다음 · 적용하기 →','challenge-continue','',readyClass+' auto-advance');
   if(needsTideReview(s,n))return button('관찰 다시 하기 →','go','s4a',readyClass);
   if(!baseStageValid(s,n))return button(aReady(s,n)?'비교 이어 하기 →':'관찰 이어 하기 →','go','s'+n+(aReady(s,n)?'b':'a'),readyClass);
   return button(s.completed.includes(n)?(n<5?'다음 탐사로 →':'최종 보고서로 →'):'탐사 배지 받기 →','challenge-finish','',readyClass);
@@ -69,24 +81,39 @@ function challengeAdvance(s,n,step,tasks,task,solved,done){
   if(correctResponse(task,s.research[n].answers[task.id]))return button('내 생각 확인','challenge-check','',readyClass);
   return button(responseComplete(task,s.research[n].answers[task.id])?'답을 고쳐 봐요':'답을 완성해요','challenge-next','','primary',true);
  }
- if(s.research[n][step]<3)return button('다음 문제 →','challenge-next','',readyClass);
+ if(s.research[n][step]<tasks.length-1)return button('다음 문제 →','challenge-next','',readyClass+' auto-advance');
  return button('남은 문제 풀기 →','challenge-task',tasks.findIndex(t=>!s.research[n].solved.includes(t.id)),readyClass);
 }
 function successGuide(s,n,step){
- if(!pageReady(s,n,step))return s.research[n][step]<3?'해결했어요! 다음 문제를 눌러요.':'해결했어요! 남은 문제 풀기를 눌러요.';
- if(step==='c')return '도전 4문제 완료! 다음 · 적용하기를 눌러요.';
- if(needsTideReview(s,n))return '적용 4문제 완료! 관찰에서 두 순간을 다시 골라요.';
- if(!baseStageValid(s,n))return '적용 4문제 완료! 앞의 '+(aReady(s,n)?'비교':'관찰')+'를 이어 가요.';
+ if(!pageReady(s,n,step))return s.research[n][step]<PAGE_SIZE-1?'잘했어! 핵심 개념을 읽고 다음 문제로 가요.':'해결했어요! 남은 문제 풀기를 눌러요.';
+ if(step==='c')return '도전 완료! 핵심 개념을 읽고 새 상황에 적용해요.';
+ if(needsTideReview(s,n))return '적용 완료! 관찰에서 두 순간을 다시 골라요.';
+ if(!baseStageValid(s,n))return '적용 완료! 앞의 '+(aReady(s,n)?'비교':'관찰')+'를 이어 가요.';
  if(s.completed.includes(n))return n<5?'이번 장 완료! 다음 탐사로를 눌러요.':'다섯 장 완료! 최종 보고서로를 눌러요.';
- return '적용 4문제 완료! 탐사 배지 받기를 눌러요.';
+ return '적용 완료! 탐사 배지 받기를 눌러요.';
 }
 export function challengeScreen(s,n,step){
  const r=s.research[n],tasks=pageChallenges(n,step),task=tasks[r[step]??0],key=n+'-'+task.id,solved=r.solved.includes(task.id)&&correctResponse(task,r.answers[task.id]),done=pageReady(s,n,step),practice=!baseStageValid(s,n),hint=!solved&&errors.has(key)?mistakeHint(task,r.answers[task.id]):null,wrong=new Set(hint?.wrong??[]);
  const status=solved?icon('check')+' '+successGuide(s,n,step):errors.has(key)?(hint?esc(hint.text)+' ':'다시 관찰해 볼까요? ')+'단서를 보고 답을 고치면 바로 확인돼요.':progressText(task,r.answers[task.id]);
- return '<section class="learning challenge-page"><div class="page-heading"><div><p class="eyebrow"><span class="chapter-label">'+chapters[n-1].title+' · '+(step==='c'?'확장 도전':'새 상황에 적용')+'</span><span class="concept-keywords">'+(chapters[n-1].keyConcepts??[]).map(word=>'<mark>'+esc(word)+'</mark>').join('')+'</span></p><h1>'+esc(task.title)+'</h1><p>'+esc(task.prompt)+'</p></div><nav class="step-tabs" aria-label="탐사 단계">'+['a','b','c','d'].map((p,i)=>button((i+1)+'. '+['관찰','비교','도전','적용'][i],'go','s'+n+p,p===step?'active':'',!s.settings.unlockAll&&(p==='d'&&!pageReady(s,n,'c')))).join('')+'</nav></div>'+(practice?'<div class="practice-banner">연습 · 관찰과 비교를 마치면 내 기록으로 저장돼요.</div>':'')+'<nav class="challenge-progress" aria-label="현재 활동의 문제">'+tasks.map((t,i)=>button((r.solved.includes(t.id)?icon('check'):(i+1))+'<span>'+esc(t.title)+'</span>','challenge-task',i,i===(r[step]??0)?'active':'')).join('')+'</nav><div class="challenge-layout"><aside class="challenge-card challenge-observation"><span class="tag">관찰 자료</span>'+visual(task,n)+'</aside><div class="challenge-board challenge-card"><div class="challenge-board-heading"><span class="tag">'+(step==='c'?'도전':'적용')+' '+((r[step]??0)+1)+' / 4</span><span>'+(task.type==='multi'?'두 가지 선택':task.type==='order'?'순서 만들기':task.type==='match'?'특징 연결':task.type==='sort'?'분류하기':'근거로 판단')+'</span></div>'+interaction(task,r.answers[task.id],key,wrong)+'</div></div><footer class="mission-footer"><div id="challenge-guidance" class="challenge-feedback '+(solved?'good':'')+'" role="status">'+status+'</div>'+companion(s,n,step,revealHint.delete(key))+'<p class="challenge-page-count">'+icon('book')+' 이번 장의 확장 기록 <b>'+r.solved.length+' / 8</b></p>'+challengeAdvance(s,n,step,tasks,task,solved,done)+'</footer></section>';
+ return '<section class="learning challenge-page"><div class="page-heading"><div><p class="eyebrow"><span class="chapter-label">'+chapters[n-1].title+' · '+(step==='c'?'확장 도전':'새 상황에 적용')+'</span><span class="concept-keywords">'+(chapters[n-1].keyConcepts??[]).map(word=>'<mark>'+esc(word)+'</mark>').join('')+'</span></p><h1>'+esc(task.title)+'</h1><p>'+esc(task.prompt)+'</p></div><nav class="step-tabs" aria-label="탐사 단계">'+['a','b','c','d'].map((p,i)=>button((i+1)+'. '+['관찰','비교','도전','적용'][i],'go','s'+n+p,p===step?'active':'',!s.settings.unlockAll&&(p==='d'&&!pageReady(s,n,'c')))).join('')+'</nav></div>'+(practice?'<div class="practice-banner">연습 · 관찰과 비교를 마치면 내 기록으로 저장돼요.</div>':'')+'<nav class="challenge-progress" aria-label="현재 활동의 문제">'+tasks.map((t,i)=>button((r.solved.includes(t.id)?icon('check'):(i+1))+'<span>'+esc(t.title)+'</span>','challenge-task',i,i===(r[step]??0)?'active':'')).join('')+'</nav><div class="challenge-layout"><aside class="challenge-card challenge-observation"><span class="tag">관찰 자료</span>'+visual(task,n)+'</aside><div class="challenge-board challenge-card"><div class="challenge-board-heading"><span class="tag">'+(step==='c'?'도전':'적용')+' '+((r[step]??0)+1)+' / '+tasks.length+'</span><span>'+(task.type==='multi'?'두 가지 선택':task.type==='order'?'순서 만들기':task.type==='match'?'특징 연결':task.type==='sort'?'분류하기':'근거로 판단')+'</span></div>'+interaction(task,r.answers[task.id],key,wrong)+(solved&&task.why?'<p class="challenge-why-card" role="note"><span>핵심 개념</span>'+esc(task.why)+'</p>':'')+'</div></div><footer class="mission-footer"><div id="challenge-guidance" class="challenge-feedback '+(solved?'good':'')+'" role="status">'+status+'</div>'+companion(s,n,step,revealHint.delete(key))+'<p class="challenge-page-count">'+icon('book')+' 이번 장의 확장 기록 <b>'+r.solved.length+' / '+CHAPTER_TASKS+'</b></p>'+challengeAdvance(s,n,step,tasks,task,solved,done)+'</footer></section>';
+}
+// After a correct answer the key idea stays on screen, then the next task opens by itself.
+// Any other touch cancels the timer so a learner who is still reading keeps control.
+let autoTimer=null;
+export function cancelAutoAdvance(){clearTimeout(autoTimer);autoTimer=null;globalThis.document?.querySelector('.auto-advance.counting')?.classList.remove('counting');}
+function scheduleAutoAdvance(ctx,n,step,route){
+ cancelAutoAdvance();
+ if(typeof document==='undefined')return;
+ const reduce=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ queueMicrotask(()=>document.querySelector('.auto-advance')?.classList.add('counting'));
+ autoTimer=setTimeout(()=>{autoTimer=null;const s=ctx.state;if(s.route!==route)return;const r=s.research[n],tasks=pageChallenges(n,step),task=tasks[r[step]??0];if(!r.solved.includes(task.id))return;
+  if(!pageReady(s,n,step)){const next=tasks.findIndex(t=>!r.solved.includes(t.id));if(next<0)return;selected.clear();r[step]=next;ctx.save();ctx.render();ctx.sound?.('click');}
+  else if(step==='c'){ctx.navigate('s'+n+'d');}
+ },reduce?4200:3200);
 }
 export function handleChallenge(ctx){
  const {action,value,state:s,save,render,feedback,navigate}=ctx;
+ if(action!=='challenge-check')cancelAutoAdvance();
  const base=/^s([1-5])b$/.exec(s.route);
  if(action==='complete'&&base&&baseStageValid(s,+base[1])){save();navigate('s'+base[1]+'c');return true;}
  if(!action.startsWith('challenge-'))return false;
@@ -94,7 +121,7 @@ export function handleChallenge(ctx){
  const {n,step,r,tasks,task,key}=v;
  let changed=false;
  const previous=JSON.stringify(r.answers[task.id]);
- if(action==='challenge-task'){selected.delete(key);r[step]=Math.max(0,Math.min(3,Number(value)||0));save();render();return true;}
+ if(action==='challenge-task'){selected.delete(key);r[step]=Math.max(0,Math.min(tasks.length-1,Number(value)||0));save();render();return true;}
  if(action==='challenge-pick'){if(task.items?.some(item=>item.id===value)){selected.set(key,value);render();}return true;}
  if(action==='challenge-answer'){
   if(!task.options?.some(option=>option.id===value))return true;
@@ -124,8 +151,11 @@ export function handleChallenge(ctx){
   if(previous===JSON.stringify(r.answers[task.id])){render();return true;}
   r.solved=r.solved.filter(id=>id!==task.id);errors.delete(key);
   const ready=responseComplete(task,r.answers[task.id]),correct=ready?check():false;
-  save();render();
+  save();
+  // Tone first, then render so the status keeps its key-idea markup.
   if(ready)feedback(correct?successGuide(s,n,step):(mistakeHint(task,r.answers[task.id])?.text??'관찰 단서를 보고 고쳐 봐요.')+' 선택을 바꾸면 바로 확인돼요.',correct);
+  render();
+  if(ready&&correct&&(!pageReady(s,n,step)||step==='c'))scheduleAutoAdvance(ctx,n,step,s.route);
   else if(['challenge-bin','challenge-drop','challenge-order'].includes(action))ctx.sound?.('drop');
   else if(action==='challenge-answer')ctx.sound?.('click');
   return true;
@@ -133,10 +163,10 @@ export function handleChallenge(ctx){
  if(action==='challenge-check'){
   if(!responseComplete(task,r.answers[task.id])){feedback('답을 모두 고르면 바로 확인돼요.');return true;}
   if(r.solved.includes(task.id)&&correctResponse(task,r.answers[task.id]))return true;
-  const correct=check();save();render();feedback(correct?successGuide(s,n,step):'관찰 단서를 보고 답을 고쳐 봐요.',correct);return true;
+  const correct=check();save();feedback(correct?successGuide(s,n,step):'관찰 단서를 보고 답을 고쳐 봐요.',correct);render();if(correct&&(!pageReady(s,n,step)||step==='c'))scheduleAutoAdvance(ctx,n,step,s.route);return true;
  }
  if(action==='challenge-next'){
-  if(r.solved.includes(task.id)&&correctResponse(task,r.answers[task.id])){selected.delete(key);r[step]=Math.min(3,r[step]+1);save();render();}
+  if(r.solved.includes(task.id)&&correctResponse(task,r.answers[task.id])){selected.delete(key);r[step]=Math.min(tasks.length-1,r[step]+1);save();render();}
   return true;
  }
  if(action==='challenge-continue'){if(pageReady(s,n,'c'))navigate('s'+n+'d');return true;}
@@ -149,4 +179,4 @@ export function handleChallenge(ctx){
  }
  return true;
 }
-export function mountChallenges(app,ctx){const get=()=>ids(ctx.state);const start=e=>{const item=e.target.closest('[data-challenge-item]');if(item)e.dataTransfer?.setData('text/plain',item.dataset.challengeItem);};const over=e=>{if(e.target.closest('[data-action="challenge-bin"]'))e.preventDefault();};const drop=e=>{const bin=e.target.closest('[data-action="challenge-bin"]'),v=get();if(!bin||!v)return;e.preventDefault();const item=e.dataTransfer?.getData('text/plain');if(!v.task.items?.some(x=>x.id===item))return;handleChallenge({...ctx,action:'challenge-drop',value:bin.dataset.value,itemId:item});};app.addEventListener('dragstart',start);app.addEventListener('dragover',over);app.addEventListener('drop',drop);return ()=>{app.removeEventListener('dragstart',start);app.removeEventListener('dragover',over);app.removeEventListener('drop',drop);};}
+export function mountChallenges(app,ctx){const get=()=>ids(ctx.state);const start=e=>{const item=e.target.closest('[data-challenge-item]');if(item)e.dataTransfer?.setData('text/plain',item.dataset.challengeItem);};const over=e=>{if(e.target.closest('[data-action="challenge-bin"]'))e.preventDefault();};const drop=e=>{const bin=e.target.closest('[data-action="challenge-bin"]'),v=get();if(!bin||!v)return;e.preventDefault();const item=e.dataTransfer?.getData('text/plain');if(!v.task.items?.some(x=>x.id===item))return;handleChallenge({...ctx,action:'challenge-drop',value:bin.dataset.value,itemId:item});};const touch=e=>{if(autoTimer&&!e.target.closest('.auto-advance'))cancelAutoAdvance();};app.addEventListener('pointerdown',touch,true);app.addEventListener('dragstart',start);app.addEventListener('dragover',over);app.addEventListener('drop',drop);return ()=>{cancelAutoAdvance();app.removeEventListener('pointerdown',touch,true);app.removeEventListener('dragstart',start);app.removeEventListener('dragover',over);app.removeEventListener('drop',drop);};}

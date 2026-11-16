@@ -1,0 +1,179 @@
+/* 2026-11-16 흐름 정리: 읽히는 제목 카드, 새 문제 장면, 정답 뒤 핵심 개념과 자동 넘김, 해안 특징 고르기. */
+
+/* 제목과 단계 탭이 배경 그림 위에서도 또렷하게 읽히도록 둥근 유리 카드에 올린다. */
+#app #main .learning .page-heading > div:first-child {
+  justify-self: start;
+  max-width: 100%;
+  padding: 8px 18px 10px;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 20px;
+  background: rgb(250 252 248 / 82%);
+  box-shadow: 0 8px 24px rgb(16 58 66 / 12%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* 자동재생은 한 버튼만 보이고, 재생 중에만 배속을 고를 수 있다. */
+#app #main .learning .activity-playback label { display: none; }
+#app.activity-playing #main .learning .activity-playback label,
+#app #main .learning.activity-playing .activity-playback label,
+.activity-playing #main .learning .activity-playback label { display: block; }
+
+/* 문제마다 다른 장면 그림. 칸을 채우되 잘리지 않게 둥근 카드 안에 맞춘다. */
+#app .challenge-page .challenge-scene {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #b9cfc4;
+  border-radius: 18px;
+  background: #e8f1ec;
+  box-shadow: inset 0 0 0 4px rgb(255 255 255 / 55%);
+}
+#app .challenge-page .challenge-scene img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+}
+#app #main .learning .challenge-observation:has(.challenge-scene) {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#app #main .learning .challenge-observation:has(.challenge-scene) .visual-caption {
+  color: var(--muted, #4d6560);
+}
+
+/* 정답 뒤에는 문제 카드 안에 핵심 개념 한 문장을 크게 보여 준다. */
+#app .challenge-page .challenge-why-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0 0;
+  padding: 14px 18px;
+  border: 2px solid #f0c25a;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff8e2, #fff2cf);
+  color: #3d3214;
+  font-size: var(--reading-size);
+  font-weight: 700;
+  line-height: 1.45;
+  box-shadow: 0 8px 20px rgb(180 130 30 / 16%);
+  animation: why-pop .32s ease-out;
+}
+#app .challenge-page .challenge-why-card > span {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #f0c25a;
+  color: #4a3608;
+  font-size: var(--label-size);
+  font-weight: 800;
+}
+@keyframes why-pop { from { opacity: 0; transform: translateY(6px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { #app .challenge-page .challenge-why-card { animation: none; } }
+
+/* 자동으로 넘어가는 버튼은 차오르는 띠로 남은 시간을 보여 준다. 눌러도 바로 넘어간다. */
+#app .auto-advance { position: relative; overflow: hidden; isolation: isolate; }
+#app .auto-advance.counting::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 5px;
+  z-index: 1;
+  background: #ffd36e;
+  transform-origin: left center;
+  animation: auto-advance-fill 3.2s linear forwards;
+}
+@keyframes auto-advance-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  #app .auto-advance.counting::after { animation-duration: 4.2s; }
+}
+
+/* 해안 비교: 사진 하나에 집중하고, 고른 특징은 사진 아래 칩으로 보여 준다. */
+#app #main .learning .photo-card { transition: box-shadow .2s ease, transform .2s ease; }
+#app #main .learning .photo-card.is-focus {
+  box-shadow: 0 0 0 3px #e2a13d, 0 10px 24px rgb(170 110 30 / 22%);
+}
+#app #main .learning .photo-card.is-done .photo-image { filter: saturate(.92); }
+#app #main .learning .feature-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border: 1px solid #a8c8b9;
+  border-radius: 14px;
+  background: #e7f4ec;
+  color: #134c45;
+  font-size: var(--label-size);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+}
+#app #main .learning .feature-chip small { flex: none; font-weight: 600; color: #557169; text-decoration: underline; }
+#app #main .learning .feature-chip.empty {
+  border-style: dashed;
+  background: rgb(255 255 255 / 55%);
+  color: #61756f;
+  font-weight: 600;
+}
+#app #main .learning .coast-feature-panel .focus-help {
+  padding: 14px;
+  border-radius: 16px;
+  background: #fff4dc;
+  color: #5b4320;
+  font-size: var(--reading-size);
+}
+#app #main .learning .coast-feature-panel .choices { display: grid; gap: 10px; }
+
+/* 정답 안내는 흐리게 보이지 않도록 진한 색으로 둔다. */
+#app #main .learning .challenge-feedback.good { color: #17433d; opacity: 1; }
+#app #main .learning .challenge-feedback:not(.good) { color: #2f4a45; }
+
+/* 낮은 가로 화면과 좁은 폰에서는 제목 카드와 핵심 개념 카드를 납작하게 줄여 활동 공간을 지킨다. */
+@media (max-height: 560px), (max-width: 600px) {
+  #app #main .learning .page-heading > div:first-child {
+    padding: 0 10px;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+  #app .challenge-page .challenge-why-card {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 6px 10px;
+    border-width: 1px;
+    border-radius: 12px;
+    font-size: var(--label-size);
+    line-height: 1.3;
+    box-shadow: none;
+  }
+  #app .challenge-page .challenge-why-card > span { flex: none; padding: 0 8px; }
+}
+@media (max-width: 600px) {
+  #app #main .learning .page-heading > div:first-child { padding: 0 8px; border: 0; }
+}
+
+/* 지구 전체가 보여야 하는 그림은 잘리지 않게 통째로 맞춘다. */
+#app .challenge-page .challenge-scene img[src*="challenge-atmosphere"] { object-fit: contain; background: #0d2350; }
+
+/* 세로 폰에서는 장면 그림이 납작해지지 않도록 높이를 따로 준다. */
+@media (max-width: 600px) {
+  #app #main .learning .challenge-layout:has(.challenge-scene) { grid-template-rows: minmax(0, .45fr) minmax(0, 1fr); }
+  #app #main .learning .challenge-layout:has(.challenge-scene):has(.challenge-sort-area, .challenge-why-card) { grid-template-rows: minmax(0, .36fr) minmax(0, 1fr); }
+  #app #main .learning .challenge-observation:has(.challenge-scene) > .visual-caption { display: none; }
+}
+/* 낮은 가로 화면에서도 그림이 너무 작아지지 않게 최소 높이를 둔다. */
+@media (max-height: 560px) and (min-width: 601px) {
+  #app #main .learning .challenge-observation > .challenge-scene:not(.tag):not(.visual-caption) { min-height: 120px; }
+}
+#app #main .learning .challenge-observation > .challenge-scene:not(.tag):not(.visual-caption) { align-self: stretch; width: 100%; }

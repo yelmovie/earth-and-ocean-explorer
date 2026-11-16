@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { sites, terrains, creatures, finalCases } from '../src/data.js';
-import { challenges } from '../src/challenge-data.js';
+import { challenges, PAGE_SIZE } from '../src/challenge-data.js';
 
 const require = createRequire(process.env.PLAYWRIGHT_RUNNER || '/Volumes/T7 Shield/DevCaches/playwright-runner/package.json');
 const { chromium } = require('playwright');
@@ -43,10 +43,15 @@ try {
     assert.equal(await input.inputValue(), String(value));
   }
   async function extensions(chapter) {
-    for (const [step, start] of [['c', 0], ['d', 4]]) {
+    for (const [step, start] of [['c', 0], ['d', PAGE_SIZE]]) {
       await route(`s${chapter}${step}`);
-      for (const [index, task] of challenges[chapter].slice(start, start + 4).entries()) {
-        if (index) await click('challenge-next');
+      for (const [index, task] of challenges[chapter].slice(start, start + PAGE_SIZE).entries()) {
+        if (index) {
+          // A solved task opens the next one by itself; pressing next is the faster path.
+          const next = page.locator('[data-action="challenge-next"]:not([disabled])');
+          if (await next.count()) await next.click().catch(() => {});
+          await page.locator(`.challenge-progress [data-action="challenge-task"][data-value="${index}"].active`).waitFor();
+        }
         if (task.type === 'choice') await click('challenge-answer', task.answer);
         else if (task.type === 'multi') {
           for (const answer of task.answer) await click('challenge-answer', answer);
@@ -55,12 +60,12 @@ try {
         } else {
           for (const [itemIndex, item] of task.items.entries()) {
             let answer = item.answer;
-            if (chapter === 1 && start === 0 && index === 0 && itemIndex === 0) {
+            if (chapter === 1 && start === 0 && index === 1 && itemIndex === 0) {
               answer = task.bins.find(bin => bin.id !== answer).id;
             }
             await click('challenge-bin', answer);
           }
-          if (chapter === 1 && start === 0 && index === 0) {
+          if (chapter === 1 && start === 0 && index === 1) {
             assert.equal(await page.locator('.challenge-feedback.good').count(), 0);
             await shot('wrong-answer-guidance');
             await click('challenge-pick', task.items[0].id);
@@ -72,11 +77,14 @@ try {
         assert.equal(await advance.isEnabled(),true);
         assert.match(await advance.getAttribute('class'),/is-ready.*next-target/);
         assert.equal(await advance.getAttribute('aria-describedby'),'challenge-guidance');
-        assert.match(await page.locator('.challenge-feedback').innerText(),/다음|남은|배지|이어/);
+        assert.match(await page.locator('.challenge-feedback').innerText(),/다음|남은|배지|이어|적용/);
+        assert.equal(await page.locator('.challenge-why-card').count(),1,'a solved task shows its key idea');
         report.guidance.challengeActions++;
         report.journey.push(task.id);
       }
-      if (step === 'c') await click('challenge-continue');
+      if (step === 'c') {
+        if (await page.locator('[data-action="challenge-continue"]').count()) await click('challenge-continue').catch(() => {});
+      }
       else {
         await click('challenge-finish');
         await page.locator('.chapter-reward[open]').waitFor();
@@ -147,7 +155,7 @@ try {
   await route('s3b');
   for (const terrain of terrains) {
     await click('pin', terrain.id);
-    await page.locator(`[data-field="features.${terrain.id}"]`).selectOption(terrain.feature);
+    await page.locator(`[data-action="choose"][data-field="features.${terrain.id}"][data-value="${terrain.feature}"]`).click();
   }
   await choose('compare', 'through');
   await click('complete');
@@ -186,8 +194,8 @@ try {
     await click('link-stage', item.stage);
     assert.equal(await page.locator('[data-action="check-link"]').isDisabled(),true);
     await choose('linkReason', item.answer);
-    assert.equal(await page.locator('[data-action="check-link"]').isEnabled(),true);
-    await click('check-link', index);
+    // Choosing both evidence and reason checks the link at once.
+    await page.waitForFunction(([key, index]) => Boolean(JSON.parse(localStorage.getItem(key)).links[index]), [key, index]);
     assert.equal(await page.locator('[data-action="check-link"]').isDisabled(),true);
     assert.match(await page.locator('.link-actions .next-target').innerText(),/상황|이야기/);
   }
@@ -211,7 +219,7 @@ try {
   const completed = await saved();
   assert.equal(completed.completed.length, 5);
   assert.equal(Object.keys(completed.links).length, 5);
-  assert.equal(report.journey.length, 40);
+  assert.equal(report.journey.length, 20);
   assert.equal(completed.drafts[2].firstPrediction, 'same');
   await page.reload({ waitUntil: 'domcontentloaded' });
   await route('certificate');
@@ -224,10 +232,13 @@ try {
   await writeFile(path.join(out, 'completed-state.json'), JSON.stringify(completed, null, 2));
 
   await click('settings');
+  // Settings load on demand; close only after the dialog is really open.
+  await page.locator('.settings-panel[open]').waitFor();
   await page.keyboard.press('Escape');
   await page.locator('.settings-panel').waitFor({ state: 'detached' });
   assert.equal(await page.locator('[data-action="settings"]').evaluate(el => el === document.activeElement), true);
   await click('settings');
+  await page.locator('.settings-panel[open]').waitFor();
   await page.getByText('교사용 가이드', { exact: true }).click();
   await page.getByText('교사용 도구', { exact: true }).click();
   await click('toggle-unlock');

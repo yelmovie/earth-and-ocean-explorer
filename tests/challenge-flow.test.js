@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { challenges, correctResponse, pageReady } from '../src/challenge-data.js';
+import { challenges, correctResponse, pageReady, PAGE_SIZE, CHAPTER_TASKS } from '../src/challenge-data.js';
 import { handleChallenge, challengeScreen } from '../src/challenges.js';
 import { freshState, normalize } from '../src/state.js';
 
@@ -8,7 +8,7 @@ function session(){
  const state=freshState(),calls={saved:0,rendered:0,feedback:[],routes:[],rewards:[],sounds:[]};
  const ctx={state,save:()=>calls.saved++,render:()=>calls.rendered++,feedback:(...message)=>calls.feedback.push(message),navigate:route=>calls.routes.push(route),finishChapter:n=>calls.rewards.push(n),sound:name=>calls.sounds.push(name)};
  const send=(action,value,extra={})=>handleChallenge({...ctx,action,value,...extra});
- const visit=(n,index)=>{state.route=`s${n}${index<4?'c':'d'}`;send('challenge-task',index%4);};
+ const visit=(n,index)=>{state.route=`s${n}${index<PAGE_SIZE?'c':'d'}`;send('challenge-task',index%PAGE_SIZE);};
  return {state,calls,send,visit};
 }
 function solve(run,task){
@@ -18,7 +18,7 @@ function solve(run,task){
  else task.items.forEach(item=>run.send('challenge-bin',item.answer));
 }
 
-test('all 40 activities validate through their meaningful inputs without confirm or card-pick clicks',()=>{
+test('all 20 activities validate through their meaningful inputs without confirm or card-pick clicks',()=>{
  const run=session();
  for(const [chapter,tasks] of Object.entries(challenges)){
   const n=Number(chapter);
@@ -26,45 +26,46 @@ test('all 40 activities validate through their meaningful inputs without confirm
    run.visit(n,index);solve(run,task);
    assert.ok(run.state.research[n].solved.includes(task.id),task.id);
    assert.ok(correctResponse(task,run.state.research[n].answers[task.id]),task.id);
-   const screen=challengeScreen(run.state,n,index<4?'c':'d');
-   assert.match(screen,/class="primary is-ready next-target"/,'solved tasks show the next available action');
+   const screen=challengeScreen(run.state,n,index<PAGE_SIZE?'c':'d');
+   assert.match(screen,/class="primary is-ready next-target/,'solved tasks show the next available action');
    assert.match(screen,/aria-describedby="challenge-guidance"/);
-   assert.match(run.calls.feedback.at(-1)[0],/다음|남은|이어|배지/,'success feedback keeps the next-step instruction');
-   assert.equal(run.state.research[n][index<4?'c':'d'],index%4,'reading and next-question timing stay under player control');
+   assert.match(run.calls.feedback.at(-1)[0],/다음|남은|이어|배지|넘어|적용/,'success feedback keeps the next-step instruction');
+   assert.ok(screen.includes('challenge-why-card')&&screen.includes(task.why),'a solved task restates its key idea');
+   assert.equal(run.state.research[n][index<PAGE_SIZE?'c':'d'],index%PAGE_SIZE,'outside the browser no timer moves the learner');
   }
-  assert.equal(run.state.research[n].solved.length,8);
+  assert.equal(run.state.research[n].solved.length,CHAPTER_TASKS);
   assert.ok(pageReady(run.state,n,'c')&&pageReady(run.state,n,'d'));
  }
  const restored=normalize(JSON.parse(JSON.stringify(run.state)));
- assert.equal(Object.values(restored.research).reduce((sum,r)=>sum+r.solved.length,0),40);
+ assert.equal(Object.values(restored.research).reduce((sum,r)=>sum+r.solved.length,0),20);
  assert.deepEqual(run.state.completed,[],'solving practice tasks must not invent badges');
  assert.equal(run.state.revised,0,'partial responses are not wrong attempts');
 });
 
 test('automatic card selection supports a wrong answer, correction and a single drop commit',()=>{
- const run=session(),task=challenges[1][0];run.visit(1,0);
+ const run=session(),task=challenges[1][1];run.visit(1,1);
  run.send('challenge-bin','sea');
  task.items.slice(1).forEach(item=>run.send('challenge-bin',item.answer));
  assert.ok(!run.state.research[1].solved.includes(task.id));
  assert.equal(run.state.revised,1);
  assert.match(challengeScreen(run.state,1,'c'),/<details class="moa-hint" open[ >]/);
  const saved=run.calls.saved,rendered=run.calls.rendered;
- run.send('challenge-drop','land',{itemId:'mountain'});
+ run.send('challenge-drop','land',{itemId:'a'});
  assert.equal(run.calls.saved,saved+1);
  assert.equal(run.calls.rendered,rendered+1);
  assert.ok(run.state.research[1].solved.includes(task.id));
  assert.equal(run.state.revised,1);
- run.send('challenge-pick','mountain');run.send('challenge-bin','sea');
+ run.send('challenge-pick','a');run.send('challenge-bin','sea');
  assert.ok(!run.state.research[1].solved.includes(task.id),'changing a correct assignment removes completion');
 });
 
 test('same choice pressed repeatedly neither repeats feedback nor counts extra errors',()=>{
- const run=session(),task=challenges[1][2];run.visit(1,2);
+ const run=session(),task=challenges[1][3];run.visit(1,3);
  run.send('challenge-answer','1');
  const revised=run.state.revised,feedback=run.calls.feedback.length,saved=run.calls.saved;
  run.send('challenge-answer','1');run.send('challenge-answer','1');
  assert.equal(run.state.revised,revised);assert.equal(run.calls.feedback.length,feedback);assert.equal(run.calls.saved,saved);
- run.send('challenge-next');assert.equal(run.state.research[1].c,2);
+ run.send('challenge-next');assert.equal(run.state.research[1].d,1);
  run.send('challenge-answer',task.answer);
  const successFeedback=run.calls.feedback.length;
  run.send('challenge-answer',task.answer);run.send('challenge-check');
@@ -73,7 +74,7 @@ test('same choice pressed repeatedly neither repeats feedback nor counts extra e
 });
 
 test('multi choice stays editable and order undo revokes completion until repaired',()=>{
- const run=session(),multi=challenges[1][1];run.visit(1,1);
+ const run=session(),multi=challenges[1][0];run.visit(1,0);
  run.send('challenge-answer',multi.answer[0]);
  assert.equal(run.state.revised,0);assert.ok(!pageReady(run.state,1,'c'));
  run.send('challenge-answer',multi.answer[1]);
@@ -82,15 +83,15 @@ test('multi choice stays editable and order undo revokes completion until repair
  assert.ok(!run.state.research[1].solved.includes(multi.id));
  run.send('challenge-answer',multi.answer[0]);
  assert.ok(run.state.research[1].solved.includes(multi.id));
- const order=challenges[2][1];run.visit(2,1);solve(run,order);
+ const order=challenges[2][0];run.visit(2,0);solve(run,order);
  run.send('challenge-undo');assert.ok(!run.state.research[2].solved.includes(order.id));
  run.send('challenge-order',order.answer.at(-1));assert.ok(run.state.research[2].solved.includes(order.id));
 });
 
 test('invalid drag targets and unfinished replies cannot advance or create credit',()=>{
- const run=session();run.visit(1,0);const before=JSON.stringify(run.state.research[1]);
+ const run=session();run.visit(1,1);const before=JSON.stringify(run.state.research[1]);
  run.send('challenge-drop','land',{itemId:'unknown'});
- run.send('challenge-drop','unknown',{itemId:'mountain'});
+ run.send('challenge-drop','unknown',{itemId:'a'});
  run.send('challenge-answer','unknown');run.send('challenge-next');run.send('challenge-check');
  assert.equal(JSON.stringify(run.state.research[1]),before);
  assert.equal(run.state.revised,0);
@@ -107,7 +108,7 @@ test('completed pages continue directly and a badge still requires original obse
  run.state.route='s1b';run.send('complete');assert.equal(run.calls.routes.at(-1),'s1c');
  run.state.route='s1d';run.send('challenge-finish');
  assert.deepEqual(run.calls.rewards,[1]);assert.deepEqual(run.state.completed,[1]);
- assert.equal(run.state.evidence[1].research.solved.length,8);
+ assert.equal(run.state.evidence[1].research.solved.length,CHAPTER_TASKS);
  const evidence=structuredClone(run.state.evidence[1]);
  run.send('challenge-finish');
  assert.deepEqual(run.calls.rewards,[1],'revisiting a completed chapter must not replay its reward');
@@ -119,9 +120,9 @@ test('completed pages continue directly and a badge still requires original obse
 test('a previously saved complete answer can be confirmed without reentering it',()=>{
  const run=session(),task=challenges[1][2];run.visit(1,2);
  run.state.research[1].answers[task.id]=task.answer;
- assert.match(challengeScreen(run.state,1,'c'),/data-action="challenge-check"/);
+ assert.match(challengeScreen(run.state,1,'d'),/data-action="challenge-check"/);
  run.send('challenge-check');assert.ok(run.state.research[1].solved.includes(task.id));
- assert.doesNotMatch(challengeScreen(run.state,1,'c'),/data-action="challenge-check"/);
+ assert.doesNotMatch(challengeScreen(run.state,1,'d'),/data-action="challenge-check"/);
 });
 
 test('completed practice leads back to missing observation or comparison instead of an unavailable badge',()=>{

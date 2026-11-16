@@ -46,7 +46,7 @@ function restoreDraft(state) {
 }
 
 test('certificates count archived extension records without inventing legacy completion',()=>{
-  for(const [state,count] of [[completedState(),40],[legacyState(),0],[legacyState([1,3]),24]]){
+  for(const [state,count] of [[completedState(),20],[legacyState(),0],[legacyState([1,3]),12]]){
     assert.equal(allLinked(state),true);
     const output=certificate(state);
     assert.match(output,/탐사 완료 인증서/);

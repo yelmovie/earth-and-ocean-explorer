@@ -11,9 +11,10 @@ import './field-stages.css';
 import './challenge-stages.css';
 import './responsive-stages.css';
 import './glass-ui.css';
+import './flow-polish.css';
 const loadConcepts = () => import('./concepts.js');
 import { mountInteractions } from './interactions.js';
-import { chapters, sites, terrains, creatures, routes, asset, tideHeight } from './data.js';
+import { chapters, sites, terrains, creatures, routes, asset, tideHeight, finalCases } from './data.js';
 import { freshState, loadState, saveState, recordPrediction, recordTideObservation, tideIntervalDirection, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
 import { home, hub, learning, report, link, ending, certificate, recordDetail, tideScene, esc, character } from './screens.js';
 import { icon } from './icons.js';
@@ -95,6 +96,23 @@ function syncLinkGuidance(){
   next?.classList.toggle('is-ready',linked&&!complete);
   ending?.classList.toggle('is-ready',complete&&linked);
 }
+// The final mission checks as soon as both evidence and reason are chosen,
+// then opens the next unfinished situation after the learner can read the result.
+let linkTimer=null;
+function runLinkCheck(index){
+  clearTimeout(linkTimer);
+  if(state.finalDraft.stage===null||state.finalDraft.reason===null){syncLinkGuidance();return;}
+  const result=linkEvidence(state,index,state.finalDraft.stage,state.finalDraft.reason);
+  if(result==='already-saved'){syncLinkGuidance();return;}
+  if(result==='wrong'){state.revised++;save();feedback('상황 속 관찰과 기록의 내용을 비교해 봐. 증거와 설명이 둘 다 맞아야 연결돼.');return;}
+  if(result==='practice'){feedback('연습 연결은 맞았어! 해당 장을 조사하면 내 증거로 실제 연결할 수 있어.',true);return;}
+  save();render();tone(660);if(allLinked(state)){sound('reward');return;}
+  const next=finalCases.findIndex((_,i)=>!state.links[i]);
+  if(next<0)return;
+  document.querySelector('.link-actions .next-target, [data-action="case"].next-target')?.classList.add('auto-advance','counting');
+  linkTimer=setTimeout(()=>{linkTimer=null;if(state.route!=='link'||state.finalDraft.caseIndex!==index||state.links[next])return;const linked=state.links[next];state.finalDraft={caseIndex:next,stage:linked?.stage??null,reason:linked?.reason??null};save();render();},2600);
+}
+function autoLink(){const d=state.finalDraft;if(state.route==='link'&&Number.isInteger(d?.caseIndex)&&d.stage!==null&&d.reason!==null&&!state.links[d.caseIndex])runLinkCheck(d.caseIndex);}
 function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button></div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group">${state.route==='hub'?'':`<button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button>`}<button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
 async function render(){
   cleanupExpedition?.();cleanupExpedition=null;
@@ -163,7 +181,7 @@ function observeSite(id){
 }
 // 접힌 질문 단계(1·2)에 고를 답이 남아 있으면 그 단계를 다시 펼쳐 보여 준다(✓ 표시만 보고 지나치지 않게).
 function openWrongStep(n){if(n!==2&&n!==4)return;const d=state.drafts[n],rise=tideHeight(d.b)>tideHeight(d.a),want=n===2?{residue:'sea',reason:'dissolved'}:{direction:rise?'up':'down',concept:rise?'in':'out'};const field=Object.keys(want).find(k=>d[k]!==want[k]);if(field)app.querySelectorAll('.question-step').forEach(el=>{el.open=!!el.querySelector(`[data-field="${field}"]`);});}
-function updateField(field,value){const m=/^s([1-5])/.exec(state.route);if(field==='linkReason'){state.finalDraft.reason=+value;save();render();return;}if(!m)return;const n=+m[1],d=state.drafts[n],[key,sub]=field.split('.');if(!Object.hasOwn(d,key))return;if(typeof d[key]==='number')value=+value;if(key==='features')sound('click');if(n===2&&key==='prediction')recordPrediction(state,value);else if(sub)d[key][sub]=value;else d[key]=value;save();if(key==='time'||key==='pan'){render();}else if(['fresh','sea','heatFresh','heatSea'].includes(key)){d.prepared=false;d.heated=false;d.seenBefore=false;d.seenAfter=false;d.view='before';save();render();}else if(document.activeElement?.tagName!=='SELECT')render();}
+function updateField(field,value){const m=/^s([1-5])/.exec(state.route);if(field==='linkReason'){state.finalDraft.reason=+value;save();render();autoLink();return;}if(!m)return;const n=+m[1],d=state.drafts[n],[key,sub]=field.split('.');if(!Object.hasOwn(d,key))return;if(typeof d[key]==='number')value=+value;if(key==='features')sound('click');if(n===2&&key==='prediction')recordPrediction(state,value);else if(sub)d[key][sub]=value;else d[key]=value;save();if(key==='time'||key==='pan'){render();}else if(['fresh','sea','heatFresh','heatSea'].includes(key)){d.prepared=false;d.heated=false;d.seenBefore=false;d.seenAfter=false;d.view='before';save();render();}else if(document.activeElement?.tagName!=='SELECT')render();}
 const paragraphs=lines=>lines.map(line=>`<p>${esc(line)}</p>`).join('');
 const details=(title,content)=>`<details><summary>${esc(title)}</summary><div class="settings-details-content">${content}</div></details>`;
 async function openOptional(load, open, valid = () => true){
@@ -316,17 +334,9 @@ document.addEventListener('click',async e=>{
     if(!aReady(state,n)){feedback('연습 화면이야. 앞의 관찰을 완료해야 실제 증거로 저장할 수 있어.');return;}
     if(!completeStage(state,n)){state.revised++;save();const hints=['내 표본을 모두 분류한 뒤, 전체 면적 자료와 구분한 설명을 골라 줘.','가열 전후를 확인해. 어느 쪽에 흔적이 더 남았고, 그 물질은 어디에서 왔을까?','사진 네 장에 핀과 알맞은 특징을 연결하고 두 바위의 차이를 비교해 줘.','기둥과 바위를 모두 비교해. A에서 B로 물 높이가 어떻게 변했는지 살펴봐.','직접 관찰한 생물의 집과 연결되는 가치·보호 행동을 골라 줘.'];feedback(hints[n-1]);openWrongStep(n);return;}save();navigate('hub');feedback(chapters[n-1].reward,true);return;
   }
-  if(action==='case'){const linked=state.links[+value];state.finalDraft={caseIndex:+value,stage:linked?.stage??null,reason:linked?.reason??null};save();render();return;}
-  if(action==='link-stage'){state.finalDraft.stage=+value;save();render();return;}
-  if(action==='check-link'){
-    if(state.finalDraft.stage===null||state.finalDraft.reason===null){syncLinkGuidance();return;}
-    const result=linkEvidence(state,+value,state.finalDraft.stage,state.finalDraft.reason);
-    if(result==='already-saved'){syncLinkGuidance();return;}
-    if(result==='wrong'){state.revised++;save();feedback('상황 속 관찰과 기록의 내용을 비교해 봐. 증거와 설명이 둘 다 맞아야 연결돼.');}
-    else if(result==='practice'){feedback('연습 연결은 맞았어! 해당 장을 조사하면 내 증거로 실제 연결할 수 있어.',true);}
-    else{save();render();tone(660);if(allLinked(state))sound('reward');}
-    return;
-  }
+  if(action==='case'){clearTimeout(linkTimer);const linked=state.links[+value];state.finalDraft={caseIndex:+value,stage:linked?.stage??null,reason:linked?.reason??null};save();render();return;}
+  if(action==='link-stage'){state.finalDraft.stage=+value;save();render();autoLink();return;}
+  if(action==='check-link'){runLinkCheck(+value);return;}
   if(action==='print'){if(!studentState&&allLinked(state))window.print();return;}
 });
 window.addEventListener('popstate',()=>{const r=location.hash.slice(1)||'home';if(canAccess(state,r))navigate(r,{back:true,push:false});else{window.history.replaceState({route:'hub'},'','#hub');navigate('hub',{back:true,push:false});}});

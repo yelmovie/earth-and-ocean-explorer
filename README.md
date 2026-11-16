@@ -1,12 +1,14 @@
 # 푸른행성 조사본부
 
+2026-11-17 흐름 정리: 반복되던 확장 문제를 40개에서 20개로 줄이고(중복 개념 제거), 문제마다 새로 생성한 장면 그림 9장을 붙였다. 정답 뒤 핵심 개념 카드와 약 3초 자동 넘김(다른 곳을 누르면 멈춤), 해안 비교의 드롭다운 대신 사진→큰 버튼 특징 고르기, 최종 미션의 즉시 확인·다음 상황 자동 이동을 적용했다. 근거는 `docs/reviews/FLOW-STREAMLINE-20261117.md`.
+
 2026-10-28 일러스트 개선: 지도 부리와 홈·이야기·최종 미션·엔딩의 부리/짱이는 개별 생성 투명 이미지를 공유한다. 갯벌 게·짱뚱어·갈대도 생성 관찰 그림으로 교체했다. 실행 자산은 `public/assets/illustrations/`, 생성 이력과 프롬프트는 `docs/IMAGE-GENERATION.md`에 있다. `tests/illustration_check.py`로 전체 페이지·이미지 해독·지도 이동·실패 후 재시도를 확인한다.
 
 지구와 바다를 관찰하고, 근거를 비교하고, 갯벌을 지킬 행동을 제안하는 교육 탐사 게임 MVP.
 
 - 스테이지 선택: 부리·짱이와 흙길을 걷는 2.5D 픽셀 RPG 지도.
 - 시설 내부: 5장 × 관찰·비교·도전·적용 4화면, 총20개 학습 화면.
-- 장마다 확장8문제, 총40개 추가. 분류·특징 연결·순서 배열·관찰·상황 적용.
+- 장마다 서로 다른 확장 4문제(도전2·새 상황 적용2), 총20개. 분류·특징 연결·순서 배열·관찰·상황 적용. 정답 뒤에는 핵심 개념 카드가 뜨고 다음 문제로 자동으로 이어진다.
 - 실제 증거로 받는 배지5개, 시설 복구, 최종5상황 DATA LINK, 엔딩과 인증서.
 - 설정의 교사용 전체 해금 하나로 26개 경로 접근. 실제 학습·보상 기록은 별도.
 
@@ -35,7 +37,7 @@ Windows/exFAT에서는 preview를 종료한 뒤 다시 빌드한다. 실행 중�
 운영 주소·로컬 개발 주소·미리보기 주소는 서로 다른 저장 공간을 사용한다. 학생은 같은 운영 주소와 브라우저에서 이어서 활동한다.
 
 ## 검증
-Node 단위 테스트: 저장·완료·해금·인증·40개 확장 활동·지도 30개 경로를 검사한다.
+Node 단위 테스트: 저장·완료·해금·인증·20개 확장 활동·지도 30개 경로를 검사한다.
 납품 브라우저 검증은 기존 Playwright 설치를 사용한다. `PLAYWRIGHT_RUNNER`에 Playwright가 설치된 package.json의 절대 경로, `BROWSER_PATH`에 Chrome 또는 Edge 실행 파일을 지정할 수 있다. 결과는 외장 SSD의 `artifacts/`에 남긴다.
 
 - 개발 서버에서 `npm run check:layout`으로 전체 활동 배치와 자동 관측을 검사한다.
@@ -75,4 +77,4 @@ Node 단위 테스트: 저장·완료·해금·인증·40개 확장 활동·지�
 
 `tests/flow_polish.py`는 연타·키보드·이전 저장 재개·가열 중 이탈·타임랩스·비교선 유지 회귀를 확인한다. 변경 범위와 검증 근거는 `docs/reviews/FLOW-POLISH-20261028.md`에 기록한다.
 
-`npm run check:layout`은 설치된 Node Playwright로 전체 활동·40개 문제·자동 관측을 확인한다. `npm run concepts:render`는 HyperFrames·FFmpeg를 사용하며, 재현 경로는 scripts/render-concepts.mjs를 참고한다. 납품 최종 근거는 `docs/reviews/RELEASE-REVIEW-20261111.md`와 `SCORE-20261111.md`에 있다.
+`npm run check:layout`은 설치된 Node Playwright로 전체 활동·20개 문제·자동 관측을 확인한다. `npm run concepts:render`는 HyperFrames·FFmpeg를 사용하며, 재현 경로는 scripts/render-concepts.mjs를 참고한다. 납품 최종 근거는 `docs/reviews/RELEASE-REVIEW-20261111.md`와 `SCORE-20261111.md`에 있다.

@@ -92,7 +92,7 @@ async function checkMapMovement(width, height, state) {
 
 try {
   await page.goto(base);
-  await page.waitForSelector('.title-map');
+  await page.waitForSelector('.title-start');
   for (const [width, height] of [[375, 812], [915, 412], [1024, 768]]) {
     await page.setViewportSize({ width, height });
     for (const state of ['fresh', 'partial', 'completed', 'teacher']) {

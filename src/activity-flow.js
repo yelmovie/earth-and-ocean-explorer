@@ -30,6 +30,8 @@ export function activityReady(state) {
   return Boolean(d.value&&d.action);
 }
 
+// 받침이 있으면 '을', 없으면 '를'.
+const objectParticle=word=>{const c=word.charCodeAt(word.length-1)-0xac00;return word+(c>=0&&c<11172&&c%28?'을':'를');};
 export function stageGuide(state) {
   const route=state.route,n=Number(route[1]),d=state.drafts[n];
   if(!d)return null;
@@ -40,7 +42,7 @@ export function stageGuide(state) {
   if(route==='s1a') {
     if(d.samples.length>=3&&!d.atmosphere)return ['세 곳 이상 관찰했어요. 대기 관찰을 눌러요.','[data-action="atmosphere"]'];
     const next=sites.find(site=>!d.samples.includes(site.id));
-    if(next)return [d.samples.length<3?`관찰 ${d.samples.length} / 3곳. ${next.name}을 눌러요.`:'땅과 물을 모두 찾을 수 있도록 다른 지점도 관찰해요.',`[data-action="site"][data-value="${next.id}"]`];
+    if(next)return [d.samples.length<3?`${objectParticle(next.name)} 눌러 관찰해요.`:'땅과 물을 모두 찾을 수 있도록 다른 지점도 관찰해요.',`[data-action="site"][data-value="${next.id}"]`];
     if(!d.atmosphere)return ['대기 관찰을 눌러 지구를 둘러싼 공기를 살펴봐요.','[data-action="atmosphere"]'];
   }
   if(route==='s1b') {
@@ -61,7 +63,7 @@ export function stageGuide(state) {
   }
   if(route==='s3a'){
     const next=terrains.find(t=>!d.photos.includes(t.id));
-    if(next)return [`촬영 ${d.photos.length} / 4장. 남은 ＋를 눌러요.`,`[data-action="target"][data-value="${next.id}"]`];
+    if(next)return ['남은 ＋를 눌러 촬영해요.',`[data-action="target"][data-value="${next.id}"]`];
   }
   if(route==='s3b') {
     const next=terrains.find(t=>!d.pins[t.id]||!d.features[t.id]);
@@ -75,14 +77,14 @@ export function stageGuide(state) {
     return ['시간을 움직여 A보다 나중의 다른 물 높이를 골라요.',choice('time')];
   }
   if(route==='s4b') {
-    if(d.markers.length<2)return ['비교선을 움직인 뒤 기둥 확인과 바위 확인을 눌러요.','[data-action="marker"]:not(.selected)'];
+    if(d.markers.length<2)return ['비교선을 끌어 기둥과 바위 위를 지나가 봐요.','[data-compare]'];
     if(!d.direction)return ['A에서 B로 물 높이가 어떻게 변했는지 골라요.',choice('direction')];
     if(!d.concept)return ['관찰한 변화의 이름을 골라요.',choice('concept')];
   }
   if(route==='s5a') {
     if(d.selected&&!d.found.includes(d.selected))return ['확대한 생물에서 보이는 특징을 직접 골라요.','[data-action="observe-feature"]'];
     const next=creatures.find(c=>!d.found.includes(c.id));
-    if(next)return [`생물 ${d.found.length} / 3종 기록. 남은 흔적을 눌러요.`,`[data-action="creature"][data-value="${next.id}"]`];
+    if(next)return ['남은 흔적을 눌러 확대해요.',`[data-action="creature"][data-value="${next.id}"]`];
   }
   if(route==='s5b') {
     if(!d.value)return ['관찰한 생물들의 집인 갯벌의 가치를 골라요.',choice('value')];
@@ -180,7 +182,7 @@ export function mountActivityFlow(app,ctx) {
       const input=app.querySelector('[data-compare]');input.value=value;automatic=true;try{input.dispatchEvent(new Event('input',{bubbles:true}));}finally{automatic=false;}
       if(playback.phase===3&&!d.markers.includes('pole')){d.markers.push('pole');save();}
       if(playback.phase===5&&!d.markers.includes('rock')){d.markers.push('rock');save();}
-      app.querySelectorAll('[data-action="marker"]').forEach(el=>{if(d.markers.includes(el.dataset.value)){el.classList.add('selected');el.textContent=`✓ ${el.dataset.value==='pole'?'기둥':'바위'} 확인`;}});
+      app.querySelectorAll('[data-action="marker"]').forEach(el=>{if(d.markers.includes(el.dataset.value)){el.classList.add('selected');el.textContent=`✓ ${el.dataset.value==='pole'?'기둥':'바위'}에서 비교함`;}});
     } else if(route==='s5a') {
       const next=creatures.find(c=>!d.found.includes(c.id));
       playback.playing=false;
@@ -196,7 +198,7 @@ export function mountActivityFlow(app,ctx) {
   on(app,'click',e=>{if(automatic||e.target.closest('[data-autoplay],.activity-playback'))return;if(playback.playing)stop();if(e.target.closest('[data-action="next"],[data-action="complete"],[data-action="tide-save"]'))return;queueMicrotask(()=>{if(!disposed)guide();});},{capture:true});
   on(app,'pointerdown',e=>{if(e.target.closest('input[data-field],[data-compare],.survey-lens,.coast-view')&&playback.playing)stop();});
   on(app,'input',e=>{if(!automatic&&e.target.matches('[data-field],[data-compare]')){if(route==='s4a')playback.phase=0;if(playback.playing)stop();}});
-  on(app,'change',e=>{if(e.target.matches('[data-field]'))queueMicrotask(()=>{if(!disposed)guide();});});
+  on(app,'change',e=>{if(e.target.matches('[data-field],[data-compare]'))queueMicrotask(()=>{if(!disposed)guide();});});
   on(document,'visibilitychange',()=>{if(document.hidden)stop();});
   activeHeat=heat;guide();sync();schedule();
   return ()=>{disposed=true;clear();listeners.forEach(off=>off());activeHeat=null;};

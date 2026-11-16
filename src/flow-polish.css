@@ -177,3 +177,119 @@
   #app #main .learning .challenge-observation > .challenge-scene:not(.tag):not(.visual-caption) { min-height: 120px; }
 }
 #app #main .learning .challenge-observation > .challenge-scene:not(.tag):not(.visual-caption) { align-self: stretch; width: 100%; }
+
+/* 실험 비커·가열판·소금: 물 높이와 눈금은 코드로 정확히 두고, 유리와 기구는 그림으로 올린다. */
+#app .activity[data-chapter="2"] .beaker-vessel,
+#app .challenge-page .lab-model-glass {
+  border: 0;
+  border-radius: 0 0 22px 22px;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+#app .activity[data-chapter="2"] .beaker-vessel::after { content: none; }
+#app .activity[data-chapter="2"] .evaporated .beaker-vessel { background: none; }
+/* 물과 눈금은 같은 안쪽 칸(유리 바닥~입구 아래)을 기준으로 해서 mL 눈금과 물 높이가 일치한다. */
+#app .activity[data-chapter="2"] .beaker-fill { position: absolute; top: 14%; bottom: 6%; left: 9%; right: 9%; z-index: 1; }
+#app .activity[data-chapter="2"] .beaker-fill .water { left: 0; right: 0; bottom: 0; width: auto; border-radius: 0 0 16px 16px; }
+#app .activity[data-chapter="2"] .beaker-fill .beaker-scale { inset: 0 4px 0 auto; z-index: 3; }
+#app .challenge-page .lab-model-water {
+  left: 9%;
+  right: 9%;
+  bottom: 5%;
+  width: auto;
+  max-height: 84%;
+  border-radius: 0 0 18px 18px;
+  z-index: 1;
+}
+#app .beaker-glass {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+#app .activity[data-chapter="2"] .beaker-unit,
+#app .challenge-page :is(.lab-model-ticks, .lab-model-glass b) { z-index: 3; }
+#app .activity[data-chapter="2"] .salt-pile {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 6%;
+  width: 64%;
+  z-index: 1;
+  pointer-events: none;
+}
+#app .activity[data-chapter="2"] .beaker-item .hotplate,
+#app .challenge-page .lab-model-plate {
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+#app .activity[data-chapter="2"] .hotplate img,
+#app .challenge-page .lab-model-plate img { display: block; width: 100%; height: auto; pointer-events: none; }
+#app .activity[data-chapter="2"] .is-heating .hotplate img { filter: drop-shadow(0 -6px 10px #ff9d4dcc) saturate(1.2); }
+
+/* 장마다 다른 그림 배지와 인증서 인장. 받은 배지는 컬러, 아직 받지 않은 배지는 흐리게. */
+.chapter-reward .chapter-badge-art {
+  display: block;
+  width: clamp(120px, 18vh, 168px);
+  height: auto;
+  margin: 4px auto 12px;
+  filter: drop-shadow(0 10px 18px rgb(120 90 20 / 25%));
+  animation: badge-land .5s cubic-bezier(.2, .9, .3, 1.2) both;
+}
+@keyframes badge-land { from { opacity: 0; transform: translateY(-14px) scale(.86); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .chapter-reward .chapter-badge-art { animation: none; } }
+@media (max-height: 560px) { .chapter-reward .chapter-badge-art { width: 96px; margin-bottom: 6px; } }
+
+#app .certificate-seal {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border: 0;
+  background: none;
+  font-size: 0;
+}
+#app .certificate-seal img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+#app .certificate-seal small {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #fff8e2;
+  color: #6c5520;
+  font-size: 12px;
+  font-weight: 800;
+}
+#app .certificate-evidence span { display: inline-flex; align-items: center; gap: 6px; }
+#app .certificate-evidence img { width: 30px; height: 30px; object-fit: contain; filter: grayscale(1) opacity(.45); }
+#app .certificate-evidence .is-earned img { filter: none; }
+@media (max-height: 560px), (max-width: 600px) {
+  #app .certificate-seal { width: 60px; height: 60px; margin: 4px auto; }
+  #app .certificate-evidence img { width: 22px; height: 22px; }
+}
+#app .activity[data-chapter="2"] .beaker-item .hotplate { width: min(124px, 74%); margin: -8px auto 0; position: relative; z-index: 0; }
+#app .challenge-page .lab-model-plate { width: min(96px, 74%); margin: -6px auto 0; }
+@media (max-height: 560px), (max-width: 600px) {
+  #app .activity[data-chapter="2"] .beaker-item .hotplate { width: min(84px, 60%); }
+  #app .challenge-page .lab-model-plate { width: min(64px, 60%); }
+}
+/* 비커 그림이 찌그러지지 않도록 칸을 그림 비율로 고정하고, 높이는 기존 반응형 규칙을 따른다. */
+#app .activity[data-chapter="2"] .beaker-vessel { width: auto; max-width: 100%; aspect-ratio: 383 / 520; margin-inline: auto; }
+#app .challenge-page .lab-model-glass { width: auto; max-width: 100%; aspect-ratio: 383 / 520; }
+#app .activity[data-chapter="2"] .beaker-unit { top: 15%; right: 14%; }
+/* 비커가 작아지는 화면에서는 눈금 글자를 비커 높이에 맞춰 줄이고, 가열판은 비커 아래에 더 겹쳐 놓는다. */
+#app .activity[data-chapter="2"] .beaker-vessel { container-type: size; }
+#app .activity[data-chapter="2"] .beaker-fill .beaker-scale { font-size: min(var(--label-size), 13cqh); }
+@media (max-width: 800px) {
+  #app .activity[data-chapter="2"] .beaker-item .hotplate { width: min(76px, 48%); margin-top: -16px; }
+}
+#app #main .activity[data-chapter="2"] .beaker-fill .beaker-scale i { font-size: min(var(--label-size), 12cqh); line-height: 1.05; }

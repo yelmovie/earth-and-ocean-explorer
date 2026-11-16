@@ -32,7 +32,14 @@ export function mountInteractions(app,ctx){
   const output=el.closest('.range-field')?.querySelector('output');if(output)output.textContent=['heatFresh','heatSea'].includes(field)?(+el.value===1?'약하게':'세게'):`${el.value} mL`;
   if(['fresh','sea','heatFresh','heatSea'].includes(field))updateLabStatus();
  }
- on(app,'input',e=>{if(e.target.matches('input[data-field]'))preview(e.target);if(e.target.matches('[data-compare]')){app.querySelector('.tide-wipe').style.setProperty('--wipe',`${e.target.value}%`);}});
+ on(app,'input',e=>{if(e.target.matches('input[data-field]'))preview(e.target);if(e.target.matches('[data-compare]')){app.querySelector('.tide-wipe').style.setProperty('--wipe',`${e.target.value}%`);markCompared(+e.target.value);}});
+ // Sliding the A·B line across the pole or the rock records that comparison; the buttons stay as a tap alternative.
+ function markCompared(v){
+  if(n!==4||step!=='b')return;const hit=v>=60&&v<=76?'pole':v>=22&&v<=46?'rock':null;
+  if(!hit||d.markers.includes(hit))return;d.markers.push(hit);save();sound('scan');
+  const el=app.querySelector(`[data-action="marker"][data-value="${hit}"]`);if(el){el.classList.add('selected');el.textContent=`✓ ${hit==='pole'?'기둥':'바위'}에서 비교함`;}
+  app.querySelector('[data-compare]')?.dispatchEvent(new Event('change',{bubbles:true}));
+ }
  on(app,'pointerdown',e=>{
   if(e.button!==0||drag||e.isPrimary===false)return;const source=e.target.closest('[data-challenge-item],[data-sample],[data-action="challenge-order"]');const coast=e.target.closest('.coast-view'),lens=e.target.closest('.survey-lens');
   if(!source&&!lens&&(!coast||e.target.closest('button,input,label')))return;

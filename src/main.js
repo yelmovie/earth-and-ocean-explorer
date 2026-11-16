@@ -175,7 +175,7 @@ function observeSite(id){
   const d=state.drafts[1];if(d.samples.includes(id))return;
   d.samples.push(id);save();
   const button=app.querySelector(`[data-action="site"][data-value="${id}"]`);button.textContent=`✓ ${sites.find(site=>site.id===id).name}`;button.classList.add('collected');
-  const progress=app.querySelector('.mini-progress');progress.querySelector('b').textContent=`${d.samples.length} / ${sites.length}`;progress.querySelector('i').style.width=`${d.samples.length/sites.length*100}%`;
+  const progress=app.querySelector('.mini-progress'),seen=Math.min(d.samples.length,3);progress.querySelector('b').textContent=`${seen} / 3`;progress.querySelector('i').style.width=`${seen/3*100}%`;
   app.querySelector('[data-action="go"][data-value="s1b"]').disabled=!canAccess(state,'s1b');
   feedback(aReady(state,1)?'관찰 준비 완료! 모은 표본을 비교하러 가자.':`${sites.find(site=>site.id===id).name} 기록 완료 · ${d.samples.length}곳 관찰했어.`,true);sound('scan');
 }
@@ -327,7 +327,7 @@ document.addEventListener('click',async e=>{
     };
     feedback(messages[result]||'서로 다른 물 높이를 골라 A와 B에 담아요.');return;
   }
-  if(action==='marker'){if(!d.markers.includes(value))d.markers.push(value);save();render();return;}
+  if(action==='marker'){const line=app.querySelector('[data-compare]');if(line)line.value=value==='pole'?68:34;if(!d.markers.includes(value))d.markers.push(value);save();render();return;}
   if(action==='creature'){sound('scan');d.selected=value;save();render();return;}
   if(action==='observe-feature'){const creature=creatures.find(c=>c.id===button.dataset.creature);if(!creature||d.selected!==creature.id)return;const id=creature.id;if(d.features[id]===value&&(value!==creature.feature||d.found.includes(id)))return;d.features[id]=value;if(value!==creature.feature){d.found=d.found.filter(found=>found!==id);state.revised++;save();render();feedback('확대해서 본 생김새와 움직임을 다시 살펴봐. 알맞은 특징을 다시 골라 줘.');return;}if(!d.found.includes(id))d.found.push(id);save();render();feedback(d.found.length===3?stageGuide(state)[0]:`${creature.name} 기록 완료! 다른 흔적도 찾아봐.`,true);return;}
   if(action==='complete'){

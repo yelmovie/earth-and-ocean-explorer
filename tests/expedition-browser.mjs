@@ -40,7 +40,7 @@ try {
   entry.setDefaultNavigationTimeout(120000);
   entry.on('pageerror', error => errors.push(error.message));
   await entry.goto(base, { waitUntil: 'domcontentloaded' });
-  await entry.locator('.title-map').tap();
+  await entry.locator('.title-start').tap();
   await entry.getByRole('button', { name: '탐사정 출항 · 직접 조사' }).tap();
   assert.equal(await entry.locator('.ocean-expedition option[value="2"]').evaluate(option => option.disabled), true);
   await entry.getByRole('button', { name: '탐사정 위', exact: true }).tap();

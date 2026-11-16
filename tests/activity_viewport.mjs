@@ -139,7 +139,7 @@ try {
     await seed('s1a');await speed(3);await play();await page.waitForFunction(()=>document.querySelector('[data-action="atmosphere"]')?.disabled);
     assert.equal((await saved()).drafts[1].samples.length,6);assert.equal((await saved()).drafts[1].conclusion,'');
     await page.waitForFunction(()=>document.querySelector('[data-autoplay]')?.getAttribute('aria-pressed')==='false');await checkState('globe-observed');
-    await seed('s3a');await speed(3);await play();await page.waitForFunction(()=>document.querySelector('.mini-progress b')?.textContent==='4 / 4');
+    await seed('s3a');await speed(3);await play();await page.waitForFunction(()=>document.querySelectorAll('.photo-slots .filled').length===4);
     assert.deepEqual((await saved()).drafts[3].features,{});
     await page.waitForFunction(()=>document.querySelector('[data-autoplay]')?.getAttribute('aria-pressed')==='false');await checkState('coast-captured');
     await seed('s4a');await speed(3);await play();await page.waitForFunction(()=>document.querySelector('[data-autoplay]')?.getAttribute('aria-pressed')==='false');
@@ -147,7 +147,7 @@ try {
     await checkState('tide-recorded');
     await page.locator('[data-action="next"]').click();await page.waitForURL(url=>url.hash==='#s4b');await play();
     await page.waitForFunction(()=>document.querySelector('[data-autoplay]')?.getAttribute('aria-pressed')==='false');
-    assert.deepEqual((await saved()).drafts[4].markers,['pole','rock']);assert.equal((await saved()).drafts[4].concept,'');
+    assert.deepEqual([...(await saved()).drafts[4].markers].sort(),['pole','rock']);assert.equal((await saved()).drafts[4].concept,'');
     await page.locator('[data-field="direction"][data-value="up"]').click();await checkState('tide-concept');
     await seed('s5a');await speed(3);await play();await page.waitForFunction(()=>document.querySelector('[data-action="observe-feature"]'));
     assert.equal(await page.locator('[data-autoplay]').getAttribute('aria-pressed'),'false');assert.deepEqual((await saved()).drafts[5].features,{});

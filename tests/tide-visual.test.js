@@ -12,9 +12,11 @@ test('tide illustration is static while all seven water levels remain model-driv
     assert.match(scenes[t],/tide-foreshore\.webp/);
     assert.ok(scenes[t].includes(`data-water-height="${tideHeight(t)}"`));
     assert.ok(scenes[t].includes(`M0 ${240-tideHeight(t)} Q240 ${200-tideHeight(t)} 480 ${220-tideHeight(t)}`));
-    assert.match(scenes[t],/x="319" y="69" width="21" height="163"/);
-    assert.match(scenes[t],/M120 211 145 160 183 149 207 214Z/);
-    assert.ok(scenes[t].indexOf('tide-foreshore')<scenes[t].indexOf('M120 211'));
+    // The rock and the pole are fixed painted references; only the water line moves.
+    assert.match(scenes[t],/tide-rock\.webp" x="92" y="136" width="160" height="74"/);
+    assert.match(scenes[t],/tide-pole\.webp" x="319" y="66" width="21" height="168"/);
+    assert.ok(scenes[t].indexOf('tide-foreshore')<scenes[t].indexOf('tide-rock'));
+    assert.ok(scenes[t].indexOf('tide-pole')<scenes[t].indexOf(`M0 ${240-tideHeight(t)}`),'water is drawn over the pole');
   }
   assert.equal(tideHeight(0),tideHeight(6));
   assert.ok(tideHeight(3)>tideHeight(0));

@@ -6,7 +6,7 @@
 :is(#app,body) :is(.topbar .icon-button,.step-tabs button:not(.active),.secondary,.hub-building-label,.hub-companion,.hub-resident,.arrival,.moa-bubble,.guide-mini,.friend-bubble){background:var(--glass-face);border-color:var(--glass-line);box-shadow:0 3px 12px #123f4b20}
 #app #main .learning .mission-footer{background:var(--glass-face);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}
 body dialog:is(.settings-modal,.concept-dialog,.chapter-reward),:is(#app,body) :is(.record-modal,.modal){background:var(--glass-read);border:1px solid var(--glass-line);box-shadow:0 18px 60px #123f4b30}
-body dialog::backdrop{background:rgba(12,40,50,.28)}
+body dialog::backdrop{background:var(--scrim)}
 @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
  :is(#app,body) :is(.topbar,.arrival,.moa-bubble),#app #main .learning .mission-footer,body dialog{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 }

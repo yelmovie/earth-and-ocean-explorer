@@ -1,4 +1,9 @@
 /* Blue Planet: cream field journal, navy instruments, teal actions. */
+/* 팝업 뒤 배경: 장면이 보이게 0.3 이하, 흐림 없음(2026-11-17 3초 규칙). 전체 화면 무대(탐사길)는 따로 둔다.
+   예전 Safari는 ::backdrop이 :root를 물려받지 않아 둘 다에 둔다. */
+:root, ::backdrop {
+  --scrim: rgba(12, 40, 50, .26);
+}
 :root {
   font-family: 'NanumSquareNeo', 'Malgun Gothic', 'Apple SD Gothic Neo', system-ui, sans-serif;
   font-synthesis: none;

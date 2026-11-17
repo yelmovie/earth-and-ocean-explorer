@@ -50,5 +50,6 @@
 .story-dialog .settings-body{padding:24px 28px}
 .story-friends{display:flex;align-items:center;justify-content:center;min-height:150px;margin-bottom:18px}
 .story-friends .character{width:100px;height:140px}
-.record-modal{height:auto;max-height:88dvh}
+/* 결과·기록 카드는 화면의 절반 이하: 뒤 보고서가 보이고, 긴 기록은 카드 안에서 스크롤한다. */
+body dialog.settings-modal.record-modal{width:min(760px,calc(100vw - 40px));height:auto;max-height:64dvh}
 @media(max-width:600px){.settings-modal{width:calc(100vw - 20px);height:94dvh;max-height:94dvh;border-radius:18px}.settings-modal .modal-head{padding:16px 18px}.settings-modal .modal-head h2{font-size:25px}.settings-modal .settings-body{padding:0 16px 18px}.settings-modal .settings-body summary{padding:14px;font-size:17px}.settings-details-content{padding:14px}.settings-modal .settings-body p,.settings-modal .settings-body li,.settings-app-line span{font-size:17px}.settings-modal .settings-body .settings-app-line{display:block}.settings-app-line b{display:block;margin-bottom:3px}.modal-footer{padding:14px 16px;gap:10px}.modal-footer button{font-size:15px}.modal-footer .primary{min-width:85px}.settings-replays button{font-size:17px}.story-dialog,.record-modal{height:auto}}

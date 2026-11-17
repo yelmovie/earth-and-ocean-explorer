@@ -11,11 +11,14 @@ const CELL = 256, FRAMES = 6;
 async function strip(file, out) {
   const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const { width, height } = info, alpha = (x, y) => data[(y * width + x) * 4 + 3];
+  // 흐린 가장자리 색 번짐과 칸 사이에 떠 있는 티끌을 지운다.
+  for (let i = 3; i < data.length; i += 4) if (data[i] < 96) data[i] = 0;
   const filled = Array.from({ length: width }, (_, x) => { let n = 0; for (let y = 0; y < height; y++) if (alpha(x, y) > 24) n++; return n; });
   let runs = [], start = -1;
   for (let x = 0; x <= width; x++) { const on = x < width && filled[x] > 2; if (on && start < 0) start = x; if (!on && start >= 0) { runs.push([start, x]); start = -1; } }
-  // 가는 틈으로 끊긴 조각은 가까운 것끼리 붙이고, 티끌은 버린다.
-  runs = runs.filter(([a, b]) => b - a > 6);
+  // 티끌(폭이 좁은 조각)은 투명하게 지우고, 가는 틈으로 끊긴 조각은 가까운 것끼리 붙인다.
+  for (const [a, b] of runs.filter(([a, b]) => b - a <= 40)) for (let y = 0; y < height; y++) for (let x = a; x < b; x++) data[(y * width + x) * 4 + 3] = 0;
+  runs = runs.filter(([a, b]) => b - a > 40);
   while (runs.length > FRAMES) { let best = 0, gap = Infinity; for (let i = 0; i < runs.length - 1; i++) { const g = runs[i + 1][0] - runs[i][1]; if (g < gap) { gap = g; best = i; } } runs.splice(best, 2, [runs[best][0], runs[best + 1][1]]); }
   if (runs.length !== FRAMES) throw new Error(`${path.basename(file)}: 칸을 ${runs.length}개 찾았다(6개여야 한다)`);
   const boxes = runs.map(([x0, x1]) => {
@@ -28,7 +31,7 @@ async function strip(file, out) {
   const layers = [];
   for (const [i, b] of boxes.entries()) {
     const w = Math.max(1, Math.round((b.x1 - b.x0) * scale)), h = Math.max(1, Math.round((b.bottom - b.top) * scale));
-    const input = await sharp(file).ensureAlpha().extract({ left: b.x0, top: b.top, width: b.x1 - b.x0, height: b.bottom - b.top }).resize(w, h).png().toBuffer();
+    const input = await sharp(data, { raw: { width, height, channels: 4 } }).extract({ left: b.x0, top: b.top, width: b.x1 - b.x0, height: b.bottom - b.top }).resize(w, h).png().toBuffer();
     const left = Math.round(i * CELL + CELL / 2 - (b.center - b.x0) * scale);
     layers.push({ input, left: Math.max(i * CELL, Math.min((i + 1) * CELL - w, left)), top: CELL - 4 - h });
   }

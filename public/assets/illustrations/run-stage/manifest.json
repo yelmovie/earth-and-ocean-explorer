@@ -53,5 +53,315 @@
       724
     ],
     "sha256": "6f86af329907229301eaa2d6f708aebe240ffdb91dca2172b25810a4e987a95e"
+  },
+  "buri-walk": {
+    "file": "illustrations/run-stage/buri-walk.webp",
+    "kind": "strip",
+    "frames": 6,
+    "feetSpread": 1,
+    "heightSpread": 1,
+    "sourceFrames": [
+      [
+        38,
+        108,
+        303,
+        469
+      ],
+      [
+        401,
+        108,
+        302,
+        468
+      ],
+      [
+        763,
+        108,
+        301,
+        468
+      ],
+      [
+        1125,
+        108,
+        302,
+        468
+      ],
+      [
+        1487,
+        108,
+        302,
+        468
+      ],
+      [
+        1849,
+        108,
+        302,
+        468
+      ]
+    ],
+    "width": 1536,
+    "height": 256,
+    "bytes": 91914,
+    "original": "assets/generated/20261117-run-stage/buri-walk.png",
+    "originalSize": [
+      2172,
+      724
+    ],
+    "sha256": "24e30aff3bbabc72b4685d7d71c9b5d38eff22bd6d9dcf127f3bd4c2dc7586d3"
+  },
+  "mud": {
+    "file": "illustrations/run-stage/mud.webp",
+    "kind": "tile",
+    "width": 512,
+    "height": 512,
+    "bytes": 29538,
+    "original": "assets/generated/20261117-run-stage/mud.png",
+    "originalSize": [
+      1254,
+      1254
+    ],
+    "sha256": "c6e3cae95a5fc3c03d8e052f34bf43a8cf9e3ad3b7d4d84c5456ce4b4b02e3d3"
+  },
+  "props-deck": {
+    "file": "illustrations/run-stage/prop-*.webp",
+    "kind": "props",
+    "parts": {
+      "prop-hut": {
+        "width": 331,
+        "height": 384,
+        "bytes": 45920
+      },
+      "prop-lifebuoy": {
+        "width": 199,
+        "height": 384,
+        "bytes": 26568
+      },
+      "prop-lantern": {
+        "width": 179,
+        "height": 384,
+        "bytes": 21110
+      },
+      "prop-telescope": {
+        "width": 258,
+        "height": 384,
+        "bytes": 30932
+      },
+      "prop-crate": {
+        "width": 312,
+        "height": 308,
+        "bytes": 29878
+      },
+      "prop-bench": {
+        "width": 356,
+        "height": 282,
+        "bytes": 25922
+      }
+    },
+    "original": "assets/generated/20261117-run-stage/props-deck.png",
+    "originalSize": [
+      2172,
+      724
+    ],
+    "sha256": "18ed16fd9545a59689aba4043f255c9dbe91753aa35f61dd78508e7b0ed26a68"
+  },
+  "planks": {
+    "file": "illustrations/run-stage/planks.webp",
+    "kind": "tile",
+    "width": 512,
+    "height": 512,
+    "bytes": 27248,
+    "original": "assets/generated/20261117-run-stage/planks.png",
+    "originalSize": [
+      1254,
+      1254
+    ],
+    "sha256": "794408dfc72b6578c23933fad8bb9468450f70139fcdd376a9d0112a3956aabf"
+  },
+  "water": {
+    "file": "illustrations/run-stage/water.webp",
+    "kind": "tile",
+    "width": 512,
+    "height": 512,
+    "bytes": 52220,
+    "original": "assets/generated/20261117-run-stage/water.png",
+    "originalSize": [
+      1254,
+      1254
+    ],
+    "sha256": "2d362f2ebcb3fc9a8091de69f14bdaac5f95857bf0bfcf5cb21e6b18ee8fc34c"
+  },
+  "grass": {
+    "file": "illustrations/run-stage/grass.webp",
+    "kind": "tile",
+    "width": 512,
+    "height": 512,
+    "bytes": 78480,
+    "original": "assets/generated/20261117-run-stage/grass.png",
+    "originalSize": [
+      1254,
+      1254
+    ],
+    "sha256": "430190ba1d3bec2641cae6312f08f51aabe9658f65aadd466d05313ccbb05d56"
+  },
+  "moa-call": {
+    "file": "illustrations/run-stage/moa-call.webp",
+    "kind": "strip",
+    "frames": 6,
+    "feetSpread": 0,
+    "heightSpread": 1,
+    "sourceFrames": [
+      [
+        17,
+        150,
+        324,
+        461
+      ],
+      [
+        380,
+        150,
+        312,
+        461
+      ],
+      [
+        742,
+        150,
+        299,
+        461
+      ],
+      [
+        1103,
+        149,
+        316,
+        462
+      ],
+      [
+        1465,
+        150,
+        328,
+        461
+      ],
+      [
+        1827,
+        149,
+        313,
+        462
+      ]
+    ],
+    "width": 1536,
+    "height": 256,
+    "bytes": 83596,
+    "original": "assets/generated/20261117-run-stage/moa-call.png",
+    "originalSize": [
+      2172,
+      724
+    ],
+    "sha256": "64d0a63e07b084e5fecca7b4a48fa0c20a1ece76753f6e1048d417780a546b68"
+  },
+  "buri-look": {
+    "file": "illustrations/run-stage/buri-look.webp",
+    "kind": "strip",
+    "frames": 6,
+    "feetSpread": 0,
+    "heightSpread": 37,
+    "sourceFrames": [
+      [
+        24,
+        125,
+        315,
+        460
+      ],
+      [
+        384,
+        130,
+        315,
+        455
+      ],
+      [
+        741,
+        145,
+        313,
+        440
+      ],
+      [
+        1096,
+        162,
+        316,
+        423
+      ],
+      [
+        1459,
+        149,
+        317,
+        436
+      ],
+      [
+        1825,
+        130,
+        319,
+        455
+      ]
+    ],
+    "width": 1536,
+    "height": 256,
+    "bytes": 99658,
+    "original": "assets/generated/20261117-run-stage/buri-look.png",
+    "originalSize": [
+      2172,
+      724
+    ],
+    "sha256": "b003594209fb6050803ece493438d0ca6e58014dbb3d08d60d3503a54733124e"
+  },
+  "buri-cheer": {
+    "file": "illustrations/run-stage/buri-cheer.webp",
+    "kind": "strip",
+    "frames": 6,
+    "feetSpread": 0,
+    "heightSpread": 17,
+    "sourceFrames": [
+      [
+        21,
+        121,
+        331,
+        478
+      ],
+      [
+        385,
+        121,
+        327,
+        478
+      ],
+      [
+        738,
+        120,
+        331,
+        479
+      ],
+      [
+        1099,
+        132,
+        336,
+        467
+      ],
+      [
+        1461,
+        137,
+        326,
+        462
+      ],
+      [
+        1824,
+        134,
+        329,
+        465
+      ]
+    ],
+    "width": 1536,
+    "height": 256,
+    "bytes": 99878,
+    "original": "assets/generated/20261117-run-stage/buri-cheer.png",
+    "originalSize": [
+      2172,
+      724
+    ],
+    "sha256": "f0622d8af4afcd24af8ecf6e7f8115ac0918d9fc655ee1b03f3cb66ce4365bd1"
   }
 }

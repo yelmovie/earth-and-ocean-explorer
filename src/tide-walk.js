@@ -11,7 +11,7 @@ import { course, SLOT_SECONDS, WALK_LAST_SLOT, WALK_WARN_SLOT, WALK_NOTE, WALK_S
 const SPEED = 3.6, REACH = 1.9, WALK_FPS = 9;
 const run3 = name => illustration(`run-stage/${name}`);
 // 생성해서 넣은 그림만 적는다. 여기 없는 것은 기본 도형과 기존 그림으로 보인다.
-const READY = new Set(['backdrop', 'prop-cordgrass', 'prop-seablite', 'prop-rocks', 'prop-pine', 'prop-gull', 'prop-shells']);
+const READY = new Set(['backdrop', 'mud', 'planks', 'water', 'grass', 'buri-walk', 'buri-look', 'buri-cheer', 'moa-call', 'prop-cordgrass', 'prop-seablite', 'prop-rocks', 'prop-pine', 'prop-gull', 'prop-shells', 'prop-hut', 'prop-lifebuoy', 'prop-lantern', 'prop-telescope', 'prop-crate', 'prop-bench']);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const clamp = (v, low, high) => Math.max(low, Math.min(high, v));
 const modelSlots = [0, 1, 2, 3];
@@ -23,7 +23,7 @@ const spotNames = Object.fromEntries(creatures.map(c => [c.id, c]));
 const zones = [course.deck, course.path, course.end];
 const lane = course.path.z - 0.36;
 const friends = Object.values(course.friends);
-const canStand = (x, z) => !friends.some(friend => Math.hypot(x - friend.x, z - friend.z) < 0.85) && zones.some(zone => x >= zone.x0 - 0.001 && x <= zone.x1 + 0.001 && z <= zone.z - 0.35 && z >= -(zone.back ?? zone.z - 0.35)) && x >= course.deck.x0 + 0.4 && x <= course.end.x1 - 0.4;
+const canStand = (x, z) => !friends.some(friend => Math.hypot(x - friend.x, z - friend.z) < 0.85) && zones.some(zone => x >= zone.x0 - 0.001 && x <= zone.x1 + 0.001 && z <= zone.z - 0.35 && z >= -(zone.back ?? zone.z - 0.35)) && x >= course.deck.x0 + 0.4 && x <= course.end.x1 - 1;
 
 const arrow = rotate => `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="transform:rotate(${rotate}deg)"><path d="M12 4 21 17H3z" fill="currentColor"/></svg>`;
 const padButton = (dir, label, rotate) => `<button type="button" class="tw-pad-${dir}" data-dir="${dir}" aria-label="${label}">${arrow(rotate)}</button>`;
@@ -85,7 +85,7 @@ function buildStage(canvas) {
   const mudMaterial = lambert('#8f8478'); add(mudGeometry, mudMaterial, 0, 0, -16); tile(mudMaterial, 'mud', 19, 12);
   // 물은 수평면이고, 높이만 물 높이 눈금을 따라 오른다.
   const waterMaterial = new THREE.MeshLambertMaterial({ color: '#3f9fc2', transparent: true, opacity: 0.8, depthWrite: false });
-  const water = add(flat(190, 96), waterMaterial, 35, waterY(tideHeight(0)), -16); water.renderOrder = 1; tile(waterMaterial, 'water', 14, 7);
+  const water = add(flat(190, 96), waterMaterial, 35, waterY(tideHeight(0)), -16); water.renderOrder = 1; tile(waterMaterial, 'water', 24, 12);
   // 해안 둑과 풀밭.
   const grassMaterial = lambert('#9fc47c'); box(60, 6, 96, grassMaterial, -30.3, -3.04, -16); tile(grassMaterial, 'grass', 10, 16);
   box(0.6, 3.2, 96, lambert('#b7ae9f'), -0.3, -1.62, -16);
@@ -160,13 +160,13 @@ function buildStage(canvas) {
   const prop = (name, x, z, height, y = ground(x)) => { const item = sprite(height, x, y, z); (propSets[name] ??= []).push(item); return item; };
   const place = (name, height, spots) => { for (const [x, z] of spots) prop(name, x, z, height); };
   place('prop-pine', 4.6, [[-13.5, -9.5], [-4.5, -12], [-18, -5.5]]);
-  place('prop-hut', 4.2, [[-10.2, -6.4]]); place('prop-bench', 0.95, [[-12.6, -3.2]]);
-  place('prop-cordgrass', 1.6, [[2.2, -5.2], [4.6, -8.4], [9.4, -6.6], [1.6, -11.5], [12.5, -11]]);
+  place('prop-hut', 4.2, [[-10.2, -6.4]]); place('prop-bench', 0.95, [[-8.3, -4.7]]);
+  place('prop-cordgrass', 1.6, [[2.2, -5.2], [4.6, -8.4], [0.9, -7.8], [1.6, -11.5], [12.5, -11]]);
   // 관찰 지점의 생물(표시 오른쪽 뒤)을 가리지 않게 그 둘레는 비워 둔다. 길 앞쪽 소품은 낮은 것만 길 가까이에 둔다.
   place('prop-seablite', 0.75, [[3.4, -4.4], [12, -7.2], [14.2, -4.3], [22.6, -9.4], [24.4, -5.6], [33.5, -6.5], [9.5, 2.9], [20.5, 3.2], [27.5, 2.8]]);
-  place('prop-rocks', 0.95, [[10.6, -10], [22.2, -7], [32, -9.5], [36, -12.5], [14.5, 3.3]]);
+  place('prop-rocks', 0.95, [[14.6, -9.4], [22.2, -7], [32, -9.5], [36, -12.5], [14.5, 3.3]]);
   place('prop-shells', 0.42, [[13.2, -3.7], [23.6, -3.5], [31.6, -3.6], [24.5, 2.7]]);
-  place('prop-gull', 1.35, [[11.4, -12.5], [35.6, -4.6]]);
+  place('prop-gull', 1.35, [[15.4, -13], [35.6, -4.6]]);
   prop('prop-lifebuoy', -2.7, -3.0, 1.6, 0); prop('prop-lantern', -6.75, -3.0, 2.1, 0); prop('prop-crate', -0.55, -2.95, 0.8, 0); prop('prop-telescope', course.end.x1 - 0.45, -1.95, 1.5, 0);
   const fill = name => texture => { for (const item of propSets[name]) { item.material.map = texture; item.material.needsUpdate = true; item.scale.set(item.userData.height * texture.image.width / texture.image.height, item.userData.height, 1); item.visible = true; } };
   for (const name of Object.keys(propSets)) art(name, fill(name));
@@ -280,8 +280,10 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
     const result = onJudge(log);
     if (!result) { close('exit'); return; }
     state.pose = result.correct ? 'cheer' : 'walk';
+    if (result.correct) setGuide('안전하게 데크로 돌아왔어요!');
     const rows = `<dl class="tw-compare"><div><dt>내 예상</dt><dd>${esc(result.plan || planLabel)}에 돌아오기</dd></div><div><dt>실제</dt><dd>${calledBack ? `${walkClock(state.slots)} · 모아가 불러서 돌아왔어요` : `${walkClock(state.slots)}에 데크로 돌아왔어요`}</dd></div><div><dt>살펴본 생물</dt><dd>${state.seen.size} / ${course.spots.length}</dd></div></dl>`;
-    if (result.correct) showCard(`<h2 id="tw-card-title">안전하게 돌아왔어요!</h2>${rows}<p class="tw-why"><span>핵심 개념</span>${esc(result.why)}</p><p class="tw-card-note">${esc(WALK_SAFETY)}</p><button type="button" class="primary" data-tw-action="done">확인</button>`, { className: 'tw-result-card good' });
+    // 맞았을 때는 부리가 기뻐하는 모습을 먼저 보여 주고 카드를 띄운다.
+    if (result.correct) cardTimer = setTimeout(() => showCard(`<h2 id="tw-card-title">안전하게 돌아왔어요!</h2>${rows}<p class="tw-why"><span>핵심 개념</span>${esc(result.why)}</p><p class="tw-card-note">${esc(WALK_SAFETY)}</p><button type="button" class="primary" data-tw-action="done">확인</button>`, { className: 'tw-result-card good' }), 1300);
     else showCard(`<h2 id="tw-card-title">다시 살펴봐요</h2>${rows}<p class="tw-why"><span>모아의 도움말</span>${esc(result.hint)}</p>${result.offerFlat ? '<p class="tw-card-note">어려우면 기존 방식으로 풀어도 좋아요.</p>' : ''}<div class="tw-card-actions"><button type="button" class="primary" data-tw-action="retry">다시 걸어 보기</button><button type="button" class="${result.offerFlat ? 'primary' : 'secondary'}" data-tw-action="flat">기존 방식으로 하기</button></div>`, { className: 'tw-result-card' });
   }
 

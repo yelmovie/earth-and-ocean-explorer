@@ -194,3 +194,12 @@
 
 - 학교 태블릿 실기기의 터치감과 프레임 속도. 검사는 맥의 Chrome(소프트웨어 WebGL)으로 했다.
 - 한 칸 24초가 아이들에게 알맞은지는 수업에서 봐야 한다.
+
+운영 반영(1차)
+
+- 커밋 `797a51d`를 `main`에 푸시했다.
+- 절차: `npm run build` → `dist`의 `._*` 삭제 → 외장 SSD의 wrangler 4.154.0으로 `wrangler deploy --config <worker.json> --tag 797a51d --message "…"`. 설정은 이전 배포와 같다(이름 `earth-and-ocean-explorer`, `assets.directory`는 `dist`, `html_handling` `auto-trailing-slash`, `not_found_handling` `none`, `compatibility_date` 2026-11-08). 저장소에는 wrangler 설정을 두지 않고 `.tmp/run-stage/deploy/worker.json`에 만든다.
+- 운영 주소 https://earth-and-ocean-explorer.yelsam.workers.dev/ 의 활성 버전은 `7a7b7b0d-67f8-4731-a376-95d5d97323ca`(태그 `797a51d`, 100%)다.
+- 운영 파일 182개의 SHA-256이 로컬 `dist`와 일치한다(`404.html`은 주소 정리 규칙 때문에 대조에서 뺐다).
+- 운영 주소에서 `tests/tide-walk-browser.mjs` 17개 확인이 통과했다(콘솔 오류·실패 요청 0). 4장 적용 문제가 3D 걷기로 열리고, 키보드와 화면 버튼으로 끝까지 되며, 기록이 기존 형식으로 남는다.
+- `.github/workflows/deploy.yml`은 수동 실행(`workflow_dispatch`)만 있어서 푸시로 GitHub Pages가 갱신되지는 않는다. 운영 배포와 무관하다.

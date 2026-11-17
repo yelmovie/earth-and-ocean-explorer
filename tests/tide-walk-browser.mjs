@@ -133,7 +133,10 @@ try {
     const turned = await clock(page);
     await holdPad(page, 'left', page.locator('dialog.tide-walk .tw-result-card'));
     const text = await card(page).textContent();
-    assert.match(text, /안전하게 돌아왔어요/); assert.match(text, /핵심 개념/); assert.match(text, /어른과 함께/); assert.match(text, /3 \/ 3/);
+    assert.match(text, /안전하게 돌아왔어요/); assert.match(text, /핵심 개념/); assert.match(text, /어른과 함께/); assert.match(text, /내 예상.*실제/);
+    // 결과 카드가 떠 있으면 같은 시각·생물 수를 보여 주는 HUD는 감춰져 한 번만 보인다.
+    assert.equal(await page.locator('dialog.tide-walk .tw-guide').evaluate(el => getComputedStyle(el).visibility), 'hidden');
+    assert.equal(await page.locator('dialog.tide-walk .tw-instruments').evaluate(el => getComputedStyle(el).visibility), 'hidden');
     s = await saved(page);
     assert.deepEqual(s.research[4].answers['tide-safety'], ['0', '2']);
     assert.ok(s.research[4].solved.includes('tide-safety'));

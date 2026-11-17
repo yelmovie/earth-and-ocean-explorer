@@ -245,7 +245,7 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
 
   function reset(message) {
     state = { slots: 0, x: course.start.x, z: course.start.z, face: 1, maxX: course.start.x, checkedBoard: false, seen: new Set(), mode: 'walk', pose: 'walk', moving: false, calling: false, snap: true };
-    dialog.querySelectorAll('[data-seen]').forEach(item => item.classList.remove('is-seen'));
+    dialog.querySelectorAll('[data-seen]').forEach(item => item.classList.remove('is-seen')); dialog.classList.remove('is-result');
     hideCard(); say(''); setGuide(message || '노란 표시 앞에서 「살펴보기」를 눌러요. 갯벌 생물을 살펴보고 안전하게 데크로 돌아와요.');
     dialog.focus({ preventScroll: true });
   }
@@ -280,10 +280,12 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
     const result = onJudge(log);
     if (!result) { close('exit'); return; }
     state.pose = result.correct ? 'cheer' : 'walk';
-    if (result.correct) setGuide('안전하게 데크로 돌아왔어요!');
+    // 결과 카드가 뜨면 시각·생물·안내 HUD를 감춰, 같은 시각과 생물 수가 카드와 두 번 보이지 않게 한다.
+    dialog.classList.add('is-result');
     const rows = `<dl class="tw-compare"><div><dt>내 예상</dt><dd>${esc(result.plan || planLabel)}에 돌아오기</dd></div><div><dt>실제</dt><dd>${calledBack ? `${walkClock(state.slots)} · 모아가 불러서 돌아왔어요` : `${walkClock(state.slots)}에 데크로 돌아왔어요`}</dd></div><div><dt>살펴본 생물</dt><dd>${state.seen.size} / ${course.spots.length}</dd></div></dl>`;
     // 맞았을 때는 부리가 기뻐하는 모습을 먼저 보여 주고 카드를 띄운다.
-    if (result.correct) cardTimer = setTimeout(() => showCard(`<h2 id="tw-card-title">안전하게 돌아왔어요!</h2>${rows}<p class="tw-why"><span>핵심 개념</span>${esc(result.why)}</p><p class="tw-card-note">${esc(WALK_SAFETY)}</p><button type="button" class="primary" data-tw-action="done">확인</button>`, { className: 'tw-result-card good' }), 1300);
+    const line = `<p class="tw-compare-line"><span>내 예상</span><b>${esc(result.plan || planLabel)}</b><span aria-hidden="true">→</span><span>실제</span><b>${walkClock(state.slots)}</b></p>`;
+    if (result.correct) cardTimer = setTimeout(() => showCard(`<h2 id="tw-card-title">안전하게 돌아왔어요!</h2>${line}<p class="tw-why"><span>핵심 개념</span>${esc(result.why)}</p><p class="tw-card-note">${esc(WALK_SAFETY)}</p><button type="button" class="primary" data-tw-action="done">확인</button>`, { className: 'tw-result-card good' }), 1300);
     else showCard(`<h2 id="tw-card-title">다시 살펴봐요</h2>${rows}<p class="tw-why"><span>모아의 도움말</span>${esc(result.hint)}</p>${result.offerFlat ? '<p class="tw-card-note">어려우면 기존 방식으로 풀어도 좋아요.</p>' : ''}<div class="tw-card-actions"><button type="button" class="primary" data-tw-action="retry">다시 걸어 보기</button><button type="button" class="${result.offerFlat ? 'primary' : 'secondary'}" data-tw-action="flat">기존 방식으로 하기</button></div>`, { className: 'tw-result-card' });
   }
 
@@ -311,7 +313,7 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
       else if (warned(state.slots)) {
         if (!beenOut && state.x <= 0.5) {
           // 나가지 않은 채 물이 찼다. 판정 없이 물이 낮은 때부터 다시 한다.
-          state.mode = 'card'; sound('hint');
+          state.mode = 'card'; sound('hint'); dialog.classList.add('is-result');
           showCard('<h2 id="tw-card-title">탐사길을 닫았어요</h2><p>물이 경고 눈금까지 들어왔어요. 물이 가장 낮은 06:00부터 다시 나가 봐요.</p><button type="button" class="primary" data-tw-action="retry">다시 시작</button>', { className: 'tw-result-card' });
         } else {
           state.mode = 'called'; state.calling = true; state.pose = 'walk'; keys.clear(); nudge = null; sound('hint');

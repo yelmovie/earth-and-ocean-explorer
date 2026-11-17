@@ -198,6 +198,11 @@
 .tide-walk .tw-compare dt { font-weight: 800; color: var(--muted); }
 .tide-walk .tw-compare dd { margin: 0; font-weight: 700; }
 .tide-walk .tw-result-card.good h2 { color: #216343; }
+/* 결과 카드가 떠 있는 동안은 시각·물 높이·생물·안내 HUD와 「기존 방식으로 하기」를 감춘다(카드에 같은 내용이 있다). */
+.tide-walk.is-result :is(.tw-instruments, .tw-guide, .tw-flat, .tw-note, .tw-pad, .tw-action) { visibility: hidden; }
+.tide-walk .tw-compare-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; padding: 10px 14px; border-radius: 12px; background: #eef5ee; font-weight: 700; }
+.tide-walk .tw-compare-line span { color: var(--muted); font-weight: 800; }
+.tide-walk .tw-compare-line b { font-size: 1.1em; color: var(--navy); font-variant-numeric: tabular-nums; }
 
 /* 물때 안내판: 막대 높이는 모형의 물 높이 값에서 나온다. */
 .tide-walk .tw-chart { position: relative; height: 150px; margin: 6px 0 10px; padding: 0 12px; border: 2px solid var(--line); border-radius: 14px; background: #f4efe2; }

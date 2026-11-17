@@ -453,8 +453,13 @@
   #app .certificate-promise{margin-top:8px}
   #app .certificate-actions{margin:12px 0 6px}
 }
-/* 확장 도전·적용 화면: 오답 뒤 펼쳐지는 모아 도움말이 오른쪽 카드·'마지막 카드 되돌리기'를 덮지 않게 왼쪽 관찰 자료 위에 띄운다. */
-@media(min-width:801px){#app #main .learning.challenge-page .moa-bubble{position:fixed;left:clamp(16px,2vw,40px);right:auto;bottom:96px;width:min(430px,calc(38vw - 24px))}}
+/* 확장 도전·적용 화면: 오답 뒤 펼쳐지는 모아 도움말은 아래 안내 띠 안 고정 자리에 붙여, 관찰 그림·설명과 답 카드를 덮지 않는다. */
+@media(min-width:801px){
+ #app #main .learning.challenge-page .moa-hint[open]{display:flex;align-items:center;gap:10px}
+ #app #main .learning.challenge-page .moa-bubble{position:static;width:min(460px,34vw);max-height:none;overflow:visible;padding:10px 14px;border-width:2px;border-radius:14px;box-shadow:none;font-size:var(--label-size);line-height:1.4}
+ #app #main .learning.challenge-page .moa-bubble p{margin:0}
+ #app #main .learning.challenge-page .moa-bubble p+p,#app #main .learning.challenge-page .moa-bubble .concept-replay{margin-top:6px}
+}
 #app .challenge-page .challenge-lab .visual-caption{margin-top:12px}
 /* 캐릭터 대사 '다시 듣기': 대사가 나온 화면에서만 보인다. */
 [data-action="voice-replay"][hidden]{display:none!important}

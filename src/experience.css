@@ -3,7 +3,7 @@
 @font-face{font-family:"NanumSquareNeo";src:url("/assets/fonts/NanumSquareNeoTTF-dEb.woff2") format("woff2");font-weight:800 900;font-style:normal;font-display:swap}
 /* Shared learning layout: readable at arm's length and on a classroom board.
    This final layer replaces scattered per-route density overrides. */
-:root{--font-heading:"NanumSquareNeo",'Malgun Gothic',sans-serif;--font-body:"NanumSquareNeo",'Malgun Gothic',sans-serif;--reading-size:clamp(20px,1.45vw,30px);--label-size:clamp(17px,1.2vw,24px);--panel-gap:clamp(12px,1.35vw,24px);--panel-pad:clamp(16px,1.5vw,28px);--font-body-size:var(--reading-size);--font-title-size:clamp(28px,2.4vw,44px);font-family:var(--font-body)}
+:root{--font-heading:"NanumSquareNeo",'Malgun Gothic',sans-serif;--font-body:"NanumSquareNeo",'Malgun Gothic',sans-serif;--reading-size:clamp(20px,1.45vw,30px);--label-size:clamp(18px,1.2vw,24px);--panel-gap:clamp(12px,1.35vw,24px);--panel-pad:clamp(16px,1.5vw,28px);--font-body-size:var(--reading-size);--font-title-size:clamp(28px,2.4vw,44px);font-family:var(--font-body)}
 body,button,input,select,textarea{font-family:var(--font-body)}
 :is(#app,body) .app:not(.route-home):not(.route-hub):not(.route-ending){background:linear-gradient(#f4f3e959,#f8f6ed80),var(--scene) center/cover fixed}
 h1,h2,.primary,.step-tabs button,.modal-head h2{font-family:var(--font-heading);font-weight:400;letter-spacing:0}
@@ -330,7 +330,7 @@ body dialog.chapter-reward{width:min(640px,calc(100vw - 40px))}
 #app .title-bg{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:58% 55%;transform-origin:62% 60%;animation:title-drift 26s ease-in-out infinite alternate}
 #app .title-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#062b3cf0 0%,#073248c7 26%,#0a3a5059 47%,#0a3a5000 62%),linear-gradient(0deg,#05273866 0%,#0527380a 32%)}
 #app .title-copy{position:absolute;left:clamp(24px,6.2vw,112px);top:50%;transform:translateY(-50%);width:min(600px,46vw);display:flex;flex-direction:column;align-items:flex-start;color:#fff;animation:title-rise .7s cubic-bezier(.2,.8,.2,1) both}
-#app .title-kicker{display:inline-flex;align-items:center;gap:8px;margin:0;padding:8px 16px 8px 12px;border:1.5px solid #ffffff59;border-radius:999px;background:#ffffff1f;backdrop-filter:blur(6px);font-size:clamp(15px,1.15vw,19px);font-weight:700;letter-spacing:-.01em;color:#eafcff}
+#app .title-kicker{display:inline-flex;align-items:center;gap:8px;margin:0;padding:8px 16px 8px 12px;border:1.5px solid #ffffff59;border-radius:999px;background:#ffffff1f;backdrop-filter:blur(6px);font-size:clamp(18px,1.15vw,19px);font-weight:700;letter-spacing:-.01em;color:#eafcff}
 #app .title-kicker svg{width:20px;height:20px;color:#8fe3f0}
 #app .title-logo-art{display:block;width:100%;height:auto;margin:-7% 0 -9% -6%;filter:drop-shadow(0 10px 16px #021c2a8c);pointer-events:none;user-select:none}
 #app .title-lead{margin:0 0 clamp(18px,2.6vh,30px);font-size:clamp(20px,1.65vw,28px);line-height:1.55;font-weight:600;color:#f3fbff;text-shadow:0 2px 8px #031c2a99;word-break:keep-all}
@@ -346,7 +346,7 @@ body dialog.chapter-reward{width:min(640px,calc(100vw - 40px))}
 #app .title-map svg{width:24px;height:24px}
 @media (hover:hover) and (pointer:fine){#app .title-map:hover{background:#06344aa6;border-color:#fff}}
 #app .title-map:active{transform:translateY(2px)}
-#app .title-progress{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin:clamp(16px,2.4vh,26px) 0 0;font-size:clamp(15px,1.05vw,18px);color:#d8eef3}
+#app .title-progress{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin:clamp(16px,2.4vh,26px) 0 0;font-size:18px;color:#d8eef3}
 #app .title-progress b{color:#fff}
 #app .title-records{display:inline-flex;gap:6px;margin-right:4px}
 #app .title-records i{width:14px;height:14px;border-radius:50%;border:2px solid #ffffffb3;background:#ffffff1a}
@@ -355,7 +355,7 @@ body dialog.chapter-reward{width:min(640px,calc(100vw - 40px))}
 #app .title-friends .character{filter:drop-shadow(0 14px 10px #2a1a0a59)}
 #app .title-friends .buri{width:auto;height:clamp(200px,min(44vh,28vw),460px);animation:title-bob 3.4s ease-in-out infinite}
 #app .title-friends .jjang{width:auto;height:clamp(120px,min(25vh,16vw),270px);margin-left:-3vw;animation:title-bob 3.4s ease-in-out -1.7s infinite}
-#app .title-bubble{position:absolute;right:58%;top:-8%;padding:14px 20px;border:2px solid #fff;border-radius:22px 22px 4px 22px;background:#fffdf3f5;color:#244b51;font-size:clamp(16px,1.15vw,20px);line-height:1.5;white-space:nowrap;box-shadow:0 10px 24px #06293a40;animation:title-pop .5s .5s cubic-bezier(.2,.8,.2,1) both}
+#app .title-bubble{position:absolute;right:58%;top:-8%;padding:14px 20px;border:2px solid #fff;border-radius:22px 22px 4px 22px;background:#fffdf3f5;color:#244b51;font-size:clamp(18px,1.15vw,20px);line-height:1.5;white-space:nowrap;box-shadow:0 10px 24px #06293a40;animation:title-pop .5s .5s cubic-bezier(.2,.8,.2,1) both}
 #app .title-bubble b{color:#0b6b6a}
 @keyframes title-drift{from{transform:scale(1.02)}to{transform:scale(1.08) translate(-1%,-.6%)}}
 @keyframes title-rise{from{opacity:0;transform:translateY(calc(-50% + 18px))}to{opacity:1;transform:translateY(-50%)}}

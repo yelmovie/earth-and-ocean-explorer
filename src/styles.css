@@ -1558,7 +1558,7 @@ input[type=range] {
 }
 
 .evidence-art {
-  height: 160px;
+  height: clamp(160px, 28dvh, 320px);
   background-size: cover;
   background-position: center;
   position: relative;

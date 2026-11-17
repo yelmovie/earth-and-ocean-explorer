@@ -40,7 +40,7 @@
 }
 .tide-walk .tw-instruments { display: flex; gap: 12px; align-items: stretch; padding: 10px 14px; }
 .tide-walk .tw-clock { display: grid; align-content: center; gap: 2px; text-align: center; }
-.tide-walk .tw-clock span { font-size: 15px; font-weight: 700; color: var(--muted); }
+.tide-walk .tw-clock span { font-size: 18px; font-weight: 700; color: var(--muted); }
 .tide-walk .tw-clock b { font-size: clamp(26px, 4vmin, 36px); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--navy); }
 /* 물 높이 표시는 코드로 그린다. 아래가 가장 낮은 물, 위가 탐사길 높이다. */
 .tide-walk .tw-gauge { display: flex; gap: 8px; align-items: stretch; min-height: 84px; }
@@ -48,14 +48,14 @@
 .tide-walk .tw-gauge-bar i { position: absolute; inset: auto 0 0; height: 0; background: #3f9fc2; border-top: 3px solid #e2ffff; }
 .tide-walk .tw-gauge-warn { position: absolute; left: 0; right: 0; bottom: var(--tw-warn); height: 5px; background: #ff8a3d; }
 .tide-walk .tw-gauge.is-warned .tw-gauge-bar { border-color: #c2410c; }
-.tide-walk .tw-gauge-labels { position: relative; display: grid; align-content: space-between; min-width: 68px; font-weight: 700; color: var(--muted); }
-.tide-walk .tw-gauge-labels small { font-size: 14px; line-height: 1.1; }
-.tide-walk .tw-gauge-labels .warn { position: absolute; left: 0; bottom: calc(var(--tw-warn) - 6px); color: #b4460b; }
+.tide-walk .tw-gauge-labels { position: relative; display: grid; align-content: space-between; min-width: 84px; font-weight: 700; color: var(--muted); }
+.tide-walk .tw-gauge-labels small { font-size: 18px; line-height: 1.1; }
+.tide-walk .tw-gauge-labels .warn { position: absolute; left: 0; bottom: calc(var(--tw-warn) - 8px); color: #b4460b; }
 
 .tide-walk .tw-guide { justify-self: center; display: grid; gap: 8px; max-width: 640px; padding: 10px 16px; text-align: center; }
-.tide-walk .tw-guide p { margin: 0; font-size: clamp(17px, 2.3vmin, 21px); font-weight: 700; line-height: 1.35; word-break: keep-all; }
+.tide-walk .tw-guide p { margin: 0; font-size: clamp(18px, 2.3vmin, 21px); font-weight: 700; line-height: 1.35; word-break: keep-all; }
 .tide-walk .tw-seen { display: flex; justify-content: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.tide-walk .tw-seen li { padding: 3px 12px; border: 2px solid var(--line); border-radius: 999px; font-size: 15px; font-weight: 700; color: var(--muted); background: #fff; }
+.tide-walk .tw-seen li { padding: 3px 12px; border: 2px solid var(--line); border-radius: 999px; font-size: 18px; font-weight: 700; color: var(--muted); background: #fff; }
 .tide-walk .tw-seen li.is-seen { border-color: #216343; color: #fff; background: #216343; }
 .tide-walk .tw-seen li.is-seen::before { content: '✓ '; }
 
@@ -65,7 +65,7 @@
   border: 2px solid #7fa798;
   border-radius: 16px;
   font: inherit;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--navy);
   background: #fffdf5f2;
@@ -132,7 +132,7 @@
   margin: 0;
   padding: 8px 14px;
   transform: translateX(-50%);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.35;
   text-align: center;
@@ -172,7 +172,7 @@
 .tide-walk .tw-card[hidden] { display: none; }
 .tide-walk .tw-card h2 { margin: 0 0 10px; font-size: clamp(22px, 3.2vmin, 28px); color: var(--navy); }
 .tide-walk .tw-card p { margin: 8px 0; }
-.tide-walk .tw-card-note { font-size: 15px; font-weight: 700; color: var(--muted); }
+.tide-walk .tw-card-note { font-size: 18px; font-weight: 700; color: var(--muted); }
 .tide-walk .tw-card button {
   min-height: 56px;
   margin-top: 8px;
@@ -192,7 +192,7 @@
 .tide-walk .tw-spot-card img { width: 112px; height: 112px; object-fit: contain; flex: none; }
 .tide-walk .tw-warn-word { color: #b4460b; }
 .tide-walk .tw-why { padding: 10px 14px; border-radius: 14px; background: #fff3c9; font-weight: 700; }
-.tide-walk .tw-why span { display: block; font-size: 15px; color: #875319; }
+.tide-walk .tw-why span { display: block; font-size: 18px; color: #875319; }
 .tide-walk .tw-compare { display: grid; gap: 6px; margin: 0 0 8px; }
 .tide-walk .tw-compare div { display: grid; grid-template-columns: 7em minmax(0, 1fr); gap: 10px; padding: 8px 12px; border-radius: 12px; background: #eef5ee; }
 .tide-walk .tw-compare dt { font-weight: 800; color: var(--muted); }
@@ -209,16 +209,16 @@
 .tide-walk .tw-chart ol { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; height: 100%; margin: 0; padding: 0; list-style: none; }
 .tide-walk .tw-chart li { position: relative; display: grid; grid-template-rows: 1fr 28px; align-items: end; text-align: center; }
 .tide-walk .tw-chart li span { display: block; align-self: end; border-radius: 8px 8px 0 0; background: #3f9fc2; }
-.tide-walk .tw-chart li b { font-size: 16px; font-variant-numeric: tabular-nums; }
+.tide-walk .tw-chart li b { font-size: 18px; font-variant-numeric: tabular-nums; }
 .tide-walk .tw-chart-warn { position: absolute; left: 6px; right: 6px; border-top: 4px dashed #ff8a3d; }
-.tide-walk .tw-chart-warn em { position: absolute; right: 4px; bottom: 4px; font-size: 14px; font-style: normal; font-weight: 800; color: #b4460b; }
+.tide-walk .tw-chart-warn em { position: absolute; right: 4px; bottom: 4px; font-size: 18px; font-style: normal; font-weight: 800; color: #b4460b; }
 
 @media (max-height: 520px) {
-  .tide-walk .tw-guide p { font-size: 16px; }
+  .tide-walk .tw-guide p { font-size: 18px; }
   .tide-walk .tw-seen { display: none; }
   .tide-walk .tw-gauge { min-height: 60px; }
-  .tide-walk .tw-note { font-size: 13px; padding: 5px 10px; }
-  .tide-walk .tw-card { padding: 12px 16px; font-size: 16px; }
+  .tide-walk .tw-note { font-size: 18px; padding: 5px 10px; }
+  .tide-walk .tw-card { padding: 12px 16px; font-size: 18px; }
   .tide-walk .tw-chart { height: 96px; }
 }
 /* 세로 태블릿: 가운데 아래 카드가 방향판·살펴보기 버튼과 겹치지 않게 그 위로 올린다. */
@@ -233,6 +233,7 @@
   .tide-walk .tw-speech { top: 46%; }
   .tide-walk .tw-gauge-labels { display: none; }
   .tide-walk .tw-instruments { padding: 8px 10px; }
+  .tide-walk .tw-note { font-size: 14px; }
   .tide-walk .tw-note { bottom: auto; top: calc(100dvh - 3 * clamp(56px, 10vmin, 76px) - 96px); width: calc(100vw - 2 * var(--tw-edge)); }
 }
 @media (prefers-reduced-motion: reduce) { .tide-walk .tw-action.is-ready { animation: none; } }

@@ -1,63 +1,59 @@
-// Original pentatonic background score + locally hosted Kenney CC0 feedback.
+// Suno background music (references/suno) + locally hosted Kenney CC0 feedback.
+// The main theme loops from the first tap; the final theme plays once on the ending/certificate
+// and while the map finale dialog is open, then the main theme resumes.
 export function createAudio(getSettings) {
-  let context, musicGain, timer, nextNote = 0, beat = 0, videoQuiet = false, voiceDuck = false, currentEffect;
-  const effects=new Map();
+  let context, started = false, videoQuiet = false, voiceDuck = false, currentEffect;
+  let routeTrack = 'main', mapFinale = false, finalDone = false;
+  const effects=new Map(), music=new Map();
+  const musicFiles={main:'main-theme.mp3',final:'final-theme.mp3'};
   const effectNames=['click','scan','camera','drop','hint','success','retry','reward','heat'];
-  const activeEffects = new Set(), activeMusic = new Set();
-  const melody = [60, 67, 69, 64, 67, 72, 69, 67, 62, 67, 64, 69, 67, 64, 62, 60];
   const settings = () => getSettings();
-  const canPlayMusic = () => !videoQuiet && !document.hidden && !settings().muted && settings().bgmEnabled !== false;
-  function stopEffect(){if(currentEffect){currentEffect.pause();currentEffect.currentTime=0;currentEffect=null;}for(const oscillator of activeEffects){try{oscillator.stop();}catch{}}activeEffects.clear();}
+  const volume = () => Math.max(0, Math.min(1, Number(settings().volume) || 0));
+  const canPlayMusic = () => started && !document.hidden && !settings().muted && settings().bgmEnabled !== false && volume() > 0;
+  function stopEffect(){if(currentEffect){currentEffect.pause();currentEffect.currentTime=0;currentEffect=null;}}
   function effect(name='click'){
     stopEffect();if(videoQuiet||!context||context.state!=='running'||document.hidden||settings().muted||settings().sfxEnabled===false)return;
     if(!effectNames.includes(name))name='click';
     let player=effects.get(name);if(!player){player=new Audio(`${import.meta.env.BASE_URL}assets/audio/${name}.mp3`);player.preload='auto';effects.set(name,player);}
     player.volume=name==='reward'?.34:.26;currentEffect=player;player.play().catch(()=>{});
   }
+  function track(name){
+    let player=music.get(name);
+    if(!player){
+      player=new Audio(`${import.meta.env.BASE_URL}assets/audio/bgm/${musicFiles[name]}`);
+      player.preload='auto';player.loop=name==='main';player.dataset.track=name;
+      if(name==='final')player.addEventListener('ended',()=>{finalDone=true;});
+      music.set(name,player);
+    }
+    return player;
+  }
+  function syncMusic(){
+    const name=mapFinale?'final':routeTrack;
+    const silent=!canPlayMusic()||name==='final'&&finalDone;
+    for(const [key,player] of music)if(silent||key!==name)player.pause();
+    if(silent)return;
+    const player=track(name);
+    // Ducked under character voices and concept clips instead of stopping.
+    player.volume=Math.min(1,volume()*.8)*(videoQuiet||voiceDuck?.25:1);
+    if(player.paused)player.play().catch(()=>{});
+  }
+  function restartFinal(){finalDone=false;const player=music.get('final');if(player){player.pause();player.currentTime=0;}}
   function prepare() {
     try {
       const Audio = window.AudioContext || window.webkitAudioContext;
       if (!Audio) return false;
-      if (!context) {
-        context = new Audio(); musicGain = context.createGain();
-        musicGain.gain.value = 0; musicGain.connect(context.destination);
-      }
+      if (!context) context = new Audio();
       return true;
     } catch { return false; }
   }
-  function note(midi, when, length, gain) {
-    const oscillator = context.createOscillator(), envelope = context.createGain();
-    oscillator.type = 'sine'; oscillator.frequency.value = 440 * 2 ** ((midi - 69) / 12);
-    envelope.gain.setValueAtTime(0, when);
-    envelope.gain.linearRampToValueAtTime(gain, when + 0.06);
-    envelope.gain.exponentialRampToValueAtTime(0.0001, when + length);
-    oscillator.connect(envelope).connect(musicGain); activeMusic.add(oscillator); oscillator.start(when); oscillator.stop(when + length + 0.02);
-    oscillator.onended = () => { activeMusic.delete(oscillator); oscillator.disconnect(); envelope.disconnect(); };
-  }
-  function schedule() {
-    if (!context || context.state !== 'running' || !canPlayMusic()) return;
-    nextNote = Math.max(nextNote, context.currentTime + 0.04);
-    while (nextNote < context.currentTime + 1.4) {
-      note(melody[beat % melody.length], nextNote, 1.1, 0.27);
-      if (beat % 4 === 0) note([48, 45, 53, 55][Math.floor(beat / 4) % 4], nextNote, 2.7, 0.18);
-      nextNote += 0.72; beat += 1;
-    }
-  }
   function sync() {
     if(document.hidden||settings().muted||settings().sfxEnabled===false)stopEffect();
-    if (!context) return;
-    const volume = Math.max(0, Math.min(1, Number(settings().volume) || 0));
-    musicGain.gain.cancelScheduledValues(context.currentTime);
-    musicGain.gain.setTargetAtTime(canPlayMusic() ? volume * 0.14 * (voiceDuck ? 0.3 : 1) : 0, context.currentTime, 0.12);
-    if (settings().muted || settings().sfxEnabled === false) {
-      for (const oscillator of activeEffects) { try { oscillator.stop(); } catch {} }
-    }
-    if (canPlayMusic()) { if (!timer) timer = window.setInterval(schedule, 450); schedule(); }
-    else { window.clearInterval(timer); timer = null; nextNote = 0; for (const oscillator of activeMusic) { try { oscillator.stop(); } catch {} } activeMusic.clear(); }
+    syncMusic();
   }
   function start() {
-    if (!prepare()) return;
-    context.resume().then(sync).catch(() => {}); sync();
+    started = true;
+    if (prepare()) context.resume().then(sync).catch(() => {});
+    sync();
   }
   function tone(frequency = 520) {
     effect(frequency>=650?'success':frequency<400?'retry':'click');return;
@@ -65,8 +61,12 @@ export function createAudio(getSettings) {
   document.addEventListener('visibilitychange', sync);
   document.addEventListener('pointerdown',start,{once:true});
   document.addEventListener('keydown',start,{once:true});
-  window.addEventListener('pagehide',()=>{stopEffect();window.clearInterval(timer);timer=null;for(const oscillator of activeMusic){try{oscillator.stop();}catch{}}activeMusic.clear();context?.suspend().catch(()=>{});});
+  // map-finale.js announces its dialog; the video stays muted and the final theme plays instead.
+  document.addEventListener('map-finale',event=>{mapFinale=!!event.detail?.open;if(mapFinale)restartFinal();sync();});
+  window.addEventListener('pagehide',()=>{stopEffect();for(const player of music.values())player.pause();context?.suspend().catch(()=>{});});
   return { start, sync, tone, effect, effectsAllowed:()=>!settings().muted&&settings().sfxEnabled!==false, quiet(value){videoQuiet=value;if(value)stopEffect();sync();},
+    // 엔딩·인증서는 파이널 곡, 나머지 화면은 메인 테마.
+    music(name){name=name==='final'?'final':'main';if(name===routeTrack)return;routeTrack=name;if(name==='final')restartFinal();sync();},
     // 캐릭터 대사가 나오는 동안 배경음만 줄인다(효과음은 그대로).
     duck(value){voiceDuck=!!value;sync();} };
 }

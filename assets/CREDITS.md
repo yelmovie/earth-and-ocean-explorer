@@ -24,6 +24,7 @@
 - 게·짱뚱어·갈대 관찰 그림: 2026-10-28 내장 image_gen 생성. 실제 사진이나 종 동정 자료가 아닌 학습용 관찰 일러스트다. UI·수치와 연동되는 과학 도해는 프로젝트 자체 CSS/SVG/Canvas다.
 - `illustrations/challenge-*.webp` 9장(대기·섬·염전·해안 재료·해안 안전길·새 절벽·밀물 안전·갯벌 보호·갯벌 생물): 2026-11-16 Codex 내장 이미지 도구(GPT 이미지)로 생성한 텍스트 없는 학습용 장면 그림이다. 기존 해안·갯벌 그림을 화풍 참고로 붙였고, 원본 PNG는 `assets/generated/20261116/`에 보존하며 배포에서 제외한다. 실제 장소 사진이 아니며 생성 계정과 납품 시 이용 조건은 최종 권리 검토 대상이다.
 - `illustrations/tide-rock·tide-pole·tide-boat·lab-beaker·lab-hotplate·lab-salt.webp`와 `challenge-earth-layers.webp`: 2026-11-17 Codex 내장 이미지 도구(GPT 이미지)로 생성했다. 예전에 SVG·CSS 도형으로 그리던 바위·관측 기둥·배·비커·가열판·소금 결정을 투명 배경 그림으로 바꿨다. 물 높이·눈금·물의 양처럼 학습 판단에 쓰는 값은 계속 코드로 그린다. 원본 PNG는 `assets/generated/20261117/`에 보존하며 배포에서 제외한다. 생성 계정과 납품 시 이용 조건은 최종 권리 검토 대상이다.
+- `illustrations/run-stage/*.webp`(3D 탐사길 걷기의 원경, 갯벌·데크 소품, 바닥 무늬, 부리·모아 동작 띠): 2026-11-17 Codex 내장 이미지 도구(GPT 이미지)로 생성한 텍스트 없는 학습용 그림이다. 원본은 `assets/generated/20261117-run-stage/`, 프롬프트는 `docs/IMAGE-PROMPTS-20261117-run-stage.json`, 크기·해시는 `illustrations/run-stage/manifest.json`에 있다. 물 높이·눈금·시계·물때 안내판 막대는 그림이 아니라 코드로 그린다.
 - `home-deck.jpg`는 2026-10-29 Canva 이미지 생성(generate-image)으로 만든 바닷가 연구소 데크 타이틀 배경(1920×1080)이다. 원본은 `assets/generated/20261029/home-seaside-deck.jpg`에 보존한다. 납품 전 Canva 계정의 AI 생성물 이용 조건을 확인한다.
 - 장면은 현장 사진이 아닌 학습용 재현이다. 위치·날씨·크기·생물의 공간 배치는 과학 사실의 증거로 삼지 않는다.
 

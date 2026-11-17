@@ -35,8 +35,30 @@ async function strip(file, out) {
   const result = await sharp({ create: { width: CELL * FRAMES, height: CELL, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite(layers).webp({ quality: 88, alphaQuality: 92, effort: 5 }).toFile(out);
   return { frames: FRAMES, feetSpread: Math.max(...boxes.map(b => b.bottom)) - Math.min(...boxes.map(b => b.bottom)), heightSpread: tallest - Math.min(...boxes.map(b => b.bottom - b.top)), sourceFrames: boxes.map(b => [b.x0, b.top, b.x1 - b.x0, b.bottom - b.top]), width: result.width, height: result.height, bytes: result.size };
 }
+// 소품 묶음: 한 줄에 놓인 소품을 빈 열로 나눠 하나씩 저장한다. 흐린 가장자리 색 번짐은 지운다.
+async function props(file, out, image) {
+  const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { width, height } = info;
+  for (let i = 3; i < data.length; i += 4) if (data[i] < 96) data[i] = 0;
+  const alpha = (x, y) => data[(y * width + x) * 4 + 3];
+  const filled = Array.from({ length: width }, (_, x) => { let n = 0; for (let y = 0; y < height; y++) if (alpha(x, y)) n++; return n; });
+  let runs = [], start = -1;
+  for (let x = 0; x <= width; x++) { const on = x < width && filled[x] > 2; if (on && start < 0) start = x; if (!on && start >= 0) { runs.push([start, x]); start = -1; } }
+  runs = runs.filter(([a, b]) => b - a > 12);
+  while (runs.length > image.parts.length) { let best = 0, gap = Infinity; for (let i = 0; i < runs.length - 1; i++) { const g = runs[i + 1][0] - runs[i][1]; if (g < gap) { gap = g; best = i; } } runs.splice(best, 2, [runs[best][0], runs[best + 1][1]]); }
+  if (runs.length !== image.parts.length) throw new Error(`${path.basename(file)}: 소품을 ${runs.length}개 찾았다(${image.parts.length}개여야 한다)`);
+  const made = {};
+  for (const [i, [x0, x1]] of runs.entries()) {
+    let top = height, bottom = 0;
+    for (let y = 0; y < height; y++) for (let x = x0; x < x1; x++) if (alpha(x, y)) { top = Math.min(top, y); bottom = Math.max(bottom, y); }
+    const name = `prop-${image.parts[i]}`;
+    const r = await sharp(data, { raw: { width, height, channels: 4 } }).extract({ left: x0, top, width: x1 - x0, height: bottom + 1 - top }).resize(384, 384, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 88, alphaQuality: 92, effort: 5 }).toFile(path.join(target, name + '.webp'));
+    made[name] = { width: r.width, height: r.height, bytes: r.size };
+  }
+  return { parts: made };
+}
 async function tile(file, out) { const r = await sharp(file).resize(512, 512, { fit: 'cover' }).webp({ quality: 82, effort: 5 }).toFile(out); return { width: r.width, height: r.height, bytes: r.size }; }
-async function backdrop(file, out) { const r = await sharp(file).resize(1536, 1024, { fit: 'cover' }).webp({ quality: 80, effort: 5 }).toFile(out); return { width: r.width, height: r.height, bytes: r.size }; }
+async function backdrop(file, out) { const r = await sharp(file).resize(1600, 1024, { fit: 'inside' }).webp({ quality: 82, effort: 5 }).toFile(out); return { width: r.width, height: r.height, bytes: r.size }; }
 
 (async () => {
   fs.mkdirSync(target, { recursive: true });
@@ -46,9 +68,9 @@ async function backdrop(file, out) { const r = await sharp(file).resize(1536, 10
     if (wanted.length && !wanted.includes(image.name)) continue;
     const file = path.join(source, image.name + '.png'); if (!fs.existsSync(file)) { console.log('원본 없음', image.name); continue; }
     const out = path.join(target, image.name + '.webp');
-    const made = await ({ strip, tile, backdrop })[image.kind](file, out);
+    const made = await ({ strip, tile, backdrop, props })[image.kind](file, out, image);
     const meta = await sharp(file).metadata();
-    manifest[image.name] = { file: `illustrations/run-stage/${image.name}.webp`, kind: image.kind, ...made, original: `assets/generated/20261117-run-stage/${image.name}.png`, originalSize: [meta.width, meta.height], sha256: crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex') };
+    manifest[image.name] = { file: image.kind === 'props' ? `illustrations/run-stage/prop-*.webp` : `illustrations/run-stage/${image.name}.webp`, kind: image.kind, ...made, original: `assets/generated/20261117-run-stage/${image.name}.png`, originalSize: [meta.width, meta.height], sha256: crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex') };
     console.log(image.name, JSON.stringify(made));
   }
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');

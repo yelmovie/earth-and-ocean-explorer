@@ -11,7 +11,7 @@ import { course, SLOT_SECONDS, WALK_LAST_SLOT, WALK_WARN_SLOT, WALK_NOTE, WALK_S
 const SPEED = 3.6, REACH = 1.9, WALK_FPS = 9;
 const run3 = name => illustration(`run-stage/${name}`);
 // 생성해서 넣은 그림만 적는다. 여기 없는 것은 기본 도형과 기존 그림으로 보인다.
-const READY = new Set([]);
+const READY = new Set(['backdrop', 'prop-cordgrass', 'prop-seablite', 'prop-rocks', 'prop-pine', 'prop-gull', 'prop-shells']);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const clamp = (v, low, high) => Math.max(low, Math.min(high, v));
 const modelSlots = [0, 1, 2, 3];
@@ -54,7 +54,7 @@ function boardChart() {
 function buildStage(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
   renderer.setPixelRatio(Math.min(globalThis.devicePixelRatio || 1, 1.5));
-  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(34, 1, 0.5, 240);
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, 1, 0.5, 240);
   scene.add(new THREE.HemisphereLight('#f6fbff', '#8d8272', 2.3));
   const sun = new THREE.DirectionalLight('#fff2d2', 1.5); sun.position.set(-8, 14, 10); scene.add(sun);
   const loader = new THREE.TextureLoader(), textures = new Set();
@@ -74,9 +74,9 @@ function buildStage(canvas) {
   skyCtx.fillStyle = gradient; skyCtx.fillRect(0, 0, 8, 256);
   const skyTexture = new THREE.CanvasTexture(sky); skyTexture.colorSpace = THREE.SRGBColorSpace; textures.add(skyTexture);
   const backdropMaterial = new THREE.MeshBasicMaterial({ map: skyTexture, fog: false });
-  const backdrop = add(new THREE.PlaneGeometry(225, 75), backdropMaterial, 15, 13.5, -62);
-  // 3:2 그림을 좌우로 뒤집어 이어 붙여 3:1 원경을 채운다. 수평선은 카메라 눈높이에 맞춘다.
-  art('backdrop', texture => { texture.wrapS = THREE.MirroredRepeatWrapping; texture.repeat.x = 2; backdropMaterial.map = texture; backdropMaterial.needsUpdate = true; });
+  const backdrop = add(new THREE.PlaneGeometry(150, 42), backdropMaterial, 15, 9.8, -62);
+  // 그림을 좌우로 뒤집어 한 번 더 이어 붙여 넓은 원경을 채운다. 수평선(그림 높이의 63%)은 카메라 눈높이에 맞춘다.
+  art('backdrop', texture => { texture.wrapS = THREE.MirroredRepeatWrapping; texture.repeat.x = 2; backdrop.scale.x = 2 * texture.image.width / texture.image.height * 42 / 150; backdropMaterial.map = texture; backdropMaterial.needsUpdate = true; });
 
   // 갯벌 바닥은 바다 쪽(+x)으로 낮아지는 비탈이다. 높이는 규칙의 mudY와 같다.
   const mudGeometry = flat(150, 96), mudPosition = mudGeometry.attributes.position;
@@ -132,11 +132,11 @@ function buildStage(canvas) {
   const still = (url, height, x, y, z) => { const item = sprite(height, x, y, z); load(url, texture => { item.material.map = texture; item.material.needsUpdate = true; item.scale.set(height * texture.image.width / texture.image.height, height, 1); item.visible = true; }); return item; };
   const spots = course.spots.map(spot => ({
     ...spot,
-    // 탐사길과 부리에 가리지 않도록 표시의 오른쪽 뒤 갯벌에 둔다. 갈대는 키가 커서 난간 바로 뒤에 선다.
-    artX: spot.x + 2.1,
-    art: still(illustration(spot.id), { reed: 2.8, crab: 1.45, skipper: 1.35 }[spot.id], spot.x + 2.1, mudY(spot.x + 2.1) - 0.04, spot.tall ? -3.1 : -5.2),
+    // 탐사길과 부리에 가리지 않도록 표시의 오른쪽 뒤 갯벌에 둔다. 살펴볼 수 있는 자리도 생물의 왼쪽까지만이다. 갈대는 키가 커서 난간 바로 뒤에 선다.
+    artX: spot.x + 2.6,
+    art: still(illustration(spot.id), { reed: 2.8, crab: 1.45, skipper: 1.35 }[spot.id], spot.x + 2.6, mudY(spot.x + 2.6) - 0.04, spot.tall ? -3.1 : -5.2),
     // 생물이 갯벌 색에 묻히지 않게 밝은 젖은 모래 자리를 깐다.
-    patch: spot.tall ? null : add(new THREE.CircleGeometry(1.25, 28).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#d8cfb6', transparent: true, opacity: 0.6, depthWrite: false }), spot.x + 2.1, mudY(spot.x + 2.1) + 0.03, -5.0),
+    patch: spot.tall ? null : add(new THREE.CircleGeometry(1.25, 28).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#d8cfb6', transparent: true, opacity: 0.6, depthWrite: false }), spot.x + 2.6, mudY(spot.x + 2.6) + 0.03, -5.0),
     ring: add(new THREE.RingGeometry(0.5, 0.72, 28).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#ffd166', transparent: true, opacity: 0.95 }), spot.x, 0.012, -0.25),
   }));
   const boardRing = add(new THREE.RingGeometry(0.5, 0.72, 28).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#ffd166', transparent: true, opacity: 0.95 }), course.board.x, 0.012, -1.5);
@@ -162,10 +162,11 @@ function buildStage(canvas) {
   place('prop-pine', 4.6, [[-13.5, -9.5], [-4.5, -12], [-18, -5.5]]);
   place('prop-hut', 4.2, [[-10.2, -6.4]]); place('prop-bench', 0.95, [[-12.6, -3.2]]);
   place('prop-cordgrass', 1.6, [[2.2, -5.2], [4.6, -8.4], [9.4, -6.6], [1.6, -11.5], [12.5, -11]]);
-  place('prop-seablite', 0.75, [[7.4, -4.6], [12, -7.2], [14.2, -4.3], [20.4, -9], [23.2, -5.2], [5, 4.6], [15.5, 5.6], [25, 4.3]]);
-  place('prop-rocks', 0.95, [[10.6, -10], [19.2, -5.6], [28.4, -7.2], [34, -11], [21, 6.2]]);
-  place('prop-shells', 0.42, [[13.2, -3.7], [22.4, -3.5], [29.2, -3.9], [10, 3.7]]);
-  place('prop-gull', 1.35, [[17.6, -9.2], [36.5, -4.4]]);
+  // 관찰 지점의 생물(표시 오른쪽 뒤)을 가리지 않게 그 둘레는 비워 둔다. 길 앞쪽 소품은 낮은 것만 길 가까이에 둔다.
+  place('prop-seablite', 0.75, [[3.4, -4.4], [12, -7.2], [14.2, -4.3], [22.6, -9.4], [24.4, -5.6], [33.5, -6.5], [9.5, 2.9], [20.5, 3.2], [27.5, 2.8]]);
+  place('prop-rocks', 0.95, [[10.6, -10], [22.2, -7], [32, -9.5], [36, -12.5], [14.5, 3.3]]);
+  place('prop-shells', 0.42, [[13.2, -3.7], [23.6, -3.5], [31.6, -3.6], [24.5, 2.7]]);
+  place('prop-gull', 1.35, [[11.4, -12.5], [35.6, -4.6]]);
   prop('prop-lifebuoy', -2.7, -3.0, 1.6, 0); prop('prop-lantern', -6.75, -3.0, 2.1, 0); prop('prop-crate', -0.55, -2.95, 0.8, 0); prop('prop-telescope', course.end.x1 - 0.45, -1.95, 1.5, 0);
   const fill = name => texture => { for (const item of propSets[name]) { item.material.map = texture; item.material.needsUpdate = true; item.scale.set(item.userData.height * texture.image.width / texture.image.height, item.userData.height, 1); item.visible = true; } };
   for (const name of Object.keys(propSets)) art(name, fill(name));
@@ -214,9 +215,10 @@ function buildStage(canvas) {
     boardRing.material.color.set(state.checkedBoard ? '#7ed6a5' : '#ffd166'); boardRing.scale.setScalar(state.checkedBoard ? 1 : 1 + Math.sin(time * 4) * 0.08);
     // 고정 시점: 옆에서 비스듬히 내려다보며 따라간다. 화면 위쪽은 항상 탐사길 안쪽(-z)이다.
     const target = clamp(state.x + 1.2, -2.2, 29.5); view.x += (target - view.x) * (state.snap ? 1 : 0.08);
-    const distance = 16.5 * Math.max(1, 1.3 / view.aspect);
-    camera.position.set(view.x, 1.5 + distance * 0.19, distance); camera.lookAt(view.x, 1.5, 0);
-    backdrop.position.set(view.x * 0.9 + 12, camera.position.y + 8.9, -62);
+    // 수평선이 화면 위에서 3분의 1쯤에 오도록 살짝만 내려다본다. 하늘과 섬이 보이고 탐사길은 화면 가운데 아래에 온다.
+    const distance = 15 * Math.max(1, 1.3 / view.aspect);
+    camera.position.set(view.x, distance * 0.293, distance); camera.lookAt(view.x, distance * 0.144, 0);
+    backdrop.position.set(view.x * 0.9 + 12, camera.position.y + 5.4, -62);
     renderer.render(scene, camera);
   }
   function dispose() {
@@ -302,7 +304,7 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
       }
       state.maxX = Math.max(state.maxX, state.x);
       const onDeck = state.x <= -0.6, beenOut = state.maxX >= course.gate;
-      near = onDeck && Math.abs(state.x - course.board.x) <= REACH && state.z < 0.8 ? { id: 'board' } : state.x > 0 ? course.spots.find(spot => Math.abs(state.x - spot.x) <= REACH) ?? null : null;
+      near = onDeck && Math.abs(state.x - course.board.x) <= REACH && state.z < 0.8 ? { id: 'board' } : state.x > 0 ? course.spots.find(spot => state.x >= spot.x - REACH && state.x <= spot.x + 1) ?? null : null;
       if (beenOut && onDeck) { finish(false); }
       else if (warned(state.slots)) {
         if (!beenOut && state.x <= 0.5) {

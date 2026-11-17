@@ -1,0 +1,57 @@
+{
+  "backdrop": {
+    "file": "illustrations/run-stage/backdrop.webp",
+    "kind": "backdrop",
+    "width": 1600,
+    "height": 900,
+    "bytes": 104890,
+    "original": "assets/generated/20261117-run-stage/backdrop.png",
+    "originalSize": [
+      1672,
+      941
+    ],
+    "sha256": "4852a98846a151c6c31b8ff8f813faf95e685186a3697cfdfbc2461b0053016b"
+  },
+  "props-shore": {
+    "file": "illustrations/run-stage/prop-*.webp",
+    "kind": "props",
+    "parts": {
+      "prop-cordgrass": {
+        "width": 328,
+        "height": 369,
+        "bytes": 50674
+      },
+      "prop-seablite": {
+        "width": 330,
+        "height": 196,
+        "bytes": 31702
+      },
+      "prop-rocks": {
+        "width": 349,
+        "height": 197,
+        "bytes": 27716
+      },
+      "prop-pine": {
+        "width": 356,
+        "height": 384,
+        "bytes": 61336
+      },
+      "prop-gull": {
+        "width": 194,
+        "height": 366,
+        "bytes": 20556
+      },
+      "prop-shells": {
+        "width": 311,
+        "height": 180,
+        "bytes": 21730
+      }
+    },
+    "original": "assets/generated/20261117-run-stage/props-shore.png",
+    "originalSize": [
+      2172,
+      724
+    ],
+    "sha256": "6f86af329907229301eaa2d6f708aebe240ffdb91dca2172b25810a4e987a95e"
+  }
+}

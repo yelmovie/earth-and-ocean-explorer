@@ -7,6 +7,9 @@ export function createAudio(getSettings) {
   const effects=new Map(), music=new Map();
   const musicFiles={main:'main-theme.mp3',final:'final-theme.mp3'};
   const effectNames=['click','scan','camera','drop','hint','success','retry','reward','heat'];
+  // Map villain cues (CC0, _shared/sfx-library-20261117): 퐁 → 첨벙 → 풍덩, then the villain bubbles away.
+  const mapVolumes={'map-swing':.2,'map-hit-1':.3,'map-hit-2':.36,'map-hit-3':.5,'map-exit':.26,'map-appear':.16,'map-bump':.24,'map-victory':.24};
+  effectNames.push(...Object.keys(mapVolumes));
   const settings = () => getSettings();
   const volume = () => Math.max(0, Math.min(1, Number(settings().volume) || 0));
   const canPlayMusic = () => started && !document.hidden && !settings().muted && settings().bgmEnabled !== false && volume() > 0;
@@ -15,7 +18,7 @@ export function createAudio(getSettings) {
     stopEffect();if(videoQuiet||!context||context.state!=='running'||document.hidden||settings().muted||settings().sfxEnabled===false)return;
     if(!effectNames.includes(name))name='click';
     let player=effects.get(name);if(!player){player=new Audio(`${import.meta.env.BASE_URL}assets/audio/${name}.mp3`);player.preload='auto';effects.set(name,player);}
-    player.volume=name==='reward'?.34:.26;currentEffect=player;player.play().catch(()=>{});
+    player.volume=mapVolumes[name]??(name==='reward'?.34:.26);player.currentTime=0;currentEffect=player;player.play().catch(()=>{});
   }
   function track(name){
     let player=music.get(name);
@@ -62,7 +65,7 @@ export function createAudio(getSettings) {
   document.addEventListener('pointerdown',start,{once:true});
   document.addEventListener('keydown',start,{once:true});
   // map-finale.js announces its dialog; the video stays muted and the final theme plays instead.
-  document.addEventListener('map-finale',event=>{mapFinale=!!event.detail?.open;if(mapFinale)restartFinal();sync();});
+  document.addEventListener('map-finale',event=>{mapFinale=!!event.detail?.open;if(mapFinale){stopEffect();restartFinal();}sync();});
   window.addEventListener('pagehide',()=>{stopEffect();for(const player of music.values())player.pause();context?.suspend().catch(()=>{});});
   return { start, sync, tone, effect, effectsAllowed:()=>!settings().muted&&settings().sfxEnabled!==false, quiet(value){videoQuiet=value;if(value)stopEffect();sync();},
     // 엔딩·인증서는 파이널 곡, 나머지 화면은 메인 테마.

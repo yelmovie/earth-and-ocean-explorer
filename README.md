@@ -82,6 +82,6 @@ Node 단위 테스트: 저장·완료·해금·인증·20개 확장 활동·지�
 
 `tests/flow_polish.py`는 연타·키보드·이전 저장 재개·가열 중 이탈·타임랩스·비교선 유지 회귀를 확인한다. 변경 범위와 검증 근거는 `docs/reviews/FLOW-POLISH-20261028.md`에 기록한다.
 
-Kenney의 CC0 효과음 9종과 Suno로 만든 배경음 2곡(메인 테마·파이널)을 사용한다. 메인 테마는 첫 탭부터 시작·지도·활동 내내 반복하고, 파이널은 엔딩·인증서와 지도 파이널 영상 대화상자에서 재생한다. 인물 목소리·개념 영상이 나올 때 배경음은 1/4로 줄어든다. 실행본은 `public/assets/audio/bgm/`, 원본은 `references/suno/`(Git 미포함), 출처는 assets/CREDITS.md에 있다.
+Kenney의 CC0 효과음 9종, 지도 악당용 CC0 효과음 8종(공격 휙 → 1타 퐁 → 2타 첨벙 → 3타 풍덩 → 보글보글 퇴장, 등장·접촉·전원 격퇴, `public/assets/audio/map-*.mp3`)과 Suno로 만든 배경음 2곡(메인 테마·파이널)을 사용한다. 메인 테마는 첫 탭부터 시작·지도·활동 내내 반복하고, 파이널은 엔딩·인증서와 지도 파이널 영상 대화상자에서 재생한다. 인물 목소리·개념 영상이 나올 때 배경음은 1/4로 줄어든다. 실행본은 `public/assets/audio/bgm/`, 원본은 `references/suno/`(Git 미포함), 출처는 assets/CREDITS.md에 있다.
 
 `npm run check:layout`은 설치된 Node Playwright로 전체 활동·20개 문제·자동 관측을 확인한다. `npm run concepts:render`는 HyperFrames·FFmpeg를 사용하며, 재현 경로는 scripts/render-concepts.mjs를 참고한다. 납품 최종 근거는 `docs/reviews/RELEASE-REVIEW-20261111.md`와 `SCORE-20261111.md`에 있다.

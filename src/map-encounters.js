@@ -40,6 +40,11 @@ function layoutSpeech(host, entries){
 }
 
 const REPEAT=380;
+// Sound timing: the swing starts on input, the hit lands at the flinch peak (28% of .32s),
+// the exit follows the heavy hit, and the victory jingle ends before the finale dialog (+2920ms).
+const HIT_CUE=90,EXIT_CUE=480,VICTORY_CUE=560;
+// Villains announce themselves once per page visit, not on every map re-entry.
+const announced=new Set();
 const CUES={
   cap:'M9 10h14v12H9zm3-4h8v4h-8z', pane:'M6 7h20v18H6zm4 4v10h12V11z',
   file:'M7 5h12l6 6v16H7zm12 2v6h5M11 17h10m-10 4h8', label:'M5 10h15l7 6-7 6H5zm5 4h5m-5 4h7',
@@ -112,6 +117,9 @@ export function mountMapEncounters({
   const paused=()=>doc.hidden||blocked()||Boolean(host.closest('[inert]'))||Boolean(doc.querySelector('dialog[open]'));
   const pose={hero:null,ally:null};
   let current=null,lastNear=null,lastHit=-Infinity,lastTone=-Infinity,saved={},last=null,closed=false;
+  const timers=new Set(),clock=view??globalThis;
+  function later(fn,ms){const id=clock.setTimeout(()=>{timers.delete(id);if(!closed&&!paused())fn();},ms);timers.add(id);}
+  function clearCues(){for(const id of timers)clock.clearTimeout(id);timers.clear();}
 
   function speak(foe,text,time){
     for(const other of foes)if(other!==foe){other.saidUntil=0;other.bubble.hidden=true;}
@@ -131,10 +139,13 @@ export function mountMapEncounters({
     const calm=still(),duration=calm?170:n===HITS?660:360;
     foe.poseUntil=time+duration;foe.hitAt=time;foe.hurtAt=undefined;
     pose.hero={kind:'attack',direction:-foe.facing,start:time,end:time+(calm?140:320)};
-    saved={...saved,[foe.s.id]:n};onSave({...saved});tone(n===HITS?'finish':'hit',n);
+    saved={...saved,[foe.s.id]:n};onSave({...saved});
+    const allClear=n===HITS&&requiredFoes>0&&stages.length===requiredFoes&&stages.every(s=>(saved[s.id]??record[s.id])===HITS);
+    clearCues();tone('swing',n);later(()=>tone(n===HITS?'finish':'hit',n),HIT_CUE);
+    if(n===HITS)later(()=>tone(allClear?'victory':'exit',n),allClear?VICTORY_CUE:EXIT_CUE);
     speak(foe, n===HITS?foe.s.finish??'앗, 물러날게!':foe.s.hit?.[n-1]??(n===1?'앗, 들켰네!':'이번 건 제법인데!'),time+(n===HITS?2750:1800));
     live.textContent+=n===HITS?' 세 번 명중! 악당이 물러나요.':` ${n}번 명중. ${HITS-n}번 남았어요.`;
-    if(n===HITS&&requiredFoes>0&&stages.length===requiredFoes&&stages.every(s=>(saved[s.id]??record[s.id])===HITS))finaleAt=time+2920;
+    if(allClear)finaleAt=time+2920;
     update({...last,now:time});
   }
   attack.addEventListener('click',hit,{signal});
@@ -161,7 +172,7 @@ export function mountMapEncounters({
     last=input;
     const {hero,ally,project,scale=1,now=view?.performance.now()??performance.now()}=input;
     const calm=still(),stop=paused(),size=Math.max(29,Math.min(90,57*scale));
-    let nearest=null,best=Infinity;
+    let nearest=null,best=Infinity,appeared=false;
     const width=host.clientWidth,height=host.clientHeight;
     for(const foe of foes){
       if(foe.hits>=HITS&&now>=Math.max(foe.poseUntil,foe.saidUntil)){foe.el.hidden=true;continue;}
@@ -182,6 +193,7 @@ export function mountMapEncounters({
       const off=point.x<-size||point.x>width+size||point.y<-size||point.y>height+size;
       foe.el.hidden=off;
       if(off)continue;
+      if(!stop&&foe.hits<HITS&&!announced.has(foe.s.id)){announced.add(foe.s.id);appeared=true;}
       const {el,actor}=foe;
       el.style.transform=`translate(${point.x.toFixed(1)}px,${point.y.toFixed(1)}px)`;
       el.style.setProperty('--encounter-size',size.toFixed(1)+'px');
@@ -226,6 +238,7 @@ export function mountMapEncounters({
       if(foe.meter.textContent!==marks)foe.meter.textContent=marks;
       foe.bubble.hidden=now>=foe.saidUntil||stop;
     }
+    if(appeared&&now-lastHit>REPEAT)tone('appear',0);
     if(stop){
       clearReady=null;
       if(now<clearUntil){clearUntil=0;clearId=null;}
@@ -262,7 +275,7 @@ export function mountMapEncounters({
     }
     return {hero:output('hero',now),ally:output('ally',now)};
   }
-  return {update,destroy(){closed=true;handles.abort();attack.remove();layer.remove();}};
+  return {update,destroy(){closed=true;clearCues();handles.abort();attack.remove();layer.remove();}};
 }
 
 const STYLES=`

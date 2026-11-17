@@ -71,3 +71,18 @@
 - 해안은 학습용 재현 그림이다. 동굴과 아치의 비교는 표시한 예시의 관찰 특징을 다룬다. 그릇 그림은 이번 가열 실험의 결과를 확대한 예시이며 실제 성분·염분을 정량 측정한 자료가 아니다.
 - 새 해안 사진은 photoVersion 2 기록에서 사용한다. 이전 핀 좌표가 있는 기록은 기존 사진을 표시한다.
 - 생성 플랫폼과 납품 계정의 이용 조건·권리 증빙은 납품 주체가 확인한다. 제작 범위와 프롬프트 요지는 docs/IMAGE-GENERATION.md에 기록했다.
+
+## 2026-11-17 지도 악당 효과음
+
+지도 악당 조우의 공격·타격·퇴장·등장·접촉·격퇴 효과음 8개. 과학34 공통 효과음 라이브러리(`_shared/sfx-library-20261117`, 라이선스 재확인된 CC0 파일만)에서 골라 `public/assets/audio/map-*.mp3`로 복사했다. 라이브러리 처리: 앞뒤 무음 제거·짧은 페이드·음량 정규화·모노 44.1 kHz MP3. `map-hit-3.mp3`만 이 프로젝트에서 앞쪽 0.12초를 더 잘라 명중 순간에 소리가 바로 나게 했다.
+
+| 파일 | 쓰임 | 원본 | 만든 사람 | 라이선스 | 출처 |
+|---|---|---|---|---|---|
+| map-swing.mp3 | 공격 시작(휙) | SWOSH-01 44.1kHz.flac | qubodup | CC0 1.0 | https://freesound.org/people/qubodup/sounds/59988 |
+| map-hit-1.mp3 | 1타 명중(퐁) | bubble low.wav | pinto0lucas | CC0 1.0 | https://freesound.org/people/pinto0lucas/sounds/422811 |
+| map-hit-2.mp3 | 2타 명중(첨벙) | splash_09 | rubberduck | CC0 1.0 | https://opengameart.org/content/40-cc0-water-splash-slime-sfx |
+| map-hit-3.mp3 | 3타 명중(풍덩) | Tiny Splash | dslrguide | CC0 1.0 | https://freesound.org/people/dslrguide/sounds/321490 |
+| map-exit.mp3 | 악당 퇴장(보글보글 가라앉음) | bubbles-03.aif | kijjaz | CC0 1.0 | https://freesound.org/people/kijjaz/sounds/16738 |
+| map-appear.mp3 | 악당 등장(뽁, 방문마다 악당별 한 번) | Mouth Pop 1 | michorvath | CC0 1.0 | https://freesound.org/people/michorvath/sounds/269501 |
+| map-bump.mp3 | 아군 접촉(첨벙) | water splash 2.wav | VacekH | CC0 1.0 | https://freesound.org/people/VacekH/sounds/189499 |
+| map-victory.mp3 | 다섯 악당 모두 격퇴(파이널 창이 열리기 전에 끝남) | WinBrass.wav | Fupicat | CC0 1.0 | https://freesound.org/people/Fupicat/sounds/521639 |

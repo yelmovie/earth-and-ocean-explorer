@@ -46,6 +46,8 @@ if(state.settings.unlockAll){state.settings.unlockAll=false;studentState=state;s
 const audioPlayer=createAudio(()=>state.settings);
 const tone=(frequency=520)=>audioPlayer.tone(frequency);
 const sound=name=>audioPlayer.effect(name);
+// Map villain encounter cues → files in public/assets/audio (see assets/CREDITS.md).
+const mapCues={swing:()=>'map-swing',hit:n=>n===1?'map-hit-1':'map-hit-2',finish:()=>'map-hit-3',exit:()=>'map-exit',appear:()=>'map-appear',contact:()=>'map-bump',victory:()=>'map-victory'};
 // 캐릭터 대사 음성: 화면 글과 같은 문장을 읽고, 화면 이동·대화창 닫기·소리 끄기에서 멈춘다. '다시 듣기'는 마지막 대사를 다시 읽는다.
 const voice=createVoice({enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,duck:v=>audioPlayer.duck(v)});
 let lastVoice=null,voiceRoute=null;
@@ -164,7 +166,7 @@ async function render(){
         new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('map timeout')),10000);})
       ]);
       if(ticket!==epoch)return;
-      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>tone(kind==='finish'?350:kind==='contact'?260:n===1?580:440)});
+      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>sound(mapCues[kind]?.(n)??'click')});
       mountPhotoRestoration(wrap,state,save,sound);
       if(state.completed.length||state.settings.unlockAll)cleanupExpedition=mountExpedition(wrap,state,save,navigate,sound);
       status.remove();

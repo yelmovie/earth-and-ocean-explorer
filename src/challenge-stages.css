@@ -487,3 +487,27 @@
   outline-offset: 3px;
 }
 #app .challenge-page .challenge-item.recheck small { color: #8a4214; font-weight: 800; }
+
+/* 4장 적용 문제의 출발 전 카드(3D 탐사길 걷기). */
+#app #main .learning .challenge-board .walk-start { display: grid; flex: 1; gap: 8px; min-height: 0; align-content: center; }
+#app #main .learning .challenge-board .walk-record { display: flex; gap: 8px; align-items: center; margin: 0; padding: 8px 12px; border-radius: 12px; font-size: 17px; font-weight: 700; background: #eef5ee; }
+#app #main .learning .challenge-board .walk-record svg { width: 22px; height: 22px; flex: none; }
+#app #main .learning .challenge-board .walk-question { margin: 0; font-size: 18px; font-weight: 800; line-height: 1.3; }
+#app #main .learning .challenge-board .walk-start .challenge-options { flex: none; }
+#app #main .learning .challenge-board .walk-start .challenge-option small { font-size: inherit; }
+#app #main .learning .challenge-board .walk-switch { justify-self: start; min-height: 48px; padding: 4px 12px; }
+@media (max-width: 699px) {
+  #app #main .learning .challenge-board .walk-record { display: none; }
+  #app #main .learning .challenge-board .walk-start { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 8px; align-items: center; }
+  #app #main .learning .challenge-board .walk-question { font-size: 17px; }
+  #app #main .learning .challenge-board .walk-start .challenge-options { grid-column: 1 / -1; grid-row: 2; }
+  #app #main .learning .challenge-board .walk-switch { grid-column: 2; grid-row: 1; }
+}
+@media (max-height: 620px) and (min-width: 700px) {
+  #app #main .learning .challenge-board .walk-start { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; }
+  #app #main .learning .challenge-board .walk-record { display: none; }
+  #app #main .learning .challenge-board .walk-question { font-size: 17px; }
+  #app #main .learning .challenge-board .walk-start .challenge-options { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #app #main .learning .challenge-board .walk-switch { grid-column: 2; grid-row: 1; }
+  #app #main .learning .challenge-board .walk-start .challenge-option small { display: none; }
+}

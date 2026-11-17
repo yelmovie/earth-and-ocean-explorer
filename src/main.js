@@ -23,9 +23,20 @@ import { createVoice, hasVoice } from './voice.js';
 import { VOICE_TEXT } from './voice-ids.js';
 let copy;
 const loadSettings = async () => copy ??= (await import('./settingsContent.js')).settingsContent;
-import { handleChallenge, mountChallenges } from './challenges.js';
+import { handleChallenge, mountChallenges, judgeWalk, walkPlanLabel } from './challenges.js';
 import { mountActivityFlow, startActivityHeating, stageGuide } from './activity-flow.js';
 let cleanupActivityFlow;
+// 4장 적용 문제의 3D 탐사길 걷기 창. 필요할 때만 불러오고, 열 수 없으면 기존 고르기 화면으로 바꾼다.
+let closeWalk=null;
+async function openWalk({plan}){
+  if(closeWalk)return;const ticket=epoch;
+  const flat=message=>{handleChallenge({...context(),action:'challenge-walk-flat'});feedback(message);};
+  try{
+    const {mountTideWalk}=await import('./tide-walk.js');
+    if(ticket!==epoch||state.route!=='s4d'||closeWalk)return;
+    closeWalk=mountTideWalk({planLabel:walkPlanLabel(plan),sound,onJudge:log=>judgeWalk(context(),log),onClosed:reason=>{closeWalk=null;if(state.route!=='s4d')return;if(reason==='lost')flat('3D 화면이 멈춰서 기존 방식으로 바꿨어.');else handleChallenge({...context(),action:reason==='flat'?'challenge-walk-flat':'challenge-walk-closed'});}});
+  }catch{if(ticket===epoch&&state.route==='s4d')flat('3D 탐사길을 열 수 없어서 기존 방식으로 바꿨어.');}
+}
 
 const app=document.querySelector('#app');
 let storage;try{storage=window.localStorage;}catch{storage={getItem(){throw Error();},setItem(){throw Error();}};}
@@ -41,7 +52,7 @@ let lastVoice=null,voiceRoute=null;
 const voiceIdOf=text=>Object.keys(VOICE_TEXT).find(id=>VOICE_TEXT[id]===text);
 function speak(ids,{replayHost}={}){const list=[].concat(ids).filter(hasVoice);if(!list.length)return false;lastVoice=list;document.querySelector('[data-action="voice-replay"]')?.removeAttribute('hidden');if(replayHost&&!replayHost.querySelector('[data-action="voice-replay"]')){const b=document.createElement('button');b.type='button';b.className='secondary voice-replay';b.dataset.action='voice-replay';b.innerHTML=`${icon('sound')}<span>다시 듣기</span>`;replayHost.prepend(b);}return voice.play(list);}
 const playConcept=(n,options={})=>openOptional(loadConcepts,({showConcept})=>showConcept(n,{audio:audioPlayer,...options}));
-const context=()=>({state,save,render,feedback,navigate,sound,tideScene,finishChapter:n=>{const shown=showChapterReward(n,{navigate,completed:state.completed.length});const dialog=document.querySelector('.chapter-reward[open]');if(shown&&dialog){speak(`reward-${n}`,{replayHost:dialog.querySelector('.modal-footer')});dialog.addEventListener('close',()=>voice.stop(),{once:true});}return shown;}});
+const context=()=>({state,save,render,feedback,navigate,sound,tideScene,openWalk,finishChapter:n=>{const shown=showChapterReward(n,{navigate,completed:state.completed.length});const dialog=document.querySelector('.chapter-reward[open]');if(shown&&dialog){speak(`reward-${n}`,{replayHost:dialog.querySelector('.modal-footer')});dialog.addEventListener('close',()=>voice.stop(),{once:true});}return shown;}});
 function save(options){if(studentState){const status=document.querySelector('#save-status');if(status)status.textContent='미리보기 · 저장하지 않음';return;}warning=saveState(storage,state,options);const status=document.querySelector('#save-status');if(status)status.textContent=warning?'저장 확인 필요':'자동 저장됨';if(!warning)document.querySelector('.storage-warning')?.remove();else if(!document.querySelector('.storage-warning')){const p=document.createElement('div');p.className='storage-warning';p.setAttribute('role','alert');p.textContent=warning;app.prepend(p);}}
 function routeName(r){const m=/^s([1-5])([abcd])$/.exec(r);return m?`${chapters[+m[1]-1].title} · ${({a:'관찰',b:'연결',c:'도전',d:'적용'}[m[2]])}`:({home:'시작 화면',hub:'탐사 지도',report:'최종 보고서',link:'DATA LINK',ending:'2D 엔딩',certificate:'조사원 인증서'}[r]||'탐사 지도');}
 function navigate(route,{back=false,push=true}={}){
@@ -115,6 +126,7 @@ function runLinkCheck(index){
 function autoLink(){const d=state.finalDraft;if(state.route==='link'&&Number.isInteger(d?.caseIndex)&&d.stage!==null&&d.reason!==null&&!state.links[d.caseIndex])runLinkCheck(d.caseIndex);}
 function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button></div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group">${state.route==='hub'?'':`<button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button>`}<button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
 async function render(){
+  if(state.route!=='s4d')closeWalk?.();
   cleanupExpedition?.();cleanupExpedition=null;
   cleanupActivityFlow?.();cleanupActivityFlow=null;
   disposeNpc?.();closeResidentScene?.();closeResidentScene=null;

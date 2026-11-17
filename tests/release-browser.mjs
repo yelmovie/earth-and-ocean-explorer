@@ -52,6 +52,9 @@ try {
           if (await next.count()) await next.click().catch(() => {});
           await page.locator(`.challenge-progress [data-action="challenge-task"][data-value="${index}"].active`).waitFor();
         }
+        // 4장의 3D 탐사길 걷기는 tests/tide-walk-browser.mjs가 따로 확인한다. 완주 검사는 대체 화면(기존 고르기)으로 지난다.
+        const flatWalk = page.locator('[data-action="challenge-walk-flat"]');
+        if (await flatWalk.count()) { await flatWalk.click(); report.guidance.walkChoiceScreen = task.id; }
         if (task.type === 'choice') await click('challenge-answer', task.answer);
         else if (task.type === 'multi') {
           for (const answer of task.answer) await click('challenge-answer', answer);

@@ -1,5 +1,7 @@
 # 푸른행성 조사본부
 
+2026-11-17 3D 탐사길 걷기: 4장 적용 문제 「물이 들어오면」(`tide-safety`)을 부리가 나무 탐사길을 걸어 갯벌 생물을 살펴보고 물이 경고 눈금에 닿기 전에 데크로 돌아오는 3D 걷기로 먼저 연다. 문제 수(20개)·정답·저장 필드는 그대로이고, 걷기에서 한 행동을 기존 보기로 옮겨 기존 판정이 맞았는지 정한다. WebGL이 없거나 기기의 움직임 줄이기·설정의 2D 대체가 켜져 있으면 기존 고르기 화면으로 열리고, 「기존 방식으로 하기」로 언제든 바꿀 수 있다. 점프는 없고 캐릭터는 난간 안쪽으로만 다닌다. 근거는 `docs/RUN-STAGE-3D-PLAN-20261117.md`.
+
 2026-11-17 흐름 정리: 반복되던 확장 문제를 40개에서 20개로 줄이고(중복 개념 제거), 문제마다 새로 생성한 장면 그림 9장을 붙였다. 정답 뒤 핵심 개념 카드와 약 3초 자동 넘김(다른 곳을 누르면 멈춤), 해안 비교의 드롭다운 대신 사진→큰 버튼 특징 고르기, 최종 미션의 즉시 확인·다음 상황 자동 이동을 적용했다. 근거는 `docs/reviews/FLOW-STREAMLINE-20261117.md`.
 
 2026-11-17 그림 교체: 밀물·썰물의 바위·기둥·배, 실험의 비커·가열판·소금, 장 완료 배지 5개와 인증서 인장을 GPT 생성 그림으로 바꿨다. 물 높이·눈금·물의 양은 코드로 정확히 그린다. 화면마다 겹치던 숫자·버튼을 정리했고, 밀물 비교는 비교선을 끌어 기둥·바위를 지나가면 기록된다. 근거는 `docs/reviews/ART-FLOW-UPGRADE-20261117.md`.
@@ -34,7 +36,7 @@ npm run preview
 
 Windows/exFAT에서는 preview를 종료한 뒤 다시 빌드한다. 실행 중인 preview가 dist 파일을 잡으면 빌드 정리에 실패할 수 있다.
 
-배포 파일은 dist다. 상대 base와 hash 경로를 사용한다. 운영 주소는 https://yelmovie.github.io/earth-and-ocean-explorer/ 이며 main 푸시 시 `.github/workflows/deploy.yml`이 단위 테스트·빌드를 통과한 dist를 GitHub Pages에 배포한다. 배포 결과는 Actions와 `docs/reviews/RELEASE-REVIEW-20261111.md`에서 확인한다.
+배포 파일은 dist다. 상대 base와 hash 경로를 사용한다. 운영 주소는 운영 시트 G열의 https://earth-and-ocean-explorer.yelsam.workers.dev/ 이고, Cloudflare Worker `earth-and-ocean-explorer`에 검증한 dist를 직접 올린다(절차는 `docs/RUN-STAGE-3D-PLAN-20261117.md`의 「구현 결과」). `.github/workflows/deploy.yml`은 수동 실행으로 GitHub Pages(https://yelmovie.github.io/earth-and-ocean-explorer/)에 올리는 보조 경로이며, 그 성공은 운영 배포의 근거가 아니다.
 
 운영 주소·로컬 개발 주소·미리보기 주소는 서로 다른 저장 공간을 사용한다. 학생은 같은 운영 주소와 브라우저에서 이어서 활동한다.
 
@@ -47,6 +49,7 @@ Node 단위 테스트: 저장·완료·해금·인증·20개 확장 활동·지�
 - `node tests/release-safety.mjs`로 저장 보호·교사 시연 분리·다중 터치를 검사한다. `QA_STATE`는 앞 완주 검사의 `completed-state.json`을 가리킨다.
 - `node tests/release-metrics.mjs`로 첫 로딩·개념 영상·음성·동작 줄이기를 검사한다.
 - `node tests/hub-overlay-browser.mjs`로 초기·진행 중·완료·교사 시연의 지도 안내·사진 작업대·이름표 겹침을 검사한다. `QA_STATE`는 완주 검사의 저장 파일이다.
+- `node tests/tide-walk-browser.mjs`로 4장의 3D 탐사길 걷기를 키보드와 화면 버튼으로 끝까지 해 보고, 기록 저장·대체 화면·화면 크기별 배치를 검사한다. 개발 서버·빌드 미리보기·운영 주소 모두에 쓸 수 있다.
 - `GAME_URL`로 검증할 주소, `QA_OUTPUT`으로 외장 결과 폴더를 지정한다. 학교 실제 기기와 학생의 학습효과 확인은 별도다.
 
 ## 콘텐츠 변경

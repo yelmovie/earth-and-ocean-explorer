@@ -1,0 +1,88 @@
+{
+  "note": "3D 탐사길 걷기(4장 적용 문제 tide-safety)에 쓰는 생성 그림의 프롬프트. scripts/generate-run-stage.sh가 이 파일을 읽어 한 장씩 만든다. 원본은 assets/generated/20261117-run-stage/, 실행 파일은 public/assets/illustrations/run-stage/. props 종류는 한 장에 소품 여섯 개를 받아 parts 이름으로 나눠 저장한다.",
+  "tool": "gpt-imagegen (Codex 내장 이미지 도구), _shared/run-stage-lock.sh image 로 한 장씩",
+  "images": [
+    {
+      "name": "buri-walk",
+      "kind": "strip",
+      "reference": "assets/generated/20261028/buri.png",
+      "prompt": "Sprite sheet of the cartoon spoonbill explorer bird from the reference image: white feathers, pale yellow head crest, long dark grey spoon-shaped bill, blue neck bandana, beige pocket vest, olive green backpack, dark grey legs. A calm walking cycle of exactly 6 frames arranged in one single horizontal row, evenly spaced with a clear empty gap between frames. Every frame shows the full body in side view facing right, the same size and proportions in every frame, feet on the same invisible baseline, the two legs alternating through a relaxed walking stride, wings relaxed at the sides. Walking only, no running, no jumping. Soft painted children's picture-book illustration matching the reference exactly, same colors, thin brown outline, gentle shading. Fully transparent background, no ground, no cast shadow, no scenery, no frame borders, no grid lines, no text, no letters, no numbers, no logo."
+    },
+    {
+      "name": "planks",
+      "kind": "tile",
+      "reference": "assets/generated/20261116/tide-safety.png",
+      "prompt": "Seamless tileable square texture, flat top-down orthographic view of a wooden boardwalk floor: eight weathered warm light-brown planks laid side by side, each plank running vertically from the top edge to the bottom edge, thin dark gaps between planks, subtle wood grain, a few small nail heads. Soft even lighting, no perspective, no shadows, painterly children's picture-book style with the gentle bright colors of the reference image. The edges must tile seamlessly on all four sides. No objects, no text, no letters, no logo."
+    },
+    {
+      "name": "mud",
+      "kind": "tile",
+      "reference": "assets/generated/20261116/tide-safety.png",
+      "prompt": "Seamless tileable square texture, flat top-down orthographic view of a wet tidal mudflat: smooth grey-brown mud with soft ripple marks, a few tiny round crab burrow holes with little sand balls around them, small shallow puddles reflecting pale sky, scattered tiny shell fragments. Soft even lighting, no perspective, no horizon, painterly children's picture-book style with the gentle colors of the reference image. The edges must tile seamlessly on all four sides. No footprints, no animals, no plants, no text, no letters, no logo."
+    },
+    {
+      "name": "water",
+      "kind": "tile",
+      "reference": "assets/generated/20261116/tide-safety.png",
+      "prompt": "Seamless tileable square texture, flat top-down orthographic view of shallow clear turquoise sea water: gentle small ripples, thin soft white foam lines and a few light sparkles, evenly spread. Soft even lighting, no perspective, no horizon, painterly children's picture-book style with the bright gentle colors of the reference image. The edges must tile seamlessly on all four sides. No objects, no animals, no boats, no text, no letters, no logo."
+    },
+    {
+      "name": "backdrop",
+      "kind": "backdrop",
+      "reference": "assets/generated/20261116/tide-safety.png",
+      "prompt": "Wide scenic background painting with no foreground, cute and cozy: a bright blue daytime sky with plump soft white cumulus clouds filling the top 60 percent, a perfectly straight level sea horizon line at 62 percent of the image height measured from the top, small rounded green islands and soft blue hills sitting on the horizon, one tiny white lighthouse with a red roof on an island, one tiny white sailboat far away, three tiny seagulls gliding in the sky, and below the horizon a calm sparkling turquoise sea with far pale tidal flats. The left and right edges show only open sky and open sea. Painterly children's picture-book style matching the reference image, bright gentle colors. No people, no boardwalk, no text, no letters, no logo."
+    },
+    {
+      "name": "moa-call",
+      "kind": "strip",
+      "reference": "assets/moa-original.png",
+      "prompt": "Sprite sheet of the cartoon river otter from the reference image: brown fur, cream chest and muzzle, teal neck scarf. Exactly 6 frames arranged in one single horizontal row, evenly spaced with a clear empty gap between frames. Every frame shows the full body standing upright facing right, the same size and proportions in every frame, feet on the same invisible baseline, blowing a small silver safety whistle held to its mouth with one paw while waving the other paw high to call a friend back; between frames the waving arm moves up and down. Soft painted children's picture-book illustration matching the reference exactly, same colors, gentle shading. Fully transparent background, no ground, no cast shadow, no scenery, no frame borders, no grid lines, no text, no letters, no numbers, no logo."
+    },
+    {
+      "name": "buri-look",
+      "kind": "strip",
+      "reference": "assets/generated/20261028/buri.png",
+      "prompt": "Sprite sheet of the cartoon spoonbill explorer bird from the reference image: white feathers, pale yellow head crest, long dark grey spoon-shaped bill, blue neck bandana, beige pocket vest, olive green backpack, dark grey legs. Exactly 6 frames arranged in one single horizontal row, evenly spaced with a clear empty gap between frames. Every frame shows the full body standing still in side view facing right, the same size and proportions in every frame, feet on the same invisible baseline, leaning slightly forward and holding a round magnifying glass in one wing, looking through it at something low on the right; between frames the head tilts a little and the magnifying glass moves slightly closer and back. Soft painted children's picture-book illustration matching the reference exactly, same colors, thin brown outline, gentle shading. Fully transparent background, no ground, no cast shadow, no scenery, no frame borders, no grid lines, no text, no letters, no numbers, no logo."
+    },
+    {
+      "name": "buri-cheer",
+      "kind": "strip",
+      "reference": "assets/generated/20261028/buri.png",
+      "prompt": "Sprite sheet of the cartoon spoonbill explorer bird from the reference image: white feathers, pale yellow head crest, long dark grey spoon-shaped bill, blue neck bandana, beige pocket vest, olive green backpack, dark grey legs. Exactly 6 frames arranged in one single horizontal row, evenly spaced with a clear empty gap between frames. Every frame shows the full body facing right, the same size and proportions in every frame, both feet staying on the same invisible ground baseline, happily raising both wings with a joyful open bill; between frames the wings wave up and down and the body sways lightly. No jumping off the ground. Soft painted children's picture-book illustration matching the reference exactly, same colors, thin brown outline, gentle shading. Fully transparent background, no ground, no cast shadow, no scenery, no frame borders, no grid lines, no text, no letters, no numbers, no logo."
+    },
+    {
+      "name": "grass",
+      "kind": "tile",
+      "reference": "assets/generated/20261116/tide-safety.png",
+      "prompt": "Seamless tileable square texture, flat top-down orthographic view of short coastal meadow grass: fresh green grass blades with a few tiny white and yellow wildflowers and small sandy patches, evenly spread. Soft even lighting, no perspective, no horizon, painterly children's picture-book style with the gentle bright colors of the reference image. The edges must tile seamlessly on all four sides. No objects, no animals, no paths, no text, no letters, no logo."
+    },
+    {
+      "name": "props-shore",
+      "kind": "props",
+      "parts": [
+        "cordgrass",
+        "seablite",
+        "rocks",
+        "pine",
+        "gull",
+        "shells"
+      ],
+      "reference": "assets/generated/20261116/tide-safety.png",
+      "prompt": "Game prop sheet: exactly 6 separate objects arranged in one single horizontal row, evenly spaced with a clear empty gap between objects. From left to right: (1) a clump of tall green coastal cordgrass, (2) a low clump of red and pink sea-blite salt marsh plants, (3) a small group of rounded mossy grey rocks with barnacles, (4) a small seaside pine tree with a curved trunk, (5) a white seagull standing on a short wooden post, (6) a little pile of seashells and a starfish. Soft painted children's picture-book illustration matching the bright gentle style of the reference image, cute and cozy, each object complete and not touching its neighbors, viewed from the front at eye level, the same lighting on every object. Fully transparent background, no ground, no cast shadow, no scenery, no frame borders, no grid lines, no text, no letters, no numbers, no logo."
+    },
+    {
+      "name": "props-deck",
+      "kind": "props",
+      "parts": [
+        "hut",
+        "lifebuoy",
+        "lantern",
+        "telescope",
+        "crate",
+        "bench"
+      ],
+      "reference": "assets/generated/20261116/tide-safety.png",
+      "prompt": "Game prop sheet: exactly 6 separate objects arranged in one single horizontal row, evenly spaced with a clear empty gap between objects. From left to right: (1) a small cozy wooden nature observation hut with a teal roof and a round window, (2) a wooden safety post holding a red and white life ring, (3) a wooden post with a warm glowing lantern, (4) a brass telescope on a wooden tripod, (5) a wooden crate with a field notebook and a magnifying glass on top, (6) a small wooden bench. Soft painted children's picture-book illustration matching the bright gentle style of the reference image, cute and cozy, each object complete and not touching its neighbors, viewed from the front at eye level, the same lighting on every object. Fully transparent background, no ground, no cast shadow, no scenery, no frame borders, no grid lines, no text, no letters, no numbers, no logo."
+    }
+  ]
+}

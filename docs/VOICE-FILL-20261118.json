@@ -2164,17 +2164,30 @@
    "file": "public/assets/audio/voices/el-villain-5-5.mp3",
    "group": "dialogue",
    "retake": false
-  }
- ],
- "notConnected": [
+  },
   {
    "key": "villain-4-5",
+   "speaker": "물때 교란 부표",
+   "voiceId": "wMrz30qBeYiSkAtnZGtn",
+   "voiceName": "Harry",
+   "model": "eleven_v4",
+   "flowId": "OS0VjvFV5F4AVrC8ZR9q",
+   "generationId": "347DqLQHVMIHKEUWhUxh",
    "text": "쳇, 수위판은 두고 간다!",
-   "reason": "받아쓰기 검수 2회(원본+재생성 1회) 모두 실패 → 연결하지 않음",
+   "prompt": "[mischievous] 쳇, 수위판은 두고 간다!",
    "asr": "채, 수입판은 두고 간다!",
    "match": 0.778,
-   "end": 0.778
+   "end": 0.778,
+   "humanCheck": "사용자 청취 확인(2026-11-18): 받아쓰기는 3회 모두 기준 미달이었지만 사람이 듣고 괜찮다고 확인한 마지막 테이크",
+   "lufs": -17.61,
+   "peakDbtp": -1.89,
+   "duration": 2.72,
+   "sha256": "0ec278cefffbd806a53f146b55f3b680a22f638675509fbfd0e211c736ffabb1",
+   "file": "public/assets/audio/voices/el-villain-4-5.mp3",
+   "group": "dialogue",
+   "retake": true
   }
  ],
+ "notConnected": [],
  "unusedOldFiles": "public/assets/audio/voices/<id>.mp3 (Qwen3-TTS 39개)는 더 이상 재생하지 않지만 지우지 않음"
 }

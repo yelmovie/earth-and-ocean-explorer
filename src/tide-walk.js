@@ -231,7 +231,7 @@ function buildStage(canvas) {
 }
 
 /** 전체 화면 걷기 창을 연다. 끝나면 onJudge로 판정을 받고, 닫히면 onClosed를 부른다. */
-export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClosed }) {
+export function mountTideWalk({ planLabel = '', sound = () => {}, speak = () => {}, onJudge, onClosed }) {
   const dialog = document.createElement('dialog'); dialog.className = 'tide-walk'; dialog.setAttribute('aria-label', '갯벌 탐사길 걷기'); dialog.tabIndex = -1;
   dialog.innerHTML = hud(); document.body.append(dialog);
   const canvas = dialog.querySelector('canvas');
@@ -257,7 +257,7 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
     card.querySelector('button')?.focus({ preventScroll: true });
     if (autoClose) cardTimer = setTimeout(closeCard, autoClose);
   }
-  function closeCard() { const done = cardDone; hideCard(); if (state.mode === 'card') { state.mode = 'walk'; state.pose = 'walk'; } dialog.focus({ preventScroll: true }); done?.(); }
+  function closeCard() { const done = cardDone; hideCard(); speak(''); if (state.mode === 'card') { state.mode = 'walk'; state.pose = 'walk'; } dialog.focus({ preventScroll: true }); done?.(); }
 
   function lookAt(target) {
     if (state.mode !== 'walk' || !target) return;
@@ -286,7 +286,8 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
     // 맞았을 때는 부리가 기뻐하는 모습을 먼저 보여 주고 카드를 띄운다.
     const line = `<p class="tw-compare-line"><span>내 예상</span><b>${esc(result.plan || planLabel)}</b><span aria-hidden="true">→</span><span>실제</span><b>${walkClock(state.slots)}</b></p>`;
     if (result.correct) cardTimer = setTimeout(() => showCard(`<h2 id="tw-card-title">안전하게 돌아왔어요!</h2>${line}<p class="tw-why"><span>핵심 개념</span>${esc(result.why)}</p><p class="tw-card-note">${esc(WALK_SAFETY)}</p><button type="button" class="primary" data-tw-action="done">확인</button>`, { className: 'tw-result-card good' }), 1300);
-    else showCard(`<h2 id="tw-card-title">다시 살펴봐요</h2>${rows}<p class="tw-why"><span>모아의 도움말</span>${esc(result.hint)}</p>${result.offerFlat ? '<p class="tw-card-note">어려우면 기존 방식으로 풀어도 좋아요.</p>' : ''}<div class="tw-card-actions"><button type="button" class="primary" data-tw-action="retry">다시 걸어 보기</button><button type="button" class="${result.offerFlat ? 'primary' : 'secondary'}" data-tw-action="flat">기존 방식으로 하기</button></div>`, { className: 'tw-result-card' });
+    else speak(result.hint);
+    if (!result.correct) showCard(`<h2 id="tw-card-title">다시 살펴봐요</h2>${rows}<p class="tw-why"><span>모아의 도움말</span>${esc(result.hint)}</p>${result.offerFlat ? '<p class="tw-card-note">어려우면 기존 방식으로 풀어도 좋아요.</p>' : ''}<div class="tw-card-actions"><button type="button" class="primary" data-tw-action="retry">다시 걸어 보기</button><button type="button" class="${result.offerFlat ? 'primary' : 'secondary'}" data-tw-action="flat">기존 방식으로 하기</button></div>`, { className: 'tw-result-card' });
   }
 
   function step(dt, time) {
@@ -317,7 +318,7 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
           showCard('<h2 id="tw-card-title">탐사길을 닫았어요</h2><p>물이 경고 눈금까지 들어왔어요. 물이 가장 낮은 06:00부터 다시 나가 봐요.</p><button type="button" class="primary" data-tw-action="retry">다시 시작</button>', { className: 'tw-result-card' });
         } else {
           state.mode = 'called'; state.calling = true; state.pose = 'walk'; keys.clear(); nudge = null; sound('hint');
-          say('삐익! 물이 경고 눈금까지 들어왔어요. 안전한 길로 돌아와요!'); setGuide('모아가 불렀어요. 부리가 탐사길을 따라 데크로 돌아가요.');
+          say('삐익! 물이 경고 눈금까지 들어왔어요. 안전한 길로 돌아와요!'); speak('삐익! 물이 경고 눈금까지 들어왔어요. 안전한 길로 돌아와요!'); setGuide('모아가 불렀어요. 부리가 탐사길을 따라 데크로 돌아가요.');
         }
       }
     } else if (state.mode === 'called') {
@@ -343,6 +344,7 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, onJudge, onClo
   }
 
   function close(reason = 'exit') {
+    speak('');
     if (closed) return; closed = true;
     cancelAnimationFrame(raf); clearTimeout(cardTimer); clearTimeout(speechTimer); abort.abort(); pad.destroy(); observer.disconnect(); stage.dispose();
     if (dialog.open) dialog.close(); dialog.remove();

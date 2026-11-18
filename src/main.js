@@ -34,7 +34,7 @@ async function openWalk({plan}){
   try{
     const {mountTideWalk}=await import('./tide-walk.js');
     if(ticket!==epoch||state.route!=='s4d'||closeWalk)return;
-    closeWalk=mountTideWalk({planLabel:walkPlanLabel(plan),sound,onJudge:log=>judgeWalk(context(),log),onClosed:reason=>{closeWalk=null;if(state.route!=='s4d')return;if(reason==='lost')flat('3D 화면이 멈춰서 기존 방식으로 바꿨어.');else handleChallenge({...context(),action:reason==='flat'?'challenge-walk-flat':'challenge-walk-closed'});}});
+    closeWalk=mountTideWalk({planLabel:walkPlanLabel(plan),sound,speak:speakText,onJudge:log=>judgeWalk(context(),log),onClosed:reason=>{closeWalk=null;if(state.route!=='s4d')return;if(reason==='lost')flat('3D 화면이 멈춰서 기존 방식으로 바꿨어.');else handleChallenge({...context(),action:reason==='flat'?'challenge-walk-flat':'challenge-walk-closed'});}});
   }catch{if(ticket===epoch&&state.route==='s4d')flat('3D 탐사길을 열 수 없어서 기존 방식으로 바꿨어.');}
 }
 
@@ -52,8 +52,11 @@ const mapCues={swing:()=>'map-swing',hit:n=>n===1?'map-hit-1':'map-hit-2',finish
 const voice=createVoice({enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,duck:v=>audioPlayer.duck(v)});
 let lastVoice=null,voiceRoute=null;
 const voiceIdOf=text=>Object.keys(VOICE_TEXT).find(id=>VOICE_TEXT[id]===text);
+// 화면 글 그대로 읽기: 한 줄이면 그 대사, 여러 대사를 이어 붙인 글이면 순서대로 읽는다. 맞는 음성이 없으면 읽지 않는다.
+const voiceIdsOf=text=>{const one=voiceIdOf(text);if(one)return [one];const parts=Object.keys(VOICE_TEXT).filter(id=>VOICE_TEXT[id].length>12&&text.includes(VOICE_TEXT[id])).sort((a,b)=>text.indexOf(VOICE_TEXT[a])-text.indexOf(VOICE_TEXT[b]));return parts.map(id=>VOICE_TEXT[id]).join(' ')===text?parts:[];};
+const speakText=text=>{if(!text){voice.stop();return;}const ids=voiceIdsOf(text);if(ids.length)speak(ids);};
 function speak(ids,{replayHost}={}){const list=[].concat(ids).filter(hasVoice);if(!list.length)return false;lastVoice=list;document.querySelector('[data-action="voice-replay"]')?.removeAttribute('hidden');if(replayHost&&!replayHost.querySelector('[data-action="voice-replay"]')){const b=document.createElement('button');b.type='button';b.className='secondary voice-replay';b.dataset.action='voice-replay';b.innerHTML=`${icon('sound')}<span>다시 듣기</span>`;replayHost.prepend(b);}return voice.play(list);}
-const playConcept=(n,options={})=>openOptional(loadConcepts,({showConcept})=>showConcept(n,{audio:audioPlayer,...options}));
+const playConcept=(n,options={})=>openOptional(loadConcepts,({showConcept})=>showConcept(n,{audio:audioPlayer,voice,...options}));
 const context=()=>({state,save,render,feedback,navigate,sound,tideScene,openWalk,finishChapter:n=>{const shown=showChapterReward(n,{navigate,completed:state.completed.length});const dialog=document.querySelector('.chapter-reward[open]');if(shown&&dialog){speak(`reward-${n}`,{replayHost:dialog.querySelector('.modal-footer')});dialog.addEventListener('close',()=>voice.stop(),{once:true});}return shown;}});
 function save(options){if(studentState){const status=document.querySelector('#save-status');if(status)status.textContent='미리보기 · 저장하지 않음';return;}warning=saveState(storage,state,options);const status=document.querySelector('#save-status');if(status)status.textContent=warning?'저장 확인 필요':'자동 저장됨';if(!warning)document.querySelector('.storage-warning')?.remove();else if(!document.querySelector('.storage-warning')){const p=document.createElement('div');p.className='storage-warning';p.setAttribute('role','alert');p.textContent=warning;app.prepend(p);}}
 function routeName(r){const m=/^s([1-5])([abcd])$/.exec(r);return m?`${chapters[+m[1]-1].title} · ${({a:'관찰',b:'연결',c:'도전',d:'적용'}[m[2]])}`:({home:'시작 화면',hub:'탐사 지도',report:'최종 보고서',link:'DATA LINK',ending:'2D 엔딩',certificate:'조사원 인증서'}[r]||'탐사 지도');}
@@ -154,7 +157,7 @@ async function render(){
   if(taskProgress)app.querySelector('.challenge-board-heading')?.replaceChildren(taskProgress);
   document.querySelector('h1')?.setAttribute('tabindex','-1');
   if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});
-  if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-buri','ending-jjang']:[];if(entry.length)speak(entry);}
+  if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-intro','ending-buri','ending-jjang']:[];if(entry.length)speak(entry);}
   if(r==='hub'){
     const wrap=app.querySelector('.map-wrap'),next=chapters.find(c=>!state.completed.includes(c.id)&&canAccess(state,`s${c.id}a`));
     const status=document.createElement('section');status.className='hub-load-status';status.setAttribute('role','status');
@@ -166,7 +169,7 @@ async function render(){
         new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('map timeout')),10000);})
       ]);
       if(ticket!==epoch)return;
-      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>sound(mapCues[kind]?.(n)??'click')});
+      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>sound(mapCues[kind]?.(n)??'click'),encounterSay:speakText});
       mountPhotoRestoration(wrap,state,save,sound);
       if(state.completed.length||state.settings.unlockAll)cleanupExpedition=mountExpedition(wrap,state,save,navigate,sound);
       status.remove();
@@ -257,7 +260,7 @@ document.addEventListener('keydown',e=>{
 });
 // 오답 뒤 저절로 열린 도움말은 오답 소리(retry)를 끊지 않도록 조용히 열고, 학생이 직접 열 때만 hint 소리를 낸다.
 const autoHints=new WeakSet();
-document.addEventListener('toggle',e=>{if(!e.target.matches?.('.moa-hint'))return;const m=/^s([1-5])([ab])$/.exec(state.route),id=m&&`hint-${m[1]}${m[2]}`;if(!e.target.open){if(id&&lastVoice?.[0]===id)voice.stop();return;}if(e.target.hasAttribute('data-auto-open')&&!autoHints.has(e.target)){autoHints.add(e.target);return;}sound('hint');if(id)speak(id);},true);
+document.addEventListener('toggle',e=>{if(!e.target.matches?.('.moa-hint'))return;const m=/^s([1-5])([abcd])$/.exec(state.route),ids=[];if(m){const first=m[2]<'c'?`hint-${m[1]}${m[2]}`:voiceIdOf(e.target.querySelector('.moa-bubble p')?.textContent||'');if(first)ids.push(first);if(state.completed.includes(+m[1]))ids.push(`concept-summary-${m[1]}`);}const id=ids[0];if(!e.target.open){if(id&&lastVoice?.[0]===id)voice.stop();return;}if(e.target.hasAttribute('data-auto-open')&&!autoHints.has(e.target)){autoHints.add(e.target);return;}sound('hint');if(ids.length)speak(ids);},true);
 // 탐사 지도: 모아 안내·주민 말풍선 글과 같은 대사를 읽는다(지도 코드가 띄운 글을 그대로 찾아 읽음).
 document.addEventListener('click',e=>{
   const trigger=e.target.closest?.('[data-hub-guide],[data-hub-resident]');

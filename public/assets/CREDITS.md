@@ -55,6 +55,11 @@
 - `tide-foreshore.webp`는 내장 OpenAI `image_gen`으로 생성한 텍스트 없는 마른 해안 배경 1장이다. 원본은 `assets/generated/20261108/tide-foreshore-original.png`, 제작 기록은 `public/assets/tide-foreshore-manifest.json`에 있다.
 - 수면·물 높이·기둥·바위·배와 라벨은 기존 SVG로 그려 고정 배경과 함께 표시한다. 학습용 관측 모형이며 생성 계정과 납품 시 이용 조건은 최종 권리 검토 대상이다.
 
+## 캐릭터 목소리 (2026-11-18 통일)
+- 화면에서 나오는 모든 캐릭터 대사는 ElevenLabs(eleven_v4, 유료 요금제 상업 이용 가능) AI 합성 음성 `public/assets/audio/voices/el-<대사 id>.mp3`. 캐릭터마다 목소리 하나: 부리 Jusen, 짱이 Bee, 모아 Taek, 게 선율 v1, 이야기 내레이터 Mina, 물때 교란 부표 Harry. 실제 사람 목소리를 흉내 내지 않음.
+- 대사 원문·voiceId·generationId·받아쓰기 검수·LUFS·SHA-256은 `docs/VOICE-FILL-20261118.json`(이번 추가·교체)과 `docs/NPC-DIALOGUE-20261112.json`(이전 ElevenLabs 대사).
+- 아래 2026-11-10 Qwen3-TTS 파일(`<대사 id>.mp3`)은 앱에서 더 이상 재생하지 않음(파일만 남아 있음).
+
 ## 캐릭터 목소리 (2026-11-10)
 - 부리·짱이·모아·게·이야기 내레이터 대사 39개: 모모(로컬) Qwen3-TTS 프리셋 목소리로 생성한 AI 합성 음성 · Apache-2.0. 실제 사람 목소리를 쓰지 않음.
 - 실행 파일 `public/assets/audio/voices/<대사 id>.mp3`(모노 44.1kHz 96kbps, 약 -16 LUFS). 대사 원문·목소리·길이·SHA-256은 `docs/VOICE-PROVENANCE-20261110.json`.

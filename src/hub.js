@@ -124,7 +124,7 @@ function explorer(c,image,x,y,t,walking,facing,reduced,height,outlined=false,fra
   else c.drawImage(image,-width/2,-height+3,width,height);
   c.restore();
 }
-export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSay}={}){
+export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSay,encounterSave}={}){
   if(!background.src)background.src=`${import.meta.env?.BASE_URL??'/'}assets/expedition-map.webp`;
   const c=canvas.getContext('2d'),wrap=canvas.closest('.map-wrap'),input=createHubInput(),pads=new Set(),padPointers=new Map(),listeners=[];
   let pos=canStandInHub(s.mapPosition)?{...s.mapPosition}:{...hubMap.spawn};
@@ -166,7 +166,8 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
    }
   }
   const encounters=mountMapEncounters({requiredFoes:5,host:wrap,controls:wrap.querySelector('.hub-next-stack')??wrap,clearStage:()=>newlyCompleted.at(-1),stages:s.settings.unlockAll?[]:mapVillainStages.filter(stage=>s.completed.includes(Number(stage.id))),
-    progress:s.mapHits,onSave:patch=>{s.mapHits={...s.mapHits,...patch};onPosition?.();},
+    // encounterSave(before,patch) lets main.js award the achievement card for a villain's third hit.
+    progress:s.mapHits,onSave:patch=>{const before=s.mapHits;s.mapHits={...s.mapHits,...patch};onPosition?.();encounterSave?.(before,patch);},
     art:{left:import.meta.env.BASE_URL+'assets/map-encounter/map-villain-poses-left.webp',frames:6,nativeFacing:1},palette:'#44cfea',reach:82,contact:23,
     blocked:()=>stopped||entered||overview||hand||target!==null||guideOpen||paused(),reduced:()=>reduced,tone:encounterTone,say:encounterSay});
   function clearInput(){input.clear();pads.clear();padPointers.clear();wrap.querySelectorAll('.is-held').forEach(button=>button.classList.remove('is-held'));previous=0;}

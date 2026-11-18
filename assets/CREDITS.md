@@ -8,6 +8,7 @@
 | Vite8.3.4 | 개발·정적 빌드 | 설치 패키지 MIT | 의존 라이선스 고지 보존 |
 | Three.js0.186.1 | 지구 관찰 패널 | 설치 패키지 MIT | 원저작자 고지 보존 |
 | Kenney Interface Sounds | CC0 효과음 9종 | Kenney 공식 배포 ZIP의 License.txt 보존, MP3 변환 | 실제 기기 음량 확인 |
+| 과학34 공통 효과음 라이브러리 CC0 5종 (2026-11-18) | 성취 카드 효과음 audio/card-*.mp3 | CC0 1.0(원본 페이지 재확인). 아래 「2026-11-18 성취 카드」 표 | 실제 기기 음량 확인 |
 | 배경음 2곡 (Suno 생성) | audio/bgm/main-theme.mp3 (첫 탭부터 시작·지도·활동 반복), audio/bgm/final-theme.mp3 (엔딩·인증서, 지도 파이널 영상 대화상자) | 2026-11-17 사용자가 Suno로 생성해 제공. 프롬프트는 _shared/music-prompts-10-16.html | 원본은 references/suno 보관. 상업 이용 근거: 생성 당시 Suno Premier 유료 요금제(2026-11-18 사용자 확인) |
 | 나눔스퀘어 네오 | 본문·제목·숫자·SVG 글꼴 | 네이버 공식 Regular/Bold/ExtraBold WOFF2, SIL OFL 1.1 원문·출처 동봉 | 새 문구에도 공식 원본 글꼴 사용 |
 | 제공된 배경·로고·캐릭터10종 | 기존 프로젝트의 학습·메인·엔딩 그림 | 제공된 생성형AI 이미지로 기록되어 있음 | 최초 생성 계정·상업 이용권 증빙은 제공자 확인 필요 |
@@ -90,4 +91,19 @@
 | map-exit.mp3 | 악당 퇴장(보글보글 가라앉음) | bubbles-03.aif | kijjaz | CC0 1.0 | https://freesound.org/people/kijjaz/sounds/16738 |
 | map-appear.mp3 | 악당 등장(뽁, 방문마다 악당별 한 번) | Mouth Pop 1 | michorvath | CC0 1.0 | https://freesound.org/people/michorvath/sounds/269501 |
 | map-bump.mp3 | 아군 접촉(첨벙) | water splash 2.wav | VacekH | CC0 1.0 | https://freesound.org/people/VacekH/sounds/189499 |
-| map-victory.mp3 | 다섯 악당 모두 격퇴(파이널 창이 열리기 전에 끝남) | WinBrass.wav | Fupicat | CC0 1.0 | https://freesound.org/people/Fupicat/sounds/521639 |
+| map-victory.mp3 | 다섯 악당 모두 격퇴(파이널 창이 열리기 전에 끝남). 2026-11-18부터 마지막 악당은 성취 카드의 컬렉션 완성 징글(`card-complete.mp3`)이 대신하고, 카드가 뜨지 않을 때만 난다 | WinBrass.wav | Fupicat | CC0 1.0 | https://freesound.org/people/Fupicat/sounds/521639 |
+
+## 2026-11-18 성취 카드
+
+지도 악당(물때 교란 부표)을 세 번 맞혀 물리치면 받는 성취 카드 5장의 그림과 소리.
+
+- 그림 `reward-cards/card-{1..5}-{1..5}.webp`(640×960), `reward-cards/thumb-{1..5}-{1..5}.webp`(96×144): 2026-11-18 ChatGPT 앱의 Codex 내장 이미지 도구(GPT 이미지)로 이 프로젝트를 위해 생성했다. 부리(`illustrations/buri.webp`, `dialogue/buri.webp`)·모아(`moa.webp`, `dialogue/moa.webp`)와 각 장의 배경 그림을 화풍 참고로 붙였다. 글자 없이 생성했고 테두리·별·이름은 코드(`src/reward-cards.js`, `src/reward-cards.css`)로 올린다. 원본 PNG는 `_scratch/reward-cards-20261118/gen/10/`에 있다. 학습용 장면 그림이며 과학 사실의 증거로 쓰지 않는다.
+- 소리: 과학34 공통 효과음 라이브러리(`_shared/sfx-library-20261117/`)에서 이름만 바꿔 복사했다(가공은 라이브러리에서 한 무음 제거·음량 정규화뿐). 모두 CC0 1.0이며 라이브러리 작성 때(2026-11-17) 원본 페이지에서 라이선스를 다시 확인했다.
+
+| 파일 | 쓰는 곳 | 라이브러리 파일 | 원본 제목 · 제작자 | 원본 페이지 |
+|---|---|---|---|---|
+| audio/card-whoosh.mp3 | 카드가 날아올 때·보관함 칸으로 날아갈 때(휙) | `sfx/wind-whoosh-03.mp3` | Slow Swosh 40 · qubodup | https://freesound.org/people/qubodup/sounds/60027 |
+| audio/card-reveal.mp3 | 카드 공개(브론즈·실버·골드, 반짝) | `sfx/reward-01.mp3` | Fantasy_ui_Button_3.wav · ZenithInfinitiveStudios | https://freesound.org/people/ZenithInfinitiveStudios/sounds/376745 |
+| audio/card-epic.mp3 | 카드 공개(홀로·레전드, 긴 징글) | `sfx/reward-03.mp3` | Achievement Happy Beeps Jingle · CogFireStudios | https://freesound.org/people/CogFireStudios/sounds/619838 |
+| audio/card-slot.mp3 | 카드가 보관함 칸에 들어갈 때(톡) | `sfx/pickup-01.mp3` | item-pickup-v1.wav · DeltaCode | https://freesound.org/people/DeltaCode/sounds/678384 |
+| audio/card-complete.mp3 | 다섯 장을 모두 모았을 때(지도 파이널 영상이 열리면 멈춤) | `sfx/victory-jingle-01.mp3` | Game Success Fanfare Short · el_boss | https://freesound.org/people/el_boss/sounds/677858 |

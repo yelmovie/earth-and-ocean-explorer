@@ -513,6 +513,9 @@
 @media(max-width:650px){
   #app.route-hub>.topbar{padding-inline:8px;gap:3px}
   #app.route-hub>.topbar .nav-group{gap:4px}
+  /* Achievement card slots (reward-cards.css) shrink so the phone-width header stays on one line. */
+  #app.route-hub>.topbar .rc-slots{gap:3px;padding:4px 6px}
+  #app.route-hub>.topbar .rc-slot{width:20px;height:30px;font-size:12px}
   #app .hub-page .map-wrap{display:block;padding-top:74px}
   #app.route-hub:has(.admin-label) .hub-page .map-wrap{padding-top:110px}
   #app .hub-page #hub-map{position:absolute;inset:0}

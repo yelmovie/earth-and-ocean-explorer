@@ -12,6 +12,7 @@ import './challenge-stages.css';
 import './responsive-stages.css';
 import './glass-ui.css';
 import './flow-polish.css';
+import './reward-cards.css';
 const loadConcepts = () => import('./concepts.js');
 import { mountInteractions } from './interactions.js';
 import { chapters, sites, terrains, creatures, routes, asset, tideHeight, finalCases } from './data.js';
@@ -19,6 +20,7 @@ import { freshState, loadState, saveState, recordPrediction, recordTideObservati
 import { home, hub, learning, report, link, ending, certificate, recordDetail, tideScene, esc, character } from './screens.js';
 import { icon } from './icons.js';
 import { createAudio } from './audio.js';
+import { bindRewardSound, rewardSlotsHtml, awardRewardCards, rewardCardPending } from './map-reward-cards.js';
 import { createVoice, hasVoice } from './voice.js';
 import { VOICE_TEXT } from './voice-ids.js';
 let copy;
@@ -48,6 +50,9 @@ const tone=(frequency=520)=>audioPlayer.tone(frequency);
 const sound=name=>audioPlayer.effect(name);
 // Map villain encounter cues → files in public/assets/audio (see assets/CREDITS.md).
 const mapCues={swing:()=>'map-swing',hit:n=>n===1?'map-hit-1':'map-hit-2',finish:()=>'map-hit-3',exit:()=>'map-exit',appear:()=>'map-appear',contact:()=>'map-bump',victory:()=>'map-victory'};
+// 성취 카드(map-reward-cards.js): 악당의 세 번째 타격이 저장되면 퇴장 뒤 카드가 뜬다. 카드가 열린 동안 #app이 inert라 지도·악당·파이널 영상이 기다린다.
+// 마지막 악당은 카드의 컬렉션 완성 징글이 격퇴 징글을 대신한다(효과음은 한 번에 하나만 나서 겹치면 서로 끊긴다). 파이널 영상이 열리면 audio.js가 징글을 멈춘다.
+bindRewardSound(sound);
 // 캐릭터 대사 음성: 화면 글과 같은 문장을 읽고, 화면 이동·대화창 닫기·소리 끄기에서 멈춘다. '다시 듣기'는 마지막 대사를 다시 읽는다.
 const voice=createVoice({enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,duck:v=>audioPlayer.duck(v)});
 let lastVoice=null,voiceRoute=null;
@@ -129,7 +134,7 @@ function runLinkCheck(index){
   linkTimer=setTimeout(()=>{linkTimer=null;if(state.route!=='link'||state.finalDraft.caseIndex!==index||state.links[next])return;const linked=state.links[next];state.finalDraft={caseIndex:next,stage:linked?.stage??null,reason:linked?.reason??null};save();render();},2600);
 }
 function autoLink(){const d=state.finalDraft;if(state.route==='link'&&Number.isInteger(d?.caseIndex)&&d.stage!==null&&d.reason!==null&&!state.links[d.caseIndex])runLinkCheck(d.caseIndex);}
-function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button></div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group">${state.route==='hub'?'':`<button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button>`}<button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
+function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button></div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group">${state.route==='hub'?'':`<button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button>`}${state.route==='hub'?rewardSlotsHtml(state.mapHits):''}<button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
 async function render(){
   if(state.route!=='s4d')closeWalk?.();
   cleanupExpedition?.();cleanupExpedition=null;
@@ -169,7 +174,7 @@ async function render(){
         new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('map timeout')),10000);})
       ]);
       if(ticket!==epoch)return;
-      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>sound(mapCues[kind]?.(n)??'click'),encounterSay:speakText});
+      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>sound(mapCues[kind==='victory'&&rewardCardPending()?'exit':kind]?.(n)??'click'),encounterSay:speakText,encounterSave:(before,patch)=>awardRewardCards(before,patch,()=>state.mapHits,()=>state.route==='hub')});
       mountPhotoRestoration(wrap,state,save,sound);
       if(state.completed.length||state.settings.unlockAll)cleanupExpedition=mountExpedition(wrap,state,save,navigate,sound);
       status.remove();

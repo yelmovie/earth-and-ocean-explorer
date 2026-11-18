@@ -9,6 +9,8 @@ export function createAudio(getSettings) {
   const effectNames=['click','scan','camera','drop','hint','success','retry','reward','heat'];
   // Map villain cues (CC0, _shared/sfx-library-20261117): 퐁 → 첨벙 → 풍덩, then the villain bubbles away.
   const mapVolumes={'map-swing':.2,'map-hit-1':.3,'map-hit-2':.36,'map-hit-3':.5,'map-exit':.26,'map-appear':.16,'map-bump':.24,'map-victory':.24};
+  // Achievement card cues (map-reward-cards.js, same CC0 library): fly in, reveal (the two rarest cards use the longer jingle), land in the slot, full set.
+  Object.assign(mapVolumes,{'card-whoosh':.2,'card-reveal':.3,'card-epic':.3,'card-slot':.3,'card-complete':.3});
   effectNames.push(...Object.keys(mapVolumes));
   const settings = () => getSettings();
   const volume = () => Math.max(0, Math.min(1, Number(settings().volume) || 0));

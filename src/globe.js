@@ -43,10 +43,12 @@ export async function mountGlobe(el,{flat=false,atmosphere=false,selected='asia'
   const down=e=>{drag=[e.clientX,e.clientY];el.setPointerCapture(e.pointerId);};
   const move=e=>{if(!drag)return;const dx=e.clientX-drag[0],dy=e.clientY-drag[1];drag=[e.clientX,e.clientY];q.premultiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(dy*.006,dx*.006,0)));cancelAnimationFrame(raf);raf=requestAnimationFrame(draw);};
   const up=()=>{drag=null;};
+  // 화면의 회전 버튼 대신 지구 자체에서 왼쪽·오른쪽 화살표 키로 돌린다(키보드 접근 유지).
+  const key=e=>{const dir={ArrowLeft:-1,ArrowRight:1}[e.key];if(!dir)return;e.preventDefault();rotate(dir);};
   const lost=()=>{if(stopped)return;onReady('3D 연결이 중단됐어. 설정에서 2D 지구 대체를 켜 줘.');};
-  el.addEventListener('pointerdown',down);el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);canvas.addEventListener('webglcontextlost',lost);
+  el.addEventListener('pointerdown',down);el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('keydown',key);canvas.addEventListener('webglcontextlost',lost);
   const observer=new ResizeObserver(()=>{if(renderer){renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();}draw();});observer.observe(el);
   const validated=sites.every(p=>{const x=Math.floor((p.lon+180)/360*2048),y=Math.floor((90-p.lat)/180*1024);return (data.mask[(y*2048+x)*4]===255)===(p.type==='육지');});
   draw();onReady(isFlat?'2D 대체 관찰':'3D 지구 · 드래그 회전');
-  return {focus,rotate,validated,dispose(){stopped=true;cancelAnimationFrame(raf);observer.disconnect();el.removeEventListener('pointerdown',down);el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);canvas.removeEventListener('webglcontextlost',lost);cleanup();}};
+  return {focus,rotate,validated,dispose(){stopped=true;cancelAnimationFrame(raf);observer.disconnect();el.removeEventListener('pointerdown',down);el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);el.removeEventListener('keydown',key);canvas.removeEventListener('webglcontextlost',lost);cleanup();}};
 }

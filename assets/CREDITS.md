@@ -8,7 +8,7 @@
 | Vite8.3.4 | 개발·정적 빌드 | 설치 패키지 MIT | 의존 라이선스 고지 보존 |
 | Three.js0.186.1 | 지구 관찰 패널 | 설치 패키지 MIT | 원저작자 고지 보존 |
 | Kenney Interface Sounds | CC0 효과음 9종 | Kenney 공식 배포 ZIP의 License.txt 보존, MP3 변환 | 실제 기기 음량 확인 |
-| 배경음 2곡 (Suno 생성) | audio/bgm/main-theme.mp3 (첫 탭부터 시작·지도·활동 반복), audio/bgm/final-theme.mp3 (엔딩·인증서, 지도 파이널 영상 대화상자) | 2026-11-17 사용자가 Suno로 생성해 제공. 프롬프트는 _shared/music-prompts-10-16.html | 원본은 references/suno 보관. 상업 이용 근거(생성 당시 Suno 유료 요금제) 확인 필요 |
+| 배경음 2곡 (Suno 생성) | audio/bgm/main-theme.mp3 (첫 탭부터 시작·지도·활동 반복), audio/bgm/final-theme.mp3 (엔딩·인증서, 지도 파이널 영상 대화상자) | 2026-11-17 사용자가 Suno로 생성해 제공. 프롬프트는 _shared/music-prompts-10-16.html | 원본은 references/suno 보관. 상업 이용 근거: 생성 당시 Suno Premier 유료 요금제(2026-11-18 사용자 확인) |
 | 나눔스퀘어 네오 | 본문·제목·숫자·SVG 글꼴 | 네이버 공식 Regular/Bold/ExtraBold WOFF2, SIL OFL 1.1 원문·출처 동봉 | 새 문구에도 공식 원본 글꼴 사용 |
 | 제공된 배경·로고·캐릭터10종 | 기존 프로젝트의 학습·메인·엔딩 그림 | 제공된 생성형AI 이미지로 기록되어 있음 | 최초 생성 계정·상업 이용권 증빙은 제공자 확인 필요 |
 | 새 섬·시설5종 | 이 요청에서 생성·적용 | 내장 image_gen 사용, 원본·이력 보존 | 납품 주체의 계정/약관·최종 권리 증빙 확인 |

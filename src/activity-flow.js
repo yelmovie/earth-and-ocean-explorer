@@ -105,7 +105,7 @@ export function mountActivityFlow(app,ctx) {
   function guide(message) {
     app.querySelectorAll('.next-target').forEach(el=>el.classList.remove('next-target'));
     const [text,target]=playback.heating
-      ?[playback.playing?'물의 변화를 관찰해요. 가열이 끝나면 결과를 골라요.':'잠시 멈췄어요. 이어보기를 눌러요.',playback.playing?'#experiment-visual':'[data-autoplay]']
+      ?[playback.playing?'물의 변화를 관찰해요. 가열이 끝나면 결과를 골라요.':'잠시 멈췄어요. 이어 보기를 눌러요.',playback.playing?'#experiment-visual':'[data-autoplay]']
       :stageGuide(state);
     const hint=app.querySelector('#hint');
     if(hint)hint.textContent=message||text;
@@ -122,7 +122,7 @@ export function mountActivityFlow(app,ctx) {
     (el?.closest('.choices')||el)?.classList.add('next-target');
   }
   function sync() {
-    if(button){button.setAttribute('aria-pressed',String(playback.playing));button.innerHTML=`${icon(playback.playing?'pause':'play')}<span>${playback.playing?'직접 해보기':playback.heating?'이어보기':'자동재생'}</span>`;}
+    if(button){button.setAttribute('aria-pressed',String(playback.playing));button.innerHTML=`${icon(playback.playing?'pause':'play')}<span>${playback.playing?'직접 해보기':playback.heating?'이어 보기':'자동재생'}</span>`;}
     app.classList.toggle('activity-playing',playback.playing);
     if(playback.heating) {
       const visual=app.querySelector('#experiment-visual');visual?.classList.add('playback-heating');

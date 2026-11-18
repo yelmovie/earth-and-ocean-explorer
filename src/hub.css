@@ -5,13 +5,13 @@
 .hub-page #hub-map{display:block;width:100%;height:100%;outline:0;touch-action:none}
 .hub-page #hub-map:focus-visible{outline:4px solid #ffdc79;outline-offset:-5px}
 .hub-page .hub-labels{position:absolute;inset:0;pointer-events:none;z-index:2}
-.hub-page .hub-building-label{position:absolute;transform:translate(-50%,-100%);min-height:52px;min-width:145px;max-width:205px;padding:10px 14px;border:2px solid #e6d8b2;border-radius:12px;background:#fffbedf5;box-shadow:0 4px 0 #48766c66,0 6px 16px #173c5533;color:#244b51;font-size:clamp(16px,1.25vw,20px);font-weight:800;line-height:1.25;white-space:nowrap;pointer-events:auto;word-break:keep-all;transition:background .18s,box-shadow .18s;touch-action:manipulation}
+.hub-page .hub-building-label{position:absolute;transform:translate(-50%,-100%);min-height:52px;min-width:145px;max-width:205px;padding:10px 14px;border:2px solid #e6d8b2;border-radius:12px;background:#fffbedf5;box-shadow:0 4px 0 #48766c66,0 6px 16px #173c5533;color:#244b51;font-size:clamp(18px,1.25vw,20px);font-weight:800;line-height:1.25;white-space:nowrap;pointer-events:auto;word-break:keep-all;transition:background .18s,box-shadow .18s;touch-action:manipulation}
 .hub-page .hub-building-label:after{content:'';position:absolute;left:calc(50% - 6px);bottom:-8px;width:12px;height:12px;transform:rotate(45deg);background:inherit;border-right:2px solid #e6d8b2;border-bottom:2px solid #e6d8b2}
 .hub-page .hub-building-label.is-current{background:#ffecac;border-color:#d6a94e;box-shadow:0 4px 0 #8f744780,0 0 0 4px #fff9db55;color:#3d5045}
 .hub-page .hub-building-label.is-done{background:#e8f3ce;border-color:#7d9e72;color:#315d45}
 .hub-page .hub-building-label.is-locked{background:#edf0e7f2;color:#566b67;border-color:#bac9bd}
-.hub-page .hub-building-label.is-offscreen{opacity:.92;font-size:15px}
-.hub-page .hub-building-label>span{display:inline-flex;align-items:center;justify-content:center;min-width:21px;margin-right:7px;font-size:14px;vertical-align:middle}
+.hub-page .hub-building-label.is-offscreen{opacity:.92;font-size:18px}
+.hub-page .hub-building-label>span{display:inline-flex;align-items:center;justify-content:center;min-width:21px;margin-right:7px;font-size:18px;vertical-align:middle}
 .hub-page .hub-building-label svg{display:block;width:19px;height:19px}
 .hub-page .hub-building-label small{display:block;font-size:12px;font-weight:600;margin-top:3px}
 @media (hover:hover) and (pointer:fine){.hub-page .hub-building-label:hover:not(:disabled){transform:translate(-50%,-100%);background:#fff6d5;box-shadow:0 4px 0 #48766c66,0 0 0 4px #fffdf077}}
@@ -41,7 +41,7 @@
 .hub-page .hub-records i{width:12px;height:12px;border-radius:50%;border:2px solid #c9b98a;background:#fff}
 .hub-page .hub-records i.is-done{background:#f5c451;border-color:#b7832a}
 .hub-page .hub-building-label b{font-family:var(--font-heading);font-weight:400}
-.hub-page .hub-building-label.is-offscreen{font-size:clamp(16px,1.25vw,20px)}
+.hub-page .hub-building-label.is-offscreen{font-size:clamp(18px,1.25vw,20px)}
 .hub-page .hub-building-label.is-offscreen:not(.is-current){opacity:0;pointer-events:none}
 .hub-page .hub-building-label.is-offscreen:not(.is-current):focus-visible{opacity:1}
 .hub-page .hub-building-label.is-offscreen:after{display:none}

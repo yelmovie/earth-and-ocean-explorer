@@ -1,3 +1,13 @@
+# 2026-11-18 성취 카드(지도 악당 격퇴 보상)
+
+지도 악당을 세 번 맞혀 물리치면 카드가 돌며 나타나고 소리 버튼 앞 5칸에 모인다. 설정·연결은 `src/map-reward-cards.js`, 공통 모듈 `src/reward-cards.js`·`src/reward-cards.css`는 `_shared/reward-cards` 복사본(고치지 않음), 지침은 `_shared/reward-cards/INTEGRATION.md`. 보유는 `mapHits`의 3에서 계산해 저장 필드는 그대로다. 마지막 악당의 격퇴 징글은 카드 완성 징글이 대신하고, 파이널 영상은 카드를 닫은 뒤에 열린다.
+
+검증: `npm test` 101개 통과, 빌드 성공, 헤드리스 Chrome으로 실제 공격 버튼 격퇴 → 카드 → 칸 → 새로고침 유지, 5장 완성 뒤 파이널, 소리 끄기, 1024×768 헤더, 움직임 줄이기 45항목과 `tests/hub-overlay-browser.mjs` 39상태(375·915·1024 폭) 통과. 검사 스크립트와 화면은 `.tmp/reward-cards/`(Git 미포함).
+
+운영 반영: 커밋 `d07dc60`·`8f4323f`를 main에 푸시하고 `_scratch/deploy-20261118/deploy.sh 10 "10 earthsea" worker-cfg earth-and-ocean-explorer`로 배포했다. 운영 주소 https://earth-and-ocean-explorer.yelsam.workers.dev/ 의 활성 버전은 `de356018-a91f-4681-88c6-5b837bc57f06`(100%). 운영 주소의 index.html, `assets/index-D537GcfL.js`, `assets/reward-cards/card-5-5.webp`, `assets/audio/card-complete.mp3`의 SHA-256이 빌드와 같고, 같은 45항목 검사를 운영 주소에서도 통과했다. 실제 태블릿의 소리 크기와 터치감은 기기로 확인해야 한다.
+
+---
+
 # 2026-11-12 과학 학습·관찰 그림·조작 흐름 고도화
 
 앱 소스61965d2를 main에 커밋·푸시했고 Actions43054191053의 Pages 배포를 확인했다. 공개120파일 일치,실제 전체 완주,저장8항목,영상5편·음성39개,보너스 사진15장까지 재검증했다. 최종 검증 점수는9.0/10이다.

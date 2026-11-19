@@ -13,11 +13,11 @@
       "files": [
         {
           "name": "chapter-1.mp4",
-          "bytes": 495726
+          "bytes": 702817
         },
         {
           "name": "chapter-1.webm",
-          "bytes": 612232
+          "bytes": 829488
         },
         {
           "name": "chapter-1.webp",
@@ -31,11 +31,11 @@
       "files": [
         {
           "name": "chapter-2.mp4",
-          "bytes": 739981
+          "bytes": 839066
         },
         {
           "name": "chapter-2.webm",
-          "bytes": 711303
+          "bytes": 976328
         },
         {
           "name": "chapter-2.webp",
@@ -49,11 +49,11 @@
       "files": [
         {
           "name": "chapter-3.mp4",
-          "bytes": 1730201
+          "bytes": 1648813
         },
         {
           "name": "chapter-3.webm",
-          "bytes": 1190187
+          "bytes": 1661745
         },
         {
           "name": "chapter-3.webp",
@@ -67,11 +67,11 @@
       "files": [
         {
           "name": "chapter-4.mp4",
-          "bytes": 526518
+          "bytes": 738385
         },
         {
           "name": "chapter-4.webm",
-          "bytes": 635332
+          "bytes": 843703
         },
         {
           "name": "chapter-4.webp",
@@ -85,11 +85,11 @@
       "files": [
         {
           "name": "chapter-5.mp4",
-          "bytes": 754999
+          "bytes": 1055623
         },
         {
           "name": "chapter-5.webm",
-          "bytes": 1107026
+          "bytes": 1379604
         },
         {
           "name": "chapter-5.webp",
@@ -97,5 +97,6 @@
         }
       ]
     }
-  ]
+  ],
+  "captions": "자막을 영상 안에 입힘(2026-11-18, docs/concept-captions-20261118/burn_cues.py · _shared/caption-motion-20261118/burn.py)"
 }

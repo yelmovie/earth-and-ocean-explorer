@@ -1,0 +1,37 @@
+{
+ "src": "../../../_scratch/caption-motion-20261118/concepts/10/src/chapter-5.mp4",
+ "out": "../../../_scratch/caption-motion-20261118/concepts/10/out/chapter-5.mp4",
+ "out_webm": "../../../_scratch/caption-motion-20261118/concepts/10/out/chapter-5.webm",
+ "theme": {
+  "box": "#0d2a22",
+  "accent": "#ffd35c",
+  "hot": "#ffd35c"
+ },
+ "sweep": false,
+ "cues": [
+  {
+   "s": 0,
+   "e": 3.4,
+   "bottom": 30,
+   "text": "[갯벌]의 작은 흔적을 따라가 보자."
+  },
+  {
+   "s": 3.5,
+   "e": 7.9,
+   "bottom": 30,
+   "text": "구멍과 발자국을 따라가니 게와 짱뚱어가 있었어."
+  },
+  {
+   "s": 8,
+   "e": 11.4,
+   "bottom": 30,
+   "text": "갈대는 진흙에 뿌리를 내려. [생김새]도 사는 모습도 서로 달라."
+  },
+  {
+   "s": 11.5,
+   "e": 15.3,
+   "bottom": 30,
+   "text": "[갯벌]은 생물의 집! 흔적과 [서식처]를 지켜."
+  }
+ ]
+}

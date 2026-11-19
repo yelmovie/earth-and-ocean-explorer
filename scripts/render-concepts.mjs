@@ -1,6 +1,8 @@
 // `npm run concepts:render [N…]` → HyperFrames 개념영상(films/earth-sea-concepts)을 렌더해
 // public/assets/concepts/chapter-N.{mp4,webm,webp}와 manifest.json을 만든다.
 // 2026-11-09 이전의 SVG 프레임 생성기(9초 무음)는 이 파이프라인으로 교체됐다(git 기록에 남아 있음).
+// 주의(2026-11-18): 앱의 chapter-N.mp4/webm에는 자막이 영상 안에 입혀져 있다. 다시 렌더하면 자막 없는 판이 되므로
+// 그 결과를 원본(src)으로 삼아 docs/concept-captions-20261118/burn_cues.py로 자막을 다시 입힌 뒤 교체한다.
 // TMPDIR 는 외장 SSD 경로여야 하고, 전역 `hyperframes`(0.9.26)·`ffmpeg`·`ffprobe`가 필요하다.
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';

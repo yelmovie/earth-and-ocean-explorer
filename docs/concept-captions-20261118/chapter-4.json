@@ -1,0 +1,37 @@
+{
+ "src": "../../../_scratch/caption-motion-20261118/concepts/10/src/chapter-4.mp4",
+ "out": "../../../_scratch/caption-motion-20261118/concepts/10/out/chapter-4.mp4",
+ "out_webm": "../../../_scratch/caption-motion-20261118/concepts/10/out/chapter-4.webm",
+ "theme": {
+  "box": "#0d2a22",
+  "accent": "#ffd35c",
+  "hot": "#ffd35c"
+ },
+ "sweep": false,
+ "cues": [
+  {
+   "s": 0,
+   "e": 3.4,
+   "bottom": 166,
+   "text": "움직이지 않는 같은 기둥을 [기준]으로 봐."
+  },
+  {
+   "s": 3.5,
+   "e": 7.9,
+   "bottom": 166,
+   "text": "바닷물이 들어오며 높아지는 변화는 [밀물]."
+  },
+  {
+   "s": 8,
+   "e": 11.4,
+   "bottom": 166,
+   "text": "바닷물이 빠지며 낮아지는 변화는 [썰물]."
+  },
+  {
+   "s": 11.5,
+   "e": 15.3,
+   "bottom": 166,
+   "text": "관측 모형이야. 실제 [밀물]·[썰물] 시각과는 달라."
+  }
+ ]
+}

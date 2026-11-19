@@ -1,0 +1,37 @@
+{
+ "src": "../../../_scratch/caption-motion-20261118/concepts/10/src/chapter-3.mp4",
+ "out": "../../../_scratch/caption-motion-20261118/concepts/10/out/chapter-3.mp4",
+ "out_webm": "../../../_scratch/caption-motion-20261118/concepts/10/out/chapter-3.webm",
+ "theme": {
+  "box": "#0d2a22",
+  "accent": "#ffd35c",
+  "hot": "#ffd35c"
+ },
+ "sweep": false,
+ "cues": [
+  {
+   "s": 0,
+   "e": 3.4,
+   "bottom": 22,
+   "text": "해안을 천천히 둘러보며 땅의 모습을 살펴봐."
+  },
+  {
+   "s": 3.5,
+   "e": 7.9,
+   "bottom": 22,
+   "text": "고운 모래가 쌓인 곳은 [모래사장], 높고 가파른 바위는 [절벽]."
+  },
+  {
+   "s": 8,
+   "e": 11.4,
+   "bottom": 22,
+   "text": "이 장면의 [동굴]은 안쪽 공간이, 구멍 난 바위는 반대편 바다가 보여."
+  },
+  {
+   "s": 11.5,
+   "e": 15.3,
+   "bottom": 262,
+   "text": "해안에는 여러 모습의 지형이 있어. 생김새를 보고 이름을 붙여."
+  }
+ ]
+}

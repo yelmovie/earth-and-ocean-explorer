@@ -1,0 +1,37 @@
+{
+ "src": "../../../_scratch/caption-motion-20261118/concepts/10/src/chapter-1.mp4",
+ "out": "../../../_scratch/caption-motion-20261118/concepts/10/out/chapter-1.mp4",
+ "out_webm": "../../../_scratch/caption-motion-20261118/concepts/10/out/chapter-1.webm",
+ "theme": {
+  "box": "#0d2a22",
+  "accent": "#ffd35c",
+  "hot": "#ffd35c"
+ },
+ "sweep": false,
+ "cues": [
+  {
+   "s": 0,
+   "e": 3.4,
+   "bottom": 18,
+   "text": "지구 표면을 살펴보면 [육지]와 [바다]가 보여."
+  },
+  {
+   "s": 3.5,
+   "e": 7.9,
+   "bottom": 18,
+   "text": "표본 몇 곳만 세면 [육지]가 많아 보일 수도 있어."
+  },
+  {
+   "s": 8,
+   "e": 11.4,
+   "bottom": 18,
+   "text": "지구 [전체 넓이]로 비교하면 [바다]가 훨씬 넓어."
+  },
+  {
+   "s": 11.5,
+   "e": 15.3,
+   "bottom": 18,
+   "text": "표본 개수와 [전체 넓이]는 구분해서 판단해."
+  }
+ ]
+}

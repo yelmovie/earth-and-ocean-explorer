@@ -19,8 +19,8 @@ with sync_playwright() as p:
   if route in ['home','hub','s1c','s4b','certificate']:
    page.screenshot(path=str(root/'artifacts'/('final-'+route+'-1280.png')))
  page.goto('http://127.0.0.1:5173/#home',wait_until='networkidle')
- image=page.evaluate("async()=>{const i=new Image();i.src='/assets/characters.webp';await i.decode();return [i.naturalWidth,i.naturalHeight]}")
- assert image==[1672,941]
+ image=page.evaluate("async()=>{const i=new Image();i.src='/assets/home-deck.jpg';await i.decode();return [i.naturalWidth,i.naturalHeight]}")
+ assert image==[1920,1080]
  assert errors==[],errors
  assert failed==[],failed
  result={'routes':len(routes),'consoleErrors':errors,'httpErrors':failed,'charactersDecoded':image,'mode':'admin preview rendering, distinct from completed student journey'}

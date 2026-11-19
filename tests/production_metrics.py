@@ -12,7 +12,7 @@ with sync_playwright() as p:
   start=time.perf_counter();page.goto('http://127.0.0.1:4174',wait_until='networkidle')
   assert page.locator('h1').inner_text()=='푸른행성 조사본부'
   decoded=page.evaluate(r"""async()=>{const urls=new Set();for(const el of document.querySelectorAll('*')){for(const pseudo of [null,'::before','::after']){const css=getComputedStyle(el,pseudo).backgroundImage;for(const m of css.matchAll(/url\([\"']?([^\"')]+)[\"']?\)/g))urls.add(m[1]);}if(el.tagName==='IMG')urls.add(el.currentSrc);}await Promise.all([...urls].map(async url=>{const i=new Image();i.src=url;await i.decode();}));return [...urls]}""")
-  assert any('characters.webp' in u for u in decoded) and any('home.webp' in u for u in decoded)
+  assert any('home-deck.jpg' in u for u in decoded)
   metrics=page.evaluate("()=>{const n=performance.getEntriesByType('navigation')[0],r=performance.getEntriesByType('resource');return {loadMs:Math.round(n.loadEventEnd),bytes:n.transferSize+r.reduce((a,v)=>a+v.transferSize,0),encodedBytes:n.encodedBodySize+r.reduce((a,v)=>a+v.encodedBodySize,0),requests:r.length+1,origins:[...new Set(r.map(v=>new URL(v.name).origin))]}}")
   metrics['networkIdleSeconds']=round(time.perf_counter()-start,2);samples.append(metrics)
   if i==0:

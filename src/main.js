@@ -367,3 +367,5 @@ document.addEventListener('click',async e=>{
 window.addEventListener('popstate',()=>{const r=location.hash.slice(1)||'home';if(canAccess(state,r))navigate(r,{back:true,push:false});else{window.history.replaceState({route:'hub'},'','#hub');navigate('hub',{back:true,push:false});}});
 const requested=location.hash.slice(1);if(routes.includes(requested)&&canAccess(state,requested))state.route=requested;
 window.history.replaceState({route:state.route},'',`#${state.route}`);render();
+// 오프라인 재방문: 배포 빌드에서만 서비스워커를 쓴다. 자리 잡기 전에 받은 파일 목록도 넘겨 저장하게 한다.
+if(import.meta.env?.PROD&&'serviceWorker' in navigator&&location.protocol.startsWith('http')){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').then(()=>navigator.serviceWorker.ready).then(reg=>reg.active?.postMessage({cacheUrls:performance.getEntriesByType('resource').map(entry=>entry.name)})).catch(()=>{});});}

@@ -23,7 +23,7 @@ with sync_playwright() as p:
  page.on('response',lambda r:http_errors.append([r.status,r.url]) if r.status>=400 else None)
  page.goto(base,wait_until='networkidle')
  urls=page.evaluate(r"""async()=>{const urls=new Set();for(const el of document.querySelectorAll('*'))for(const pseudo of [null,'::before','::after']){for(const m of getComputedStyle(el,pseudo).backgroundImage.matchAll(/url\(["']?([^"')]+)["']?\)/g))urls.add(m[1]);}await Promise.all([...urls].map(async url=>{let i=new Image();i.src=url;await i.decode()}));return [...urls]}""")
- assert any('characters.webp' in u for u in urls) and all(u.startswith(base) for u in urls)
+ assert any('home-deck.jpg' in u for u in urls) and all(u.startswith(base) for u in urls)
  page.locator('[data-action="settings"]').click()
  for name in ['bgmEnabled','sfxEnabled']:page.locator('[data-action="toggle-setting"][data-value="'+name+'"]').click()
  page.locator('[data-action="close-settings"]').first.click()

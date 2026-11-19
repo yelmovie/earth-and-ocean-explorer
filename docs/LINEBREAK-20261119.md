@@ -45,3 +45,4 @@
 
 - 커밋 `7403dfe`(이 작업, 같은 시간 소리 정리 세션이 올린 `dc0d17d` 위) → 배포 잠금 안에서 `_scratch/deploy-20261118/deploy.sh 10 "10 earthsea" worker-cfg earth-and-ocean-explorer`(직전과 같은 `cfg/10.json`, 영상 Range 워커 포함).
 - Version ID `fa5f7d23-079f-4b6a-9d20-dde24f0614d8`. `cmp.sh`: `index.html`·`assets/index-CLEwQtet.css`(줄바꿈 규칙 포함)·`assets/index-C2oXCQ34.js` MATCH, 개념 영상 Range 요청 206 유지.
+- 추가(11-20, 공통 지침 8절): 성취 카드 보관함 잠긴 문구 「악당을 물리치면 / 열려요」 → `src/reward-cards.css` `.rc-locked` 컨테이너 쿼리 네 줄. 로컬 빌드에서 1280×800 한 줄, 1024×768 「악당을 / 물리치면 / 열려요」 세 줄, 카드·줄 넘침 없음. 커밋 `03f1646` → `run-lock.sh lbk-deploy-1 … deploy.sh 10`(cfg/10.json), Version ID `b31a4b94-fbaa-4f58-9303-4b1bd420758f`, `index.html`·`assets/index-vAe5dJSa.css`·`assets/index-Bq6FAVoE.js` MATCH.

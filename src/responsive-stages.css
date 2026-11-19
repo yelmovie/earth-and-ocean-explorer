@@ -656,21 +656,48 @@
   #app .link-page .work-panel h3{margin:0 0 4px}
   #app .link-page .evidence-options{gap:6px}
   #app #main .learning.challenge-page .page-heading>div:first-child{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:14px}
-  #app #main .learning.challenge-page .page-heading .eyebrow{flex:1 0 100%}
-  #app #main .learning.challenge-page .page-heading p:not(.eyebrow){margin:0}
+  /* 도전·적용 제목 카드: 1줄 = 눈썹글 + 제목, 2줄 = 문제 문장(화면 폭 전체). 긴 문제도 두 줄 안에 든다. */
+  #app #main .learning.challenge-page .page-heading .eyebrow{flex:0 1 auto}
+  #app #main .learning.challenge-page .page-heading p:not(.eyebrow){margin:0;flex:1 0 100%;max-width:none}
+  #app #main .learning.challenge-page .page-heading>div:first-child{padding-bottom:8px}
   #app .certificate-actions{display:inline-flex;vertical-align:middle;margin-inline:6px}
   #app .certificate-page>.field-note{vertical-align:middle;margin-inline:6px}
 }
 /* 회전 버튼을 없앤 지구는 자체가 키보드 초점을 받는다. */
 #app #globe:focus-visible{outline:4px solid var(--color-focus);outline-offset:-4px;border-radius:16px}
 #app .link-page .link-actions>:last-child{margin-left:auto}
-/* 4:3 태블릿(1100px 이하)에서는 증거 카드 요약만 16px로 두어 「다음 상황」이 화면 안에 남게 한다. */
+/* 4:3 태블릿(1100px 이하)에서는 증거 카드 안쪽 여백·줄 간격을 줄여 18px 요약과 「다음 상황」이 화면 안에 남게 한다. */
 @media(min-width:801px) and (max-width:1100px) and (min-height:621px){
-  #app .link-page .evidence-options small{font-size:16px;line-height:1.25}
-  #app .link-page .evidence-options button{padding:6px 10px}
+  #app .link-page .evidence-options small{line-height:1.2}
+  #app .link-page .evidence-options button{padding:4px 10px}
+  #app .link-page #hint{line-height:1.25}
   #app .link-page .page-heading h1{font-size:26px}
   #app .link-page .page-heading p:not(.eyebrow){font-size:18px;line-height:1.3}
   #app .link-page .choices{margin:4px 0}
 }
 /* 전자칠판(1600px 이상)은 위 띠가 82px이라 엔딩이 6px 넘쳐 스크롤되던 것을 맞춘다. */
 @media(min-width:1600px){#app .ending-page{min-height:calc(100dvh - 82px)}}
+/* 단계 탭(관찰·비교·도전·적용)은 위 도구 띠 가운데 빈자리로 올린다. 제목 카드가 화면 폭을 다 써서
+   4:3에서도 긴 문제 문장이 한 줄 덜 차지하고, 그만큼 놀이 영역이 커진다. 교사 미리보기·저장 경고 띠가 있을 때는 원래 자리. */
+@media(min-width:801px) and (min-height:621px){
+  #app:not(:has(.admin-label,.storage-warning)) #main .learning .page-heading{grid-template-columns:minmax(0,1fr)}
+  #app:not(:has(.admin-label,.storage-warning)) #main .learning .page-heading>.step-tabs{position:fixed;z-index:5;top:28px;left:50%;transform:translate(-50%,-50%);width:max-content;grid-template-columns:repeat(4,max-content)}
+}
+/* 엔딩의 눈썹글·기록 칩 보조 글자도 태블릿·노트북에서 18px. */
+@media(min-width:801px) and (min-height:621px){
+  #app .ending-page .eyebrow,#app .ending-page .ending-records small{font-size:18px}
+  #app .ending-page{padding-top:30px}
+  #app .ending-page>.eyebrow{line-height:1.3}
+}
+/* 인증서 화면(태블릿·노트북) 글자 18px 하한. 인쇄는 print 규칙이 따로 맞춘다. */
+@media screen and (min-width:801px) and (max-width:1599px) and (min-height:621px){
+  #app .certificate-frame :is(.eyebrow,.certificate-sub,p,b,small,.certificate-evidence span),#app .certificate-seal small{font-size:18px}
+  #app .certificate-page .certificate-promise{font-size:18px!important;line-height:1.45}
+  #app .certificate-page .certificate-frame{padding-block:10px}
+  #app .certificate-page .certificate p{line-height:1.4}
+  #app .certificate-page :is(.certificate-line,.certificate-evidence){margin-block:6px}
+  #app .certificate-page .certificate-promise{margin-top:4px}
+}
+@media screen and (min-width:801px) and (min-height:621px){
+  #app .certificate-page .certificate-seal small,#app .link-page .case-card p{font-size:18px}
+}

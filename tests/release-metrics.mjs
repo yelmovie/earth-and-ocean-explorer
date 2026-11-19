@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { freshState } from '../src/state.js';
-import { VOICE_TEXT } from '../src/voice-ids.js';
+import { VOICE_TEXT, EL_VOICE_IDS } from '../src/voice-ids.js';
 
 const require = createRequire(process.env.PLAYWRIGHT_RUNNER || '/Volumes/T7 Shield/DevCaches/playwright-runner/package.json');
 const { chromium } = require('playwright');
@@ -66,18 +66,18 @@ try {
     report.media.push({ chapter, ...media });
     await page.keyboard.press('Escape');
   }
-  report.voiceDecode = await page.evaluate(async ({ base, ids }) => {
+  report.voiceDecode = await page.evaluate(async ({ base, ids, el }) => {
     const audio = new AudioContext();
     const results = [];
     for (const id of ids) {
-      const response = await fetch(`${base}/assets/audio/voices/${id}.mp3`);
+      const response = await fetch(`${base}/assets/audio/voices/${el.includes(id) ? 'el-' : ''}${id}.mp3`);
       if (!response.ok) throw Error(`Voice ${id} returned ${response.status}`);
       const buffer = await audio.decodeAudioData(await response.arrayBuffer());
       results.push({ id, seconds: buffer.duration, channels: buffer.numberOfChannels });
     }
     await audio.close();
     return results;
-  }, { base, ids: Object.keys(VOICE_TEXT) });
+  }, { base, ids: Object.keys(VOICE_TEXT), el: [...EL_VOICE_IDS] });
   await page.goto(`${base}/#s2a`, { waitUntil: 'domcontentloaded' });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   report.reducedMotion = await page.evaluate(() => ({ preference: matchMedia('(prefers-reduced-motion: reduce)').matches, activeAnimations: document.getAnimations().filter(animation => animation.playState === 'running').length }));

@@ -293,3 +293,6 @@
   #app .activity[data-chapter="2"] .beaker-item .hotplate { width: min(76px, 48%); margin-top: -16px; }
 }
 #app #main .activity[data-chapter="2"] .beaker-fill .beaker-scale i { font-size: min(var(--label-size), 12cqh); line-height: 1.05; }
+/* 「다시 고르기」 14px 글자 대신 되돌리기 그림(읽기용 이름은 버튼 aria-label에 있다). */
+#app #main .learning .feature-chip small.chip-redo { display: inline-grid; place-items: center; text-decoration: none; }
+#app #main .learning .feature-chip small.chip-redo .ui-icon { width: 22px; height: 22px; }

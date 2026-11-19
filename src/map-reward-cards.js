@@ -44,17 +44,20 @@ export const rewardCardPending=()=>flying.size>0;
 export const rewardSlotsHtml=hits=>rewards().slotsHtml(ownedRewardCards(hits).map((owned,index)=>owned&&!flying.has(index)));
 // Shows the cards won by a villain save (hub.js onSave) once the villain's exit has played: 760ms, 520ms with reduced motion.
 // The card flies in from the villain while it is still on screen. hits() returns the saved hit record at that moment;
-// open() says whether the map is still the screen in view.
-export function awardRewardCards(before,patch,hits,open){
+// open() says whether the map is still the screen in view. talking() is true while the villain's exit line still plays:
+// the card waits for it (at most 6 s), so the line and the card sounds take turns.
+export function awardRewardCards(before,patch,hits,open,talking=()=>false){
   const won=newRewardCards(before,patch);
   if(!won.length)return;
   const reduced=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   for(const index of won){
     flying.add(index);
+    const since=Date.now();
     const show=()=>{
       if(!open()||!ownedRewardCards(hits())[index]){flying.delete(index);return;}
       // A dialog opened in the meantime (settings) sits above the card layer: wait until it is closed.
       if(document.querySelector('dialog[open]')){setTimeout(show,300);return;}
+      if(talking()&&Date.now()-since<6000){setTimeout(show,150);return;}
       const foe=document.querySelector(`.map-encounter-foe[data-encounter="${REWARD_CARDS[index].id}"]`),box=foe?.getClientRects().length?foe.getBoundingClientRect():null;
       rewards().reveal(index,box?{x:box.left,y:box.top-28}:undefined,ownedRewardCards(hits())).finally(()=>flying.delete(index));
     };

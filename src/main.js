@@ -38,7 +38,7 @@ async function openWalk({plan}){
   try{
     const {mountTideWalk}=await import('./tide-walk.js');
     if(ticket!==epoch||state.route!=='s4d'||closeWalk)return;
-    closeWalk=mountTideWalk({planLabel:walkPlanLabel(plan),sound,speak:speakText,onJudge:log=>judgeWalk(context(),log),onClosed:reason=>{closeWalk=null;if(state.route!=='s4d')return;if(reason==='lost')flat('3D 화면이 멈춰서 기존 방식으로 바꿨어.');else handleChallenge({...context(),action:reason==='flat'?'challenge-walk-flat':'challenge-walk-closed'});}});
+    closeWalk=mountTideWalk({planLabel:walkPlanLabel(plan),sound,speak:speakText,footstep:()=>audioPlayer.step('flat'),footstepStop:()=>audioPlayer.stopStep(),onJudge:log=>judgeWalk(context(),log),onClosed:reason=>{closeWalk=null;if(state.route!=='s4d')return;if(reason==='lost')flat('3D 화면이 멈춰서 기존 방식으로 바꿨어.');else handleChallenge({...context(),action:reason==='flat'?'challenge-walk-flat':'challenge-walk-closed'});}});
   }catch{if(ticket===epoch&&state.route==='s4d')flat('3D 탐사길을 열 수 없어서 기존 방식으로 바꿨어.');}
 }
 
@@ -62,7 +62,21 @@ const voiceIdOf=text=>Object.keys(VOICE_TEXT).find(id=>VOICE_TEXT[id]===text);
 // 화면 글 그대로 읽기: 한 줄이면 그 대사, 여러 대사를 이어 붙인 글이면 순서대로 읽는다. 맞는 음성이 없으면 읽지 않는다.
 const voiceIdsOf=text=>{const one=voiceIdOf(text);if(one)return [one];const parts=Object.keys(VOICE_TEXT).filter(id=>VOICE_TEXT[id].length>12&&text.includes(VOICE_TEXT[id])).sort((a,b)=>text.indexOf(VOICE_TEXT[a])-text.indexOf(VOICE_TEXT[b]));return parts.map(id=>VOICE_TEXT[id]).join(' ')===text?parts:[];};
 const speakText=text=>{if(!text){voice.stop();return;}const ids=voiceIdsOf(text);if(ids.length)speak(ids);};
-function speak(ids,{replayHost}={}){const list=[].concat(ids).filter(hasVoice);if(!list.length)return false;lastVoice=list;document.querySelector('[data-action="voice-replay"]')?.removeAttribute('hidden');if(replayHost&&!replayHost.querySelector('[data-action="voice-replay"]')){const b=document.createElement('button');b.type='button';b.className='secondary voice-replay';b.dataset.action='voice-replay';b.innerHTML=`${icon('sound')}<span>다시 듣기</span>`;replayHost.prepend(b);}return voice.play(list);}
+// 악당 대사와 다른 인물 대사는 서로 끊지 않는다: 악당 반응은 다른 대사 중이면 끝나길 기다리고(최대 2초) 아니면 건너뛰며,
+// 악당 대사 중에 온 안내 대사는 악당 대사 뒤로 미룬다(최대 2초).
+const villainLine=id=>/^villain-/.test(id||'');
+function afterVoice(busy,run){const route=state.route,until=performance.now()+2000;const tick=()=>{if(state.route!==route)return;if(busy()&&performance.now()<until){setTimeout(tick,100);return;}run();};tick();}
+const villainSay=text=>{const ids=voiceIdsOf(text);if(!ids.length)return;const other=()=>!!voice.playing&&!villainLine(voice.playing);afterVoice(other,()=>{if(!other())speak(ids);});};
+function speak(ids,{replayHost}={}){const list=[].concat(ids).filter(hasVoice);if(!list.length)return false;if(villainLine(voice.playing)&&!list.some(villainLine)){afterVoice(()=>villainLine(voice.playing),()=>speak(list,{replayHost}));return true;}lastVoice=list;document.querySelector('[data-action="voice-replay"]')?.removeAttribute('hidden');if(replayHost&&!replayHost.querySelector('[data-action="voice-replay"]')){const b=document.createElement('button');b.type='button';b.className='secondary voice-replay';b.dataset.action='voice-replay';b.innerHTML=`${icon('sound')}<span>다시 듣기</span>`;replayHost.prepend(b);}return voice.play(list);}
+// 지도에서 열린 장소(장 1~5 입구, 다섯 장을 마치면 최종 보고서). 앱을 연 순간의 진행을 기준으로 두고,
+// 그 뒤 지도에 처음 보이는 새 열림만 한 번 알린다(새로고침·재방문 땐 기준이 다시 잡혀 울리지 않는다). 교사 전체 해금은 알리지 않는다.
+const openPlaces=s=>[...chapters.filter(c=>canAccess(s,`s${c.id}a`)).map(c=>`s${c.id}`),...(canAccess(s,'report')?['report']:[])];
+let announcedPlaces=new Set(openPlaces(state));
+function newlyOpenedPlaces(){const open=openPlaces(state),fresh=state.settings.unlockAll?[]:open.filter(id=>!announcedPlaces.has(id));announcedPlaces=new Set(open);return fresh;}
+// 홈 타이틀 대사는 브라우저가 첫 입력 전 재생을 막으니, 첫 입력 뒤 홈에 그대로 있으면 한 번 읽는다(그 사이 부리 대화를 눌렀으면 읽지 않는다).
+let titleVoicePending=false,homeGuideTalking=false,userActed=!!navigator.userActivation?.hasBeenActive;
+const firstInput=()=>{if(userActed)return;userActed=true;if(!titleVoicePending)return;setTimeout(()=>{if(!titleVoicePending)return;titleVoicePending=false;if(state.route==='home'&&!homeGuideTalking&&!voice.playing)speak(['title-bubble']);},400);};
+document.addEventListener('pointerdown',firstInput,{capture:true});document.addEventListener('keydown',firstInput,{capture:true});
 const playConcept=(n,options={})=>openOptional(loadConcepts,({showConcept})=>showConcept(n,{audio:audioPlayer,voice,...options}));
 const context=()=>({state,save,render,feedback,navigate,sound,tideScene,openWalk,finishChapter:n=>{const shown=showChapterReward(n,{navigate,completed:state.completed.length});const dialog=document.querySelector('.chapter-reward[open]');if(shown&&dialog){speak(`reward-${n}`,{replayHost:dialog.querySelector('.modal-footer')});dialog.addEventListener('close',()=>voice.stop(),{once:true});}return shown;}});
 function save(options){if(studentState){const status=document.querySelector('#save-status');if(status)status.textContent='미리보기 · 저장하지 않음';return;}warning=saveState(storage,state,options);const status=document.querySelector('#save-status');if(status)status.textContent=warning?'저장 확인 필요':'자동 저장됨';if(!warning)document.querySelector('.storage-warning')?.remove();else if(!document.querySelector('.storage-warning')){const p=document.createElement('div');p.className='storage-warning';p.setAttribute('role','alert');p.textContent=warning;app.prepend(p);}}
@@ -156,7 +170,7 @@ async function render(){
   const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
   app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">교사 미리보기 · 체험 내용은 저장되지 않아요</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
   app.querySelectorAll('.learning [data-note]').forEach(note=>app.querySelector('.moa-bubble')?.append(note));
-  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:asset('dialogue/buri'),src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{if(value)voice.stop();audioPlayer.quiet(value);},title:'부리 목소리 듣기',onError:()=>feedback('대화를 불러오지 못했어. 다시 눌러 줘.'),note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
+  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:asset('dialogue/buri'),src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{homeGuideTalking=value;if(value){titleVoicePending=false;voice.stop();}audioPlayer.quiet(value);},title:'부리 목소리 듣기',onError:()=>feedback('대화를 불러오지 못했어. 다시 눌러 줘.'),note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
@@ -166,7 +180,7 @@ async function render(){
   if(taskProgress)app.querySelector('.challenge-board-heading')?.replaceChildren(taskProgress);
   document.querySelector('h1')?.setAttribute('tabindex','-1');
   if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});
-  if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-intro','ending-buri','ending-jjang']:[];if(entry.length)speak(entry);}
+  if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-intro','ending-buri','ending-jjang']:[];if(r==='home'&&!userActed){titleVoicePending=true;entry.length=0;}else if(r!=='home')titleVoicePending=false;const opened=r==='hub'&&newlyOpenedPlaces().length>0;if(opened)audioPlayer.opened();if(entry.length){if(opened)setTimeout(()=>{if(state.route===r)speak(entry);},300);else speak(entry);}}
   if(r==='hub'){
     const wrap=app.querySelector('.map-wrap'),next=chapters.find(c=>!state.completed.includes(c.id)&&canAccess(state,`s${c.id}a`));
     const status=document.createElement('section');status.className='hub-load-status';status.setAttribute('role','status');
@@ -178,7 +192,7 @@ async function render(){
         new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('map timeout')),10000);})
       ]);
       if(ticket!==epoch)return;
-      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>sound(mapCues[kind==='victory'&&rewardCardPending()?'exit':kind]?.(n)??'click'),encounterSay:speakText,encounterSave:(before,patch)=>awardRewardCards(before,patch,()=>state.mapHits,()=>state.route==='hub')});
+      controller=mountHub(wrap.querySelector('#hub-map'),state,id=>navigate(`s${id}a`),save,{encounterTone:(kind,n)=>sound(mapCues[kind==='victory'&&rewardCardPending()?'exit':kind]?.(n)??'click'),encounterSay:villainSay,encounterHold:rewardCardPending,encounterSave:(before,patch)=>awardRewardCards(before,patch,()=>state.mapHits,()=>state.route==='hub',()=>villainLine(voice.playing)),footstep:()=>audioPlayer.step('map'),footstepStop:()=>audioPlayer.stopStep()});
       mountPhotoRestoration(wrap,state,save,sound);
       if(state.completed.length||state.settings.unlockAll)cleanupExpedition=mountExpedition(wrap,state,save,navigate,sound);
       status.remove();

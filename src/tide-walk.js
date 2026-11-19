@@ -231,7 +231,7 @@ function buildStage(canvas) {
 }
 
 /** 전체 화면 걷기 창을 연다. 끝나면 onJudge로 판정을 받고, 닫히면 onClosed를 부른다. */
-export function mountTideWalk({ planLabel = '', sound = () => {}, speak = () => {}, onJudge, onClosed }) {
+export function mountTideWalk({ planLabel = '', sound = () => {}, speak = () => {}, footstep = () => {}, footstepStop = () => {}, onJudge, onClosed }) {
   const dialog = document.createElement('dialog'); dialog.className = 'tide-walk'; dialog.setAttribute('aria-label', '갯벌 탐사길 걷기'); dialog.tabIndex = -1;
   dialog.innerHTML = hud(); document.body.append(dialog);
   const canvas = dialog.querySelector('canvas');
@@ -240,7 +240,7 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, speak = () => 
   const part = name => dialog.querySelector(`[data-tw="${name}"]`);
   const guide = part('guide'), clock = part('clock'), level = part('level'), gauge = part('gauge'), action = dialog.querySelector('.tw-action'), actionLabel = part('action'), card = part('card'), speech = part('speech');
   const abort = new AbortController(), on = (target, type, fn, options) => target.addEventListener(type, fn, { signal: abort.signal, ...options });
-  let state, raf = 0, last = 0, closed = false, cardTimer = 0, cardDone = null, nudge = null, padDirection = null, near = null, speechTimer = 0;
+  let state, raf = 0, last = 0, closed = false, cardTimer = 0, cardDone = null, nudge = null, padDirection = null, near = null, speechTimer = 0, stepAt = -Infinity;
   const keys = new Map();
 
   function reset(message) {
@@ -334,6 +334,9 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, speak = () => 
     if (action.disabled === canLook) action.disabled = !canLook;
     const text = near?.id === 'board' ? '안내판 살펴보기' : '살펴보기'; if (actionLabel.textContent !== text) actionLabel.textContent = text;
     action.classList.toggle('is-ready', canLook);
+    // 갯벌 발자국: 부리가 실제로 걷는 동안 0.3초마다, 카드가 떠 있거나 멈추면 바로 그친다.
+    if (state.moving && card.hidden) { if (time * 1000 - stepAt >= 300) { stepAt = time * 1000; footstep(); } }
+    else if (stepAt > -Infinity) { stepAt = -Infinity; footstepStop(); }
     stage.frame(state, time); state.snap = false;
   }
   function loop(now) {
@@ -345,7 +348,7 @@ export function mountTideWalk({ planLabel = '', sound = () => {}, speak = () => 
 
   function close(reason = 'exit') {
     speak('');
-    if (closed) return; closed = true;
+    if (closed) return; closed = true; footstepStop();
     cancelAnimationFrame(raf); clearTimeout(cardTimer); clearTimeout(speechTimer); abort.abort(); pad.destroy(); observer.disconnect(); stage.dispose();
     if (dialog.open) dialog.close(); dialog.remove();
     onClosed?.(reason);

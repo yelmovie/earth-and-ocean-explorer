@@ -72,7 +72,7 @@ export function normalizeMapHits(value,ids) {
  */
 export function mountMapEncounters({
   host,controls=host,stages,progress={},onSave=()=>{},blocked=()=>false,reduced=()=>false,
-  clearStage=()=>null,requiredFoes=0,art,tone=()=>{},say=()=>{},palette='#a855f7',reach=90,contact=22,
+  clearStage=()=>null,requiredFoes=0,art,tone=()=>{},say=()=>{},finaleHold=()=>false,palette='#a855f7',reach=90,contact=22,
 }) {
   const handles=new AbortController(),{signal}=handles;
   const doc=host.ownerDocument,view=doc.defaultView;
@@ -121,14 +121,15 @@ export function mountMapEncounters({
   function later(fn,ms){const id=clock.setTimeout(()=>{timers.delete(id);if(!closed&&!paused())fn();},ms);timers.add(id);}
   function clearCues(){for(const id of timers)clock.clearTimeout(id);timers.clear();}
 
-  function speak(foe,text,time){
+  // voiceDelay: the third hit's exit line starts 300 ms after the hit sound (the bubble shows at once).
+  function speak(foe,text,time,voiceDelay=0){
     for(const other of foes)if(other!==foe){other.saidUntil=0;other.bubble.hidden=true;}
     foe.bubble.textContent=text;
     foe.bubble.hidden=false;
     lastSpeechLayout=-Infinity;
     foe.saidUntil=time;
     live.textContent=text;
-    say(text);
+    if(voiceDelay)later(()=>say(text),voiceDelay);else say(text);
   }
   function hit(){
     if(closed||!current||!last||paused())return;
@@ -144,7 +145,7 @@ export function mountMapEncounters({
     const allClear=n===HITS&&requiredFoes>0&&stages.length===requiredFoes&&stages.every(s=>(saved[s.id]??record[s.id])===HITS);
     clearCues();tone('swing',n);later(()=>tone(n===HITS?'finish':'hit',n),HIT_CUE);
     if(n===HITS)later(()=>tone(allClear?'victory':'exit',n),allClear?VICTORY_CUE:EXIT_CUE);
-    speak(foe, n===HITS?foe.s.finish??'앗, 물러날게!':foe.s.hit?.[n-1]??(n===1?'앗, 들켰네!':'이번 건 제법인데!'),time+(n===HITS?2750:1800));
+    speak(foe, n===HITS?foe.s.finish??'앗, 물러날게!':foe.s.hit?.[n-1]??(n===1?'앗, 들켰네!':'이번 건 제법인데!'),time+(n===HITS?2750:1800),n===HITS?HIT_CUE+300:0);
     live.textContent+=n===HITS?' 세 번 명중! 악당이 물러나요.':` ${n}번 명중. ${HITS-n}번 남았어요.`;
     if(allClear)finaleAt=time+2920;
     update({...last,now:time});
@@ -255,7 +256,7 @@ export function mountMapEncounters({
       }
       callback.hidden=now>=clearUntil;
     }
-    if(finaleAt&&now>=finaleAt&&!stop){finaleAt=0;openMapFinale(host,"/assets/map-encounters/map-finale.mp4");}
+    if(finaleAt&&now>=finaleAt&&!stop&&!finaleHold()){finaleAt=0;openMapFinale(host,"/assets/map-encounters/map-finale.mp4");}
     current=nearest;
     if(current&&current!==lastNear&&current.saidUntil<=now&&now-lastHit>REPEAT&&now>=clearUntil){
       const message=current.say[current.sayIndex++%current.say.length]??'다가왔구나!';

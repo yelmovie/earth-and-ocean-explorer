@@ -124,7 +124,7 @@ function explorer(c,image,x,y,t,walking,facing,reduced,height,outlined=false,fra
   else c.drawImage(image,-width/2,-height+3,width,height);
   c.restore();
 }
-export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSay,encounterSave}={}){
+export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSay,encounterSave,encounterHold,footstep,footstepStop}={}){
   if(!background.src)background.src=`${import.meta.env?.BASE_URL??'/'}assets/expedition-map.webp`;
   const c=canvas.getContext('2d'),wrap=canvas.closest('.map-wrap'),input=createHubInput(),pads=new Set(),padPointers=new Map(),listeners=[];
   let pos=canStandInHub(s.mapPosition)?{...s.mapPosition}:{...hubMap.spawn};
@@ -132,6 +132,9 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
   let friendDirection='front',friendLastStep=-Infinity;
   const footsteps=[{...friend},{...pos}];
   let path=[],target=null,raf=0,previous=0,stopped=false,facing=1,entered=false,manualIntent=false,arrivalTimer=0;
+  // Footsteps sound every 300 ms while Buri actually moves (held key, pad or a guided walk) and stop with him.
+  let stepAt=-Infinity;
+  const quietSteps=()=>{if(stepAt>-Infinity){stepAt=-Infinity;footstepStop?.();}};
   let width=960,height=540,scale=1,zoom=1,view={x:480,y:270},camera={x:0,y:0},lastView=null,guideOpen=false;
   // Dragging frees the camera; walking again hands it back to Buri.
   const touches=new Map(),controls='.hub-dpad,.hub-next-stack,.hub-final';
@@ -169,7 +172,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
     // encounterSave(before,patch) lets main.js award the achievement card for a villain's third hit.
     progress:s.mapHits,onSave:patch=>{const before=s.mapHits;s.mapHits={...s.mapHits,...patch};onPosition?.();encounterSave?.(before,patch);},
     art:{left:import.meta.env.BASE_URL+'assets/map-encounter/map-villain-poses-left.webp',frames:6,nativeFacing:1},palette:'#44cfea',reach:82,contact:23,
-    blocked:()=>stopped||entered||overview||hand||target!==null||guideOpen||paused(),reduced:()=>reduced,tone:encounterTone,say:encounterSay});
+    blocked:()=>stopped||entered||overview||hand||target!==null||guideOpen||paused(),reduced:()=>reduced,tone:encounterTone,say:encounterSay,finaleHold:encounterHold});
   function clearInput(){input.clear();pads.clear();padPointers.clear();wrap.querySelectorAll('.is-held').forEach(button=>button.classList.remove('is-held'));previous=0;}
   function syncNext(){if(nextButton){nextButton.disabled=target!==null;nextButton.setAttribute('aria-busy',String(target!==null));}}
   function cancelTravel(){const guided=target!==null;path=[];target=null;manualIntent=false;if(guided)syncNext();}
@@ -243,12 +246,13 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
   function render(t){
     if(stopped||entered)return;raf=requestAnimationFrame(render);if(!startedAt)startedAt=t;
     // Character art may still be loading: keep drawing the map, but hold movement.
-    const dt=Math.min((t-previous)||16,40);previous=t;const blocked=paused();if(blocked){clearInput();wasMoving=false;glide=null;if(artReady()){encounters.update({hero:pos,ally:friend,project:worldToScreen,scale});return;}}
+    const dt=Math.min((t-previous)||16,40);previous=t;const blocked=paused();if(blocked){clearInput();wasMoving=false;glide=null;quietSteps();if(artReady()){encounters.update({hero:pos,ally:friend,project:worldToScreen,scale});return;}}
     const vector=input.vector(pads);let moving=false;
     if(vector.x||vector.y||path.length)resumeFollow();
     if(vector.x||vector.y){cancelTravel();manualIntent=true;const before=pos;pos=moveHubPoint(pos,{x:vector.x*dt*.105,y:vector.y*dt*.105});moving=hubDistance(pos,before)>.01;if(vector.x)facing=Math.sign(vector.x);}
     else if(!blocked&&path.length){const p=path[0],distance=hubDistance(pos,p),step=dt*.13;if(distance<=step){pos={...p};path.shift();}else{const dx=(p.x-pos.x)/distance,dy=(p.y-pos.y)/distance;pos=moveHubPoint(pos,{x:dx*step,y:dy*step});if(dx)facing=Math.sign(dx);}moving=true;if(!path.length&&target!==null){enter(target);if(entered)return;}}
     if(manualIntent&&moving&&!path.length){const i=hubDoors.findIndex(door=>hubDistance(pos,door)<11);if(i>=0){enter(i);if(entered)return;}}
+    if(moving&&!blocked){if(t-stepAt>=300){stepAt=t;footstep?.();}}else quietSteps();
     // Follow the recorded footsteps, so the helper turns at the same bends and
     // never cuts across a cliff to catch up with the player.
     if(hubDistance(footsteps.at(-1),pos)>1){footsteps.push({...pos});if(footsteps.length>180)footsteps.shift();}
@@ -339,5 +343,5 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
   listen(companion,'click',()=>{cancelTravel();guideOpen=true;message(next?`다음은 ${next.title}${(next.title.charCodeAt(next.title.length-1)-0xac00)%28?'이에요':'예요'}. 건물 이름을 누르면 함께 걸어가요! 방향키나 WASD로도 걸을 수 있어요.`:'다섯 장소가 다시 빛나요! 최종 보고서에서 우리가 찾은 기록을 연결해요.',true);});
   const modalObserver=new MutationObserver(()=>{if(artReady()&&paused()){clearInput();cancelTravel();}});modalObserver.observe(document.body,{subtree:true,attributes:true,attributeFilter:['open','inert']});
   const observer=new ResizeObserver(size);observer.observe(wrap);size();raf=requestAnimationFrame(render);
-  return{travel,dispose(){stopped=true;encounters.destroy();cancelAnimationFrame(raf);clearTimeout(arrivalTimer);clearInput();observer.disconnect();modalObserver.disconnect();listeners.forEach(remove=>remove());buriSprite.onload=buriSprite.onerror=moa.onload=moa.onerror=null;artStatus.remove();}};
+  return{travel,dispose(){stopped=true;quietSteps();encounters.destroy();cancelAnimationFrame(raf);clearTimeout(arrivalTimer);clearInput();observer.disconnect();modalObserver.disconnect();listeners.forEach(remove=>remove());buriSprite.onload=buriSprite.onerror=moa.onload=moa.onerror=null;artStatus.remove();}};
 }

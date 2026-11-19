@@ -106,4 +106,15 @@
 | audio/card-reveal.mp3 | 카드 공개(브론즈·실버·골드, 반짝) | `sfx/reward-01.mp3` | Fantasy_ui_Button_3.wav · ZenithInfinitiveStudios | https://freesound.org/people/ZenithInfinitiveStudios/sounds/376745 |
 | audio/card-epic.mp3 | 카드 공개(홀로·레전드, 긴 징글) | `sfx/reward-03.mp3` | Achievement Happy Beeps Jingle · CogFireStudios | https://freesound.org/people/CogFireStudios/sounds/619838 |
 | audio/card-slot.mp3 | 카드가 보관함 칸에 들어갈 때(톡) | `sfx/pickup-01.mp3` | item-pickup-v1.wav · DeltaCode | https://freesound.org/people/DeltaCode/sounds/678384 |
-| audio/card-complete.mp3 | 다섯 장을 모두 모았을 때(지도 파이널 영상이 열리면 멈춤) | `sfx/victory-jingle-01.mp3` | Game Success Fanfare Short · el_boss | https://freesound.org/people/el_boss/sounds/677858 |
+| audio/card-complete.mp3 | 다섯 장을 모두 모았을 때(마지막 악당의 「전부 퇴치」 축하음. 지도 파이널 창이 열려도 끝까지 나고, 파이널 곡은 이 소리가 끝난 뒤 들어온다) | `sfx/victory-jingle-01.mp3` | Game Success Fanfare Short · el_boss | https://freesound.org/people/el_boss/sounds/677858 |
+
+## 2026-11-19 지도 발자국·장소 열림 소리
+
+소리 2차 수정(`_shared/AUDIO-FIX2-BRIEF-20261119.md`)에서 과학34 공통 효과음 라이브러리(`_shared/sfx-library-20261117/`)의 CC0 파일을 이름만 바꿔 복사했다(가공은 라이브러리의 무음 제거·음량 정규화뿐). 라이브러리 작성 때(2026-11-17) 원본 페이지에서 라이선스를 다시 확인했다.
+
+| 파일 | 쓰는 곳 | 라이브러리 파일 | 원본 제목 · 제작자 | 라이선스 | 원본 페이지 |
+|---|---|---|---|---|---|
+| audio/step-1.mp3 | 지도·갯벌 탐사길 발자국(번갈아) | `sfx/step-01.mp3` | Footstep on Stone · sgossner | CC0 1.0 | https://freesound.org/people/sgossner/sounds/197778 |
+| audio/step-2.mp3 | 지도·갯벌 탐사길 발자국(번갈아) | `sfx/step-02.mp3` | concrete footstep 4 · Yoyodaman234 | CC0 1.0 | https://freesound.org/people/Yoyodaman234/sounds/166506 |
+| audio/map-open.mp3 | 지도에 새 장소가 처음 열릴 때(잠금 풀림) | `sfx/open-01.mp3` | maximize_008 · Kenney(Interface Sounds 1.0) | CC0 1.0 | https://kenney.nl/assets/interface-sounds |
+| audio/map-open-shine.mp3 | 장소 열림 0.12초 뒤 반짝(작은 종소리) | `sfx/twinkle-03.mp3` | Fantasy_ui_Button_2.wav · ZenithInfinitiveStudios | CC0 1.0 | https://freesound.org/people/ZenithInfinitiveStudios/sounds/376746 |

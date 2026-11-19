@@ -75,6 +75,8 @@
 }
 @keyframes why-pop { from { opacity: 0; transform: translateY(6px) scale(.98); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { #app .challenge-page .challenge-why-card { animation: none; } }
+/* 핵심 개념 카드가 생기면 분류 카드는 가장 긴 카드에 맞춰 늘이지 않고 글 높이만큼만 차지해 카드가 판 밖으로 밀리지 않게 한다. */
+#app #main .learning .challenge-board:has(.challenge-why-card) .challenge-sort-area :is(.challenge-items, .challenge-bins) { grid-auto-rows: minmax(48px, auto); align-content: start; }
 
 /* 자동으로 넘어가는 버튼은 차오르는 띠로 남은 시간을 보여 준다. 눌러도 바로 넘어간다. */
 #app .auto-advance { position: relative; overflow: hidden; isolation: isolate; }
@@ -105,7 +107,7 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  min-height: 44px;
+  min-height: 48px;
   margin-top: 4px;
   padding: 6px 12px;
   border: 1px solid #a8c8b9;
@@ -118,6 +120,11 @@
   text-align: left;
 }
 #app #main .learning .feature-chip small { flex: none; font-weight: 600; color: #557169; text-decoration: underline; }
+/* 세로 폰의 좁은 사진 카드에서는 고른 특징 글이 칩 안에 들어가게 여백과 줄 간격을 줄인다. */
+@media (max-width: 600px) {
+  #app #main .learning .feature-chip { gap: 4px; padding: 2px 6px; font-size: 14px; line-height: 1.05; }
+  #app #main .learning .photo-card .feature-chip small.chip-redo .ui-icon { width: 18px; height: 18px; }
+}
 #app #main .learning .feature-chip.empty {
   border-style: dashed;
   background: rgb(255 255 255 / 55%);
@@ -177,6 +184,32 @@
   #app #main .learning .challenge-observation > .challenge-scene:not(.tag):not(.visual-caption) { min-height: 120px; }
 }
 #app #main .learning .challenge-observation > .challenge-scene:not(.tag):not(.visual-caption) { align-self: stretch; width: 100%; }
+/* 폰에서 정답 뒤 핵심 개념 카드가 생기면, 판 위의 문제 꼬리표 줄(「도전 · 근거로 판단」)을 접어 카드 자리를 만든다. */
+@media (max-height: 560px), (max-width: 600px) {
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-why-card) > .challenge-board-heading { display: none; }
+}
+/* 세로 폰에서 정답 뒤에는 문제 제목만 남기고 장 이름 줄과 문제 설명 문장을 접어 판과 핵심 개념 카드에 높이를 준다. */
+@media (max-width: 600px) {
+  #app #main .learning.challenge-page:has(.challenge-why-card) .page-heading > div:first-child > :is(.eyebrow, h1 ~ p) { display: none; }
+  /* 분류 문제는 카드를 두 줄로, 상자를 그 아래 한 줄로 놓는다. */
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-why-card) .challenge-sort-area { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: start; }
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-why-card) .challenge-sort-area .challenge-items { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-rows: minmax(48px, auto); }
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-why-card) .challenge-sort-area .challenge-bins { grid-template-columns: none; grid-template-rows: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-auto-rows: minmax(48px, auto); }
+}
+/* 낮은 가로 화면(폰 가로)에서는 보기 버튼을 두 줄로 나란히 놓아 핵심 개념 카드가 들어갈 높이를 만든다. */
+@media (max-height: 560px) and (min-width: 601px) {
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-why-card) .challenge-options { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-rows: minmax(48px, auto); align-content: start; }
+  /* 분류 문제는 카드를 한 줄, 상자를 그 아래 한 줄로 놓아 세로 길이를 줄인다. */
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-why-card) .challenge-sort-area { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: start; }
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-why-card) .challenge-sort-area :is(.challenge-items, .challenge-bins) { grid-template-columns: none; grid-template-rows: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-auto-rows: minmax(48px, auto); }
+}
+/* 실험 장(2장)은 비커 그림 칸이 넓은데, 실험 장치 그림이 없는 문제는 정답 뒤 보통 장과 같은 비율로 판에 폭을 더 준다. */
+@media (max-height: 620px) and (min-width: 700px) {
+  #app:is(.route-s2c, .route-s2d) #main .learning .challenge-layout:has(.challenge-why-card):not(:has(.challenge-sequence, .challenge-lab)) { grid-template-columns: minmax(0, .6fr) minmax(0, 1.7fr); }
+  /* 순서 문제: 다 쓴(비활성) 카드 칸은 접고 그 자리에 핵심 개념 카드를 둔다. 만든 순서는 왼쪽에 그대로 보인다. */
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-sequence):has(.challenge-why-card) > .challenge-items:not(:has(.challenge-item:enabled)) { display: none; }
+  #app #main .learning.challenge-page .challenge-board:has(.challenge-sequence) > .challenge-why-card { grid-column: 2; grid-row: 1; align-self: start; flex-direction: column; align-items: flex-start; margin: 0; }
+}
 
 /* 실험 비커·가열판·소금: 물 높이와 눈금은 코드로 정확히 두고, 유리와 기구는 그림으로 올린다. */
 #app .activity[data-chapter="2"] .beaker-vessel,
@@ -296,3 +329,10 @@
 /* 「다시 고르기」 14px 글자 대신 되돌리기 그림(읽기용 이름은 버튼 aria-label에 있다). */
 #app #main .learning .feature-chip small.chip-redo { display: inline-grid; place-items: center; text-decoration: none; }
 #app #main .learning .feature-chip small.chip-redo .ui-icon { width: 22px; height: 22px; }
+
+/* 좁은 표본 카드에 「바다/육지」 꼬리표가 붙으면 이름 뒤에 이어 써서 두 줄 안에 들어가게 한다. */
+@media (max-height: 620px) and (min-width: 700px), (max-width: 600px) {
+  #app #main .learning .sample-token:has(> span:not(:empty)) { display: block; align-content: center; }
+  #app #main .learning .sample-token:has(> span:not(:empty)) > :is(b, span) { display: inline; }
+  #app #main .learning .sample-token:has(> span:not(:empty)) > span { margin-left: .35em; white-space: nowrap; }
+}

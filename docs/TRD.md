@@ -15,7 +15,7 @@
 | src/main.js | 경로/공통이벤트·렌더수명·설정·저장경고·실험/관찰 이벤트 |
 | src/settingsContent.js / settings.css | 공통순서와문구, 소리·가이드·교사용전체해금·저작권 |
 | src/icons.js / audio.js | 공통SVG아이콘, 전역WebAudio BGM/SFX |
-| src/design-tokens.css / styles.css | 의미토큰·카드·선택상태·타이포·반응형 |
+| src/design-tokens.css / styles.css(src/styles/01~05) | 의미토큰·카드·선택상태·타이포·반응형 |
 | src/globe.js / specimens.js | 검수된지리자료·WebGL/2D대체, 생물관찰SVG |
 
 ## 상태와 저장

@@ -61,7 +61,7 @@ Node 단위 테스트: 저장·완료·해금·인증·20개 확장 활동·지�
 - 확장 활동: src/challenge-data.js. choice/multi/sort/match/order 스키마를 따른다. 각 장 c/d에4개씩 둔다. id는 중복하지 않는다. prompt는 할 일 한 문장, clue는 관찰 가능한 근거로 작성한다. 정답 데이터 변경 후 저장 호환과 tests/research.test.js를 확인한다.
 - 지도: src/hub-world.js의 도로/문을 배경과 함께 바꾼다. 모든 문까지 실제 경로 테스트를 실행한다. 그림만 바꾸고 좌표를 그대로 두지 않는다.
 - 설정 문구: src/settingsContent.js. 버전은 package.json에서 읽는다.
-- 디자인 토큰: src/design-tokens.css. 화면별 규칙은 styles.css/hub.css/settings.css.
+- 디자인 토큰: src/design-tokens.css. 화면별 규칙은 styles.css(src/styles/01~05로 나눔)/hub.css/settings.css.
 
 ## 기록과 운영
 이름·학번·연락처를 받지 않는다. 같은 주소·브라우저의 localStorage에 기록한다. 공용 기기를 다른 학생에게 주기 전 설정에서 기록을 초기화한다. 초기화는 확인을 거치며 소리 설정은 보존한다. 브라우저 저장을 지우면 복구할 수 없다. 완전 오프라인 앱은 아니다.

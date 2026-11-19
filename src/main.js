@@ -13,6 +13,8 @@ import './responsive-stages.css';
 import './glass-ui.css';
 import './flow-polish.css';
 import './reward-cards.css';
+// 저사양 기기(메모리 4GB 이하 또는 코어 4개 이하)는 넓은 면의 흐림(backdrop-filter)을 끄고 불투명 면을 쓴다(glass-ui.css `.lite-glass`).
+if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add('lite-glass');
 const loadConcepts = () => import('./concepts.js');
 import { mountInteractions } from './interactions.js';
 import { chapters, sites, terrains, creatures, routes, asset, tideHeight, finalCases } from './data.js';

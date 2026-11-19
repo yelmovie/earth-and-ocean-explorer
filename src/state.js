@@ -4,7 +4,7 @@ import { freshResearch, normalizeResearch, researchReady, pageReady } from './ch
 import { chapters, sites, terrains, creatures, routes, tideHeight, finalCases } from './data.js';
 export const SAVE_KEY = 'blue-planet-hq:v2';
 export function freshState() {
-  return { version: 2, contentVersion: 3, research: freshResearch(), route: 'home', resume: 'hub', history: [], settings: { muted: false, bgmEnabled: true, sfxEnabled: true, volume: 0.35, unlockAll: false, flatGlobe: false }, drafts: {
+  return { version: 2, contentVersion: 3, research: freshResearch(), route: 'home', resume: 'hub', history: [], settings: { muted: false, bgmEnabled: true, sfxEnabled: true, voiceEnabled: true, volume: 0.35, sfxVolume: 1, unlockAll: false, flatGlobe: false }, drafts: {
     1: { samples: [], atmosphere: false, classifications: {}, conclusion: '' },
     2: { fresh: 40, sea: 60, heatFresh: 1, heatSea: 2, prediction: '', firstPrediction: '', prepared: false, heated: false, seenBefore: false, seenAfter: false, view: 'before', residue: '', reason: '' },
     3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand', photoVersion: 2 },
@@ -40,6 +40,9 @@ export function normalize(raw) {
   if (!object(raw) || raw.version !== 2 || raw.contentVersion > 3) throw new Error('지원하지 않는 저장 형식');
   for (const key of ['muted', 'unlockAll', 'flatGlobe']) base.settings[key] = raw.settings?.[key] === true;
   for (const key of ['bgmEnabled','sfxEnabled']) base.settings[key] = typeof raw.settings?.[key]==='boolean'?raw.settings[key]:raw.settings?.muted!==true;
+  // 목소리 스위치(2026-11-20)가 없던 저장은 그때의 효과음 스위치를 이어받는다(그전까지 목소리가 효과음 스위치를 따랐다).
+  base.settings.voiceEnabled = typeof raw.settings?.voiceEnabled==='boolean'?raw.settings.voiceEnabled:base.settings.sfxEnabled;
+  if (Number.isFinite(raw.settings?.sfxVolume)) base.settings.sfxVolume = Math.max(0, Math.min(1, raw.settings.sfxVolume));
   base.research = normalizeResearch(raw.research);
   base.expeditions=normalizeExpeditions(raw.expeditions);
   if (Number.isFinite(raw.settings?.volume)) base.settings.volume = Math.max(0, Math.min(1, raw.settings.volume));

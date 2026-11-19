@@ -56,7 +56,9 @@ const mapCues={swing:()=>'map-swing',hit:n=>n===1?'map-hit-1':'map-hit-2',finish
 // 마지막 악당은 카드의 컬렉션 완성 징글이 격퇴 징글을 대신한다(효과음은 한 번에 하나만 나서 겹치면 서로 끊긴다). 파이널 영상이 열리면 audio.js가 징글을 멈춘다.
 bindRewardSound(sound);
 // 캐릭터 대사 음성: 화면 글과 같은 문장을 읽고, 화면 이동·대화창 닫기·소리 끄기에서 멈춘다. '다시 듣기'는 마지막 대사를 다시 읽는다.
-const voice=createVoice({enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,duck:v=>audioPlayer.duck(v)});
+// 목소리는 설정의 「목소리」 스위치를 따른다(효과음과 따로). 끄면 글·말풍선·자막만 보이고 음성 길이를 기다리는 곳은 「음성 없음」 시간으로 돈다.
+function voiceOn(){return !state.settings.muted&&state.settings.voiceEnabled!==false;}
+const voice=createVoice({enabled:voiceOn,duck:v=>audioPlayer.duck(v)});
 let lastVoice=null,voiceRoute=null;
 const voiceIdOf=text=>Object.keys(VOICE_TEXT).find(id=>VOICE_TEXT[id]===text);
 // 화면 글 그대로 읽기: 한 줄이면 그 대사, 여러 대사를 이어 붙인 글이면 순서대로 읽는다. 맞는 음성이 없으면 읽지 않는다.
@@ -73,9 +75,10 @@ function speak(ids,{replayHost}={}){const list=[].concat(ids).filter(hasVoice);i
 const openPlaces=s=>[...chapters.filter(c=>canAccess(s,`s${c.id}a`)).map(c=>`s${c.id}`),...(canAccess(s,'report')?['report']:[])];
 let announcedPlaces=new Set(openPlaces(state));
 function newlyOpenedPlaces(){const open=openPlaces(state),fresh=state.settings.unlockAll?[]:open.filter(id=>!announcedPlaces.has(id));announcedPlaces=new Set(open);return fresh;}
-// 홈 타이틀 대사는 브라우저가 첫 입력 전 재생을 막으니, 첫 입력 뒤 홈에 그대로 있으면 한 번 읽는다(그 사이 부리 대화를 눌렀으면 읽지 않는다).
-let titleVoicePending=false,homeGuideTalking=false,userActed=!!navigator.userActivation?.hasBeenActive;
-const firstInput=()=>{if(userActed)return;userActed=true;if(!titleVoicePending)return;setTimeout(()=>{if(!titleVoicePending)return;titleVoicePending=false;if(state.route==='home'&&!homeGuideTalking&&!voice.playing)speak(['title-bubble']);},400);};
+// 화면 첫 대사(홈 타이틀·지도 목표·엔딩)는 브라우저가 첫 입력 전 재생을 막으니(새로고침 직후 포함), 시도하지 않고 미뤄 두었다가
+// 첫 입력 뒤 같은 화면에 그대로 있으면 한 번 읽는다(그 입력이 화면을 바꿨거나 대화창·다른 대사가 나오면 읽지 않는다).
+let pendingEntry=null,homeGuideTalking=false,userActed=!!navigator.userActivation?.hasBeenActive;
+const firstInput=()=>{if(userActed)return;userActed=true;if(!pendingEntry)return;setTimeout(()=>{const pending=pendingEntry;if(!pending)return;pendingEntry=null;if(state.route===pending.route&&!homeGuideTalking&&!voice.playing&&!document.querySelector('dialog[open]'))speak(pending.ids);},400);};
 document.addEventListener('pointerdown',firstInput,{capture:true});document.addEventListener('keydown',firstInput,{capture:true});
 const playConcept=(n,options={})=>openOptional(loadConcepts,({showConcept})=>showConcept(n,{audio:audioPlayer,voice,...options}));
 const context=()=>({state,save,render,feedback,navigate,sound,tideScene,openWalk,finishChapter:n=>{const shown=showChapterReward(n,{navigate,completed:state.completed.length});const dialog=document.querySelector('.chapter-reward[open]');if(shown&&dialog){speak(`reward-${n}`,{replayHost:dialog.querySelector('.modal-footer')});dialog.addEventListener('close',()=>voice.stop(),{once:true});}return shown;}});
@@ -152,7 +155,8 @@ function runLinkCheck(index){
   linkTimer=setTimeout(()=>{linkTimer=null;if(state.route!=='link'||state.finalDraft.caseIndex!==index||state.links[next])return;const linked=state.links[next];state.finalDraft={caseIndex:next,stage:linked?.stage??null,reason:linked?.reason??null};save();render();},2600);
 }
 function autoLink(){const d=state.finalDraft;if(state.route==='link'&&Number.isInteger(d?.caseIndex)&&d.stage!==null&&d.reason!==null&&!state.links[d.caseIndex])runLinkCheck(d.caseIndex);}
-function header(){const silent=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button></div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group">${['hub','home'].includes(state.route)?'':`<button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button>`}${state.route==='hub'?rewardSlotsHtml(state.mapHits):''}<button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
+const allSoundOff=()=>state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false&&state.settings.voiceEnabled===false);
+function header(){const silent=allSoundOff();return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button></div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group">${['hub','home'].includes(state.route)?'':`<button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button>`}${state.route==='hub'?rewardSlotsHtml(state.mapHits):''}<button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
 async function render(){
   if(state.route!=='s4d')closeWalk?.();
   cleanupExpedition?.();cleanupExpedition=null;
@@ -170,7 +174,7 @@ async function render(){
   const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
   app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">교사 미리보기 · 체험 내용은 저장되지 않아요</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
   app.querySelectorAll('.learning [data-note]').forEach(note=>app.querySelector('.moa-bubble')?.append(note));
-  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:asset('dialogue/buri'),src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:value=>{homeGuideTalking=value;if(value){titleVoicePending=false;voice.stop();}audioPlayer.quiet(value);},title:'부리 목소리 듣기',onError:()=>feedback('대화를 불러오지 못했어. 다시 눌러 줘.'),note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
+  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:asset('dialogue/buri'),src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:voiceOn,quiet:value=>{homeGuideTalking=value;if(value){pendingEntry=null;voice.stop();}audioPlayer.quiet(value);},title:'부리 목소리 듣기',onError:()=>feedback('대화를 불러오지 못했어. 다시 눌러 줘.'),note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
@@ -180,7 +184,7 @@ async function render(){
   if(taskProgress)app.querySelector('.challenge-board-heading')?.replaceChildren(taskProgress);
   document.querySelector('h1')?.setAttribute('tabindex','-1');
   if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});
-  if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-intro','ending-buri','ending-jjang']:[];if(r==='home'&&!userActed){titleVoicePending=true;entry.length=0;}else if(r!=='home')titleVoicePending=false;const opened=r==='hub'&&newlyOpenedPlaces().length>0;if(opened)audioPlayer.opened();if(entry.length){if(opened)setTimeout(()=>{if(state.route===r)speak(entry);},300);else speak(entry);}}
+  if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-intro','ending-buri','ending-jjang']:[];if(!userActed){pendingEntry=entry.length?{route:r,ids:[...entry]}:null;entry.length=0;}else pendingEntry=null;const opened=r==='hub'&&newlyOpenedPlaces().length>0;if(opened)audioPlayer.opened();if(entry.length){if(opened)setTimeout(()=>{if(state.route===r)speak(entry);},300);else speak(entry);}}
   if(r==='hub'){
     const wrap=app.querySelector('.map-wrap'),next=chapters.find(c=>!state.completed.includes(c.id)&&canAccess(state,`s${c.id}a`));
     const status=document.createElement('section');status.className='hub-load-status';status.setAttribute('role','status');
@@ -237,12 +241,13 @@ function settings(){
   const overlay=document.createElement('dialog');
   overlay.className='settings-modal settings-panel';overlay.dataset.scienceSettings='';overlay.setAttribute('aria-labelledby','settings-title');
   const audioSwitch=(name,label)=>`<div class="sound-row"><span id="${name}-label">${esc(label)}</span><button type="button" class="sound-toggle" data-action="toggle-setting" data-value="${name}" aria-labelledby="${name}-label" aria-pressed="${state.settings[name]!==false}"><span>${state.settings[name]!==false?copy.sounds.on:copy.sounds.off}</span></button></div>`;
+  const volumeSlider=(key,output,label,gate)=>`<label class="volume-label">${esc(label)}<output id="${output}">${Math.round(state.settings[key]*100)}%</output><input aria-label="${esc(label)}" type="range" min="0" max="100" step="5" value="${Math.round(state.settings[key]*100)}" data-setting="${key}" ${state.settings[gate]===false?'disabled':''}></label>`;
   const finalReady=allLinked(state);
   const appContent=copy.appLines.map(([label,text])=>`<p class="settings-app-line"><b>${esc(label)}</b><span>${esc(text)}</span></p>`).join('')+`<p class="settings-signature">${esc(copy.signature)}</p>`;
   const teacherContent=paragraphs(copy.teacherLines)+details(copy.standardTitle,paragraphs([copy.standardIntro,...copy.standards]))+details(copy.toolsTitle,`<p>${esc(copy.toolsIntro)}</p><button class="admin-toggle" data-action="toggle-unlock" aria-pressed="${state.settings.unlockAll}">${icon(state.settings.unlockAll?'unlock':'lock')}<span>${esc(state.settings.unlockAll?copy.unlocked:copy.unlock)}</span></button><p>${esc(copy.toolsNote)}</p><label class="switch-row">${esc(copy.flatGlobe)}<input type="checkbox" data-setting="flatGlobe" ${state.settings.flatGlobe?'checked':''}></label>`);
   const sources=`<p>${esc(copy.sourceIntro)}</p>`+copy.sources.map(([title,text])=>`<p class="settings-source"><b>${esc(title)}</b>${esc(text)}</p>`).join('');
   const credits=paragraphs(copy.creditLines)+details(copy.sourcesTitle,sources)+copy.legal.map(text=>`<p class="legal-copy">${esc(text)}</p>`).join('');
-  overlay.innerHTML=`<div class="modal-head"><div><h2 id="settings-title">설정</h2></div></div><div class="settings-body science-settings-body"><section aria-label="소리" class="science-settings-audio">${audioSwitch('bgmEnabled',copy.sounds.bgm)}${audioSwitch('sfxEnabled',copy.sounds.sfx)}<label class="volume-label">${esc(copy.sounds.volume)}<output id="music-volume-output">${Math.round(state.settings.volume*100)}%</output><input aria-label="${esc(copy.sounds.volume)}" type="range" min="0" max="100" step="5" value="${state.settings.volume*100}" data-setting="volume" ${state.settings.bgmEnabled===false?'disabled':''}></label></section><div class="settings-replays science-settings-actions"><button class="secondary" data-action="replay-story">${icon('play')}${esc(copy.replay)}</button>${finalReady?`<button data-action="settings-go" data-value="ending">${icon('star')}${esc(copy.endingReplay)}</button>`:''}<button data-action="settings-go" data-value="certificate" ${!finalReady?'disabled':''}>${icon(finalReady?'award':'lock')}${esc(copy.certificate)}</button>${!finalReady?`<p class="settings-locked">${esc(copy.finalLocked)}</p>`:''}</div>${['hub','home'].includes(state.route)&&lastVoice?`<button class="secondary" data-action="voice-replay">${icon('play')}대사 다시 듣기</button>`:''}${details(copy.appTitle,appContent)}${details(copy.studentTitle,paragraphs([...copy.studentLines,'탐사지도에서 교란 부표 악당에게 다가가면 원형 공격 버튼이나 스페이스바로 공격해요.']))}${details(copy.teacherTitle,teacherContent)}${details(copy.copyrightTitle,credits)}<section id="reset-confirm" hidden aria-labelledby="reset-title"><h3 id="reset-title">${esc(copy.resetTitle)}</h3><p>${esc(copy.resetDescription)}</p><div class="reset-actions"><button data-action="reset-cancel">${esc(copy.resetCancel)}</button><button data-action="reset-confirm" class="danger">${esc(copy.resetConfirm)}</button></div></section></div><footer class="modal-footer science-settings-footer"><button class="text-button" data-action="reset-ask">${icon('reset')}${esc(copy.reset)}</button><button class="primary" data-action="close-settings">${esc(copy.close)}</button></footer>`;
+  overlay.innerHTML=`<div class="modal-head"><div><h2 id="settings-title">설정</h2></div></div><div class="settings-body science-settings-body"><section aria-label="소리" class="science-settings-audio">${audioSwitch('bgmEnabled',copy.sounds.bgm)}${volumeSlider('volume','music-volume-output',copy.sounds.volume,'bgmEnabled')}${audioSwitch('sfxEnabled',copy.sounds.sfx)}${volumeSlider('sfxVolume','sfx-volume-output',copy.sounds.sfxVolume,'sfxEnabled')}${audioSwitch('voiceEnabled',copy.sounds.voice)}</section><div class="settings-replays science-settings-actions"><button class="secondary" data-action="replay-story">${icon('play')}${esc(copy.replay)}</button>${finalReady?`<button data-action="settings-go" data-value="ending">${icon('star')}${esc(copy.endingReplay)}</button>`:''}<button data-action="settings-go" data-value="certificate" ${!finalReady?'disabled':''}>${icon(finalReady?'award':'lock')}${esc(copy.certificate)}</button>${!finalReady?`<p class="settings-locked">${esc(copy.finalLocked)}</p>`:''}</div>${['hub','home'].includes(state.route)&&lastVoice?`<button class="secondary" data-action="voice-replay">${icon('play')}대사 다시 듣기</button>`:''}${details(copy.appTitle,appContent)}${details(copy.studentTitle,paragraphs([...copy.studentLines,'탐사지도에서 교란 부표 악당에게 다가가면 원형 공격 버튼이나 스페이스바로 공격해요.']))}${details(copy.teacherTitle,teacherContent)}${details(copy.copyrightTitle,credits)}<section id="reset-confirm" hidden aria-labelledby="reset-title"><h3 id="reset-title">${esc(copy.resetTitle)}</h3><p>${esc(copy.resetDescription)}</p><div class="reset-actions"><button data-action="reset-cancel">${esc(copy.resetCancel)}</button><button data-action="reset-confirm" class="danger">${esc(copy.resetConfirm)}</button></div></section></div><footer class="modal-footer science-settings-footer"><button class="text-button" data-action="reset-ask">${icon('reset')}${esc(copy.reset)}</button><button class="primary" data-action="close-settings">${esc(copy.close)}</button></footer>`;
   document.body.append(overlay);overlay.showModal();
   overlay.querySelector('[data-action="close-settings"]').focus();
   overlay.addEventListener('close',()=>{overlay.remove();render();if(!document.querySelector('dialog[open]'))(focusBeforeModal?.isConnected?focusBeforeModal:document.querySelector('[data-action="settings"]'))?.focus();},{once:true});
@@ -254,12 +259,14 @@ function showStory(){
   document.body.append(dialog);dialog.showModal();speak(['story-1','story-2','story-3','story-4'],{replayHost:dialog.querySelector('.modal-footer')});dialog.addEventListener('close',()=>{voice.stop();dialog.remove();document.querySelector('[data-action="settings"]')?.focus();},{once:true});
 }
 function syncSettingControls(){
-  for(const key of ['bgmEnabled','sfxEnabled']){
+  for(const key of ['bgmEnabled','sfxEnabled','voiceEnabled']){
     const control=document.querySelector(`[data-action="toggle-setting"][data-value="${key}"]`);if(!control)continue;
     control.setAttribute('aria-pressed',String(state.settings[key]!==false));control.querySelector('span').textContent=state.settings[key]!==false?copy.sounds.on:copy.sounds.off;
   }
-  const slider=document.querySelector('[data-setting="volume"]');if(slider)slider.disabled=state.settings.bgmEnabled===false;
-  const output=document.querySelector('#music-volume-output');if(output)output.textContent=`${Math.round(state.settings.volume*100)}%`;
+  for(const [key,gate,id] of [['volume','bgmEnabled','music-volume-output'],['sfxVolume','sfxEnabled','sfx-volume-output']]){
+    const slider=document.querySelector(`[data-setting="${key}"]`);if(slider)slider.disabled=state.settings[gate]===false;
+    const output=document.querySelector('#'+id);if(output)output.textContent=`${Math.round(state.settings[key]*100)}%`;
+  }
   audioPlayer.sync();
 }
 // Teacher preview: with every stage unlocked, screens can be skimmed without
@@ -304,18 +311,18 @@ document.addEventListener('click',e=>{
       closeResidentScene=openNpcScene({
         name:names[who],portrait:asset('dialogue/'+who),
         src:base+'assets/audio/voices/el-'+id+'.mp3',text:VOICE_TEXT[id],trigger,
-        enabled:()=>!state.settings.muted&&state.settings.sfxEnabled!==false,quiet:v=>audioPlayer.quiet(v)
+        enabled:voiceOn,quiet:v=>audioPlayer.quiet(v)
       });
     }else if(id)speak(id);else voice.stop();
   });
 });
 // 도움말 말풍선이 카드·되돌리기 버튼을 덮어도 막히지 않게, 말풍선 글이나 다른 곳을 누르면 접는다.
 document.addEventListener('pointerdown',e=>{for(const hint of document.querySelectorAll('.moa-hint[open]'))if(!hint.querySelector('summary').contains(e.target)&&!e.target.closest?.('.moa-bubble button'))hint.open=false;},true);
-document.addEventListener('input',e=>{if(e.target.dataset.setting!=='volume')return;state.settings.volume=Number(e.target.value)/100;syncSettingControls();});
+document.addEventListener('input',e=>{const key=e.target.dataset.setting;if(!['volume','sfxVolume'].includes(key))return;state.settings[key]=Number(e.target.value)/100;syncSettingControls();});
 document.addEventListener('change',e=>{
   const field=e.target.dataset.field;if(field)updateField(field,e.target.value);
-  const setting=e.target.dataset.setting;if(!['volume','flatGlobe'].includes(setting))return;
-  state.settings[setting]=setting==='volume'?Number(e.target.value)/100:e.target.checked;save();syncSettingControls();
+  const setting=e.target.dataset.setting;if(!['volume','sfxVolume','flatGlobe'].includes(setting))return;
+  state.settings[setting]=setting==='flatGlobe'?e.target.checked:Number(e.target.value)/100;save();syncSettingControls();
 });
 document.addEventListener('click',async e=>{
   audioPlayer.start();
@@ -325,9 +332,9 @@ document.addEventListener('click',async e=>{
   if(['challenge-pick','challenge-task','case','tide-save','marker','link-stage'].includes(action))sound(action==='tide-save'?'scan':'click');
   if(action==='go'||action==='home'){tone();navigate(action==='home'?'home':value);return;}
   if(action==='back'){previous();return;}
-  if(action==='sound'){const enable=state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false);if(!enable)voice.stop();state.settings.muted=!enable;state.settings.bgmEnabled=enable;state.settings.sfxEnabled=enable;save();audioPlayer.sync();render();if(enable)tone();return;}
+  if(action==='sound'){const enable=allSoundOff();if(!enable)voice.stop();state.settings.muted=!enable;state.settings.bgmEnabled=enable;state.settings.sfxEnabled=enable;state.settings.voiceEnabled=enable;save();audioPlayer.sync();render();if(enable)tone();return;}
   if(action==='settings'){await openOptional(loadSettings,settings,()=>button.isConnected);return;}
-  if(action==='toggle-setting'){if(!['bgmEnabled','sfxEnabled'].includes(value))return;state.settings[value]=state.settings[value]===false;if(value==='sfxEnabled'&&state.settings.sfxEnabled===false)voice.stop();state.settings.muted=false;save();syncSettingControls();return;}
+  if(action==='toggle-setting'){if(!['bgmEnabled','sfxEnabled','voiceEnabled'].includes(value))return;state.settings[value]=state.settings[value]===false;if(value==='voiceEnabled'&&state.settings.voiceEnabled===false)voice.stop();state.settings.muted=false;save();syncSettingControls();return;}
   if(action==='toggle-unlock'){if(studentState){state=studentState;studentState=null;}else{studentState=state;state=previewState(studentState);}save();button.setAttribute('aria-pressed',String(state.settings.unlockAll));button.innerHTML=`${icon(state.settings.unlockAll?'unlock':'lock')}<span>${esc(state.settings.unlockAll?copy.unlocked:copy.unlock)}</span>`;if(!canAccess(state,state.route)){state.route='hub';state.resume='hub';save();window.history.replaceState({route:'hub'},'','#hub');}window.history.replaceState({route:state.route},'','#'+state.route);audioPlayer.sync();return;}
   if(action==='view-record'){const dialog=document.createElement('dialog');dialog.className='settings-modal record-modal';dialog.setAttribute('aria-label',chapters[+value-1].evidence);dialog.innerHTML=`<div class="modal-head"><h2>${chapters[+value-1].evidence}</h2><button data-action="close-record" class="icon-button" aria-label="기록 닫기">${icon('close')}</button></div><div class="settings-body">${recordDetail(state,+value)}</div>`;document.body.append(dialog);dialog.showModal();dialog.querySelector('button').setAttribute('aria-label','기록 닫기');dialog.addEventListener('close',()=>{dialog.remove();button.focus();});return;}
   if(action==='close-record'){document.querySelector('.record-modal')?.close();return;}
@@ -337,7 +344,7 @@ document.addEventListener('click',async e=>{
   if(action==='settings-go'){if(!allLinked(state))return;closeSettings();navigate(value);return;}
   if(action==='reset-ask'){const confirmation=document.querySelector('#reset-confirm');confirmation.hidden=false;confirmation.scrollIntoView({block:'nearest'});confirmation.querySelector('[data-action="reset-cancel"]').focus();return;}
   if(action==='reset-cancel'){document.querySelector('#reset-confirm').hidden=true;document.querySelector('[data-action="reset-ask"]').focus();return;}
-  if(action==='reset-confirm'){const sounds={muted:state.settings.muted,volume:state.settings.volume,bgmEnabled:state.settings.bgmEnabled,sfxEnabled:state.settings.sfxEnabled};state=freshState();Object.assign(state.settings,sounds);warning='';if(studentState)state.settings.unlockAll=true;save({reset:true});audioPlayer.sync();closeSettings();navigate('home');return;}
+  if(action==='reset-confirm'){const sounds={muted:state.settings.muted,volume:state.settings.volume,sfxVolume:state.settings.sfxVolume,bgmEnabled:state.settings.bgmEnabled,sfxEnabled:state.settings.sfxEnabled,voiceEnabled:state.settings.voiceEnabled};state=freshState();Object.assign(state.settings,sounds);warning='';if(studentState)state.settings.unlockAll=true;save({reset:true});audioPlayer.sync();closeSettings();navigate('home');return;}
   if(n===4&&['next','complete'].includes(action)&&!tideIntervalDirection(d.a,d.b)){
     feedback('1. 관찰에서 물이 한 방향으로 변하는 두 순간을 다시 골라요.');return;
   }

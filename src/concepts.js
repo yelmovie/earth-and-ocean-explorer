@@ -13,6 +13,10 @@ export function mountConcept(host,n,audio,voice){
  audio?.quiet(true);
  // The clips carry a few CC0 action sounds; they obey the app's mute and effect switches.
  video.muted=audio?.effectsAllowed?!audio.effectsAllowed():true;
+ // 영상 소리 크기는 효과음 크기를 따르고, 모아가 자막을 읽는 동안에는 ×0.3으로 줄였다가 읽기가 끝나면 되돌린다(0.2초 전환). 목소리를 끄면 줄이지 않는다.
+ const level=()=>Math.max(0,Math.min(1,audio?.effectVolume?.()??1)),reading=()=>String(voice?.playing||'').startsWith(`concept-${n}-`);
+ video.volume=level();
+ const duckTimer=setInterval(()=>{const base=level(),target=base*(reading()?.3:1),step=base*.7/4+.001,now=video.volume;video.volume=Math.max(0,Math.min(1,Math.abs(target-now)<=step?target:now+Math.sign(target-now)*step));},50);
  // 모아가 자막을 읽는다: 장면이 바뀌면 그 줄을 읽고, 앞 줄을 다 읽기 전에 다음 장면이 오면 영상을 잠깐 세워 기다린다.
  // 기다릴 때는 되감지 않고 다음 장면 0.55초 전에 미리 멈춘다(영상 속 앞 줄 자막이 또렷이 남는 자리). 운영 서버가 영상 범위 요청을 받지 않아 되감기가 0초로 튀기 때문.
  function narrate(cue){if(!voice||dead)return;spoken=cue;voice.play(`concept-${n}-${cue+1}`,{ended:()=>{if(holding&&!dead){holding=false;start();}}});}
@@ -27,7 +31,7 @@ export function mountConcept(host,n,audio,voice){
  host.addEventListener('click',click);video.addEventListener('timeupdate',update);video.addEventListener('ended',ended);video.addEventListener('playing',playing);video.addEventListener('pause',paused);video.addEventListener('error',fallback);document.addEventListener('visibilitychange',visibility);
  const timeout=setTimeout(()=>{if(!dead&&video.readyState===0)fallback();},8000);
  if(!reduced)start();
- return ()=>{dead=true;holding=false;voice?.stop();clearTimeout(timeout);host.removeEventListener('click',click);video.removeEventListener('timeupdate',update);video.removeEventListener('ended',ended);video.removeEventListener('playing',playing);video.removeEventListener('pause',paused);video.removeEventListener('error',fallback);document.removeEventListener('visibilitychange',visibility);video.pause();video.querySelectorAll('source').forEach(s=>s.removeAttribute('src'));video.removeAttribute('src');video.load();audio?.quiet(false);};
+ return ()=>{dead=true;holding=false;voice?.stop();clearTimeout(timeout);clearInterval(duckTimer);host.removeEventListener('click',click);video.removeEventListener('timeupdate',update);video.removeEventListener('ended',ended);video.removeEventListener('playing',playing);video.removeEventListener('pause',paused);video.removeEventListener('error',fallback);document.removeEventListener('visibilitychange',visibility);video.pause();video.querySelectorAll('source').forEach(s=>s.removeAttribute('src'));video.removeAttribute('src');video.load();audio?.quiet(false);};
 }
 export function showConcept(n,{audio,voice,onDone,label='활동으로 돌아가기',reward=false}={}){
  if(document.querySelector('dialog[open]'))return false;

@@ -4,7 +4,7 @@ import { version } from '../package.json';
 export const settingsContent = {
   title: '탐사 설정',
   subtitle: '우리의 탐사를 준비해요',
-  sounds: { bgm: '배경 음악', sfx: '효과음', volume: '배경 음악 크기', on: '켜짐', off: '꺼짐' },
+  sounds: { bgm: '배경 음악', sfx: '효과음', voice: '목소리', volume: '배경 음악 크기', sfxVolume: '효과음 크기', on: '켜짐', off: '꺼짐' },
   replay: '이 탐사를 하는 이유 다시 보기',
   endingReplay: '엔딩 다시 보기',
   certificate: '인증서 받기',
@@ -54,7 +54,7 @@ export const settingsContent = {
   creditLines: [
     '캐릭터·배경·장식은 프로젝트 자체 AI 생성 이미지예요.',
     '장면 그림은 실제 현장 사진이 아닌 학습용 재현 이미지예요. 배치·날씨·크기는 사실 근거로 쓰지 않아요.',
-    '배경 음악은 Suno로 만든 메인 테마·파이널 2곡이고, 효과음은 Kenney의 CC0 소리예요.',
+    '배경 음악은 Suno로 만든 메인 테마·파이널 2곡이고, 효과음은 Kenney와 Freesound·OpenGameArt 제작자들의 CC0 소리예요.',
     '부리·짱이·모아·게·부표·이야기 목소리는 AI 음성 합성으로 만든 소리예요. 실제 사람의 목소리가 아니에요.',
     '출처와 라이선스 상세 내용은 프로젝트의 assets/CREDITS.md에서 확인할 수 있어요.',
   ],
@@ -67,7 +67,8 @@ export const settingsContent = {
     ['해안 지형', '미국 국립공원청 · nps.gov · Sea/Littoral Caves · 동굴과 구멍 난 바위의 모습을 참고했어요.'],
     ['갯벌 생물과 보전', '해양수산부 · mof.go.kr · 순천만 갯벌 이야기책 발간 자료(2023.4.6.)'],
     ['교육과정', '교육부 2022 개정 과학과 교육과정 · 경기도교육청 초등 깊이있는 수업 프레임워크 부록 85~86쪽'],
-    ['효과음', 'Kenney Interface Sounds · kenney.nl · CC0 1.0 · 확인·촬영·기록·힌트·보상 소리'],
+    ['효과음', 'Kenney Interface Sounds · kenney.nl · CC0 1.0 · 확인·촬영·기록·힌트·보상 소리, 개념 영상 속 소리, 장소 열림 소리'],
+    ['지도·카드 효과음', '과학34 공통 효과음 라이브러리 · Freesound·OpenGameArt 제작자들의 CC0 1.0 소리 · 악당 공격·성취 카드·발자국·장소 열림 반짝 소리 · 제작자별 상세는 assets/CREDITS.md'],
     ['글꼴', '네이버 나눔스퀘어 네오 · SIL OFL 1.1 · 공식 원본 글꼴과 라이선스를 함께 제공해요.'],
     ['캐릭터 목소리', 'ElevenLabs · 유료 요금제 상업 이용 · AI 합성 음성(docs/VOICE-FILL-20261118.json, docs/NPC-DIALOGUE-20261112.json)'],
     ['프로그램', 'Three.js · MIT / Vite · MIT / HyperFrames·FFmpeg 자체 제작 개념 영상'],

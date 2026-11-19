@@ -79,7 +79,7 @@ test('repeated final evidence confirmation cannot emit a new saved event',()=>{
  assert.equal(linkEvidence(s,4,last.stage,last.answer),'already-saved');
  assert.equal(JSON.stringify(s),before);
 });
-test('resume, evidence, audio and unlock survive a real serialization round trip',()=>{const s=freshState();for(let n=1;n<=5;n++){investigated(s,n);completeStage(s,n);}finalCases.forEach((c,i)=>linkEvidence(s,i,c.stage,c.answer));s.route='certificate';s.resume='certificate';s.history=['home','hub','s1a'];s.settings={muted:true,volume:.2,unlockAll:true,flatGlobe:true};const loaded=normalize(JSON.parse(JSON.stringify(s)));assert.equal(loaded.route,'certificate');assert.equal(loaded.resume,'certificate');assert.ok(allLinked(loaded));assert.deepEqual(loaded.settings,{bgmEnabled:false,sfxEnabled:false,...s.settings});assert.deepEqual(loaded.evidence[4],s.evidence[4]);});
+test('resume, evidence, audio and unlock survive a real serialization round trip',()=>{const s=freshState();for(let n=1;n<=5;n++){investigated(s,n);completeStage(s,n);}finalCases.forEach((c,i)=>linkEvidence(s,i,c.stage,c.answer));s.route='certificate';s.resume='certificate';s.history=['home','hub','s1a'];s.settings={muted:true,volume:.2,unlockAll:true,flatGlobe:true};const loaded=normalize(JSON.parse(JSON.stringify(s)));assert.equal(loaded.route,'certificate');assert.equal(loaded.resume,'certificate');assert.ok(allLinked(loaded));assert.deepEqual(loaded.settings,{bgmEnabled:false,sfxEnabled:false,voiceEnabled:false,sfxVolume:1,...s.settings});assert.deepEqual(loaded.evidence[4],s.evidence[4]);});
 test('bad/missing/versioned saves and blocked storage do not crash',()=>{for(const raw of ['{broken','null','[]','{"version":1}']){const r=loadState({getItem:()=>raw});assert.equal(r.state.route,'home');assert.ok(r.warning);}assert.equal(loadState({getItem:()=>null}).warning,'');assert.ok(saveState({setItem(){throw Error('blocked');}},freshState()));const malformed={version:2,drafts:{1:{samples:32},4:{a:-9,b:'bad'}},settings:{volume:500}};assert.deepEqual(normalize(malformed).drafts[1].samples,[]);assert.equal(normalize(malformed).drafts[4].a,null);assert.equal(normalize(malformed).settings.volume,1);});
 test('land source matches all curated scan points, excluding ambiguous coasts and lakes',()=>{const geo=JSON.parse(readFileSync(new URL('../public/assets/land.geojson',import.meta.url)));function inside(point,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];if(((yi>point[1])!==(yj>point[1]))&&(point[0]<(xj-xi)*(point[1]-yi)/(yj-yi)+xi))c=!c;}return c;}for(const p of sites){const land=geo.features.some(f=>(f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates).some(poly=>inside([p.lon,p.lat],poly[0])&&!poly.slice(1).some(r=>inside([p.lon,p.lat],r))));assert.equal(land,p.type==='육지',p.name);}});
 
@@ -172,4 +172,14 @@ test('archived turning-point tide evidence and earned certificate survive reload
   assert.deepEqual(restored.evidence[4],archived);
   assert.equal(stateModule.recordTideObservation(restored,'a',3),'saved');
   assert.deepEqual(normalize(JSON.parse(JSON.stringify(restored))).evidence[4],archived);
+});
+test('voice switch and effect volume: old saves inherit the effect switch, new values round-trip',()=>{
+  const old=v=>{const s=freshState();delete s.settings.voiceEnabled;delete s.settings.sfxVolume;if(v===undefined)delete s.settings.sfxEnabled;else s.settings.sfxEnabled=v;return normalize(JSON.parse(JSON.stringify(s))).settings;};
+  assert.deepEqual([old(false).voiceEnabled,old(false).sfxEnabled,old(false).sfxVolume],[false,false,1]);
+  assert.deepEqual([old(true).voiceEnabled,old(true).sfxEnabled,old(true).sfxVolume],[true,true,1]);
+  assert.deepEqual([old(undefined).voiceEnabled,old(undefined).sfxEnabled,old(undefined).sfxVolume],[true,true,1]);
+  const fresh=freshState().settings;assert.equal(fresh.voiceEnabled,true);assert.equal(fresh.sfxVolume,1);
+  const s=freshState();s.settings.voiceEnabled=false;s.settings.sfxEnabled=true;s.settings.sfxVolume=.45;
+  const back=normalize(JSON.parse(JSON.stringify(s))).settings;assert.equal(back.voiceEnabled,false);assert.equal(back.sfxEnabled,true);assert.equal(back.sfxVolume,.45);
+  s.settings.sfxVolume=7;assert.equal(normalize(JSON.parse(JSON.stringify(s))).settings.sfxVolume,1);
 });

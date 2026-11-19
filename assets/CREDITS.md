@@ -8,7 +8,7 @@
 | Vite8.3.4 | 개발·정적 빌드 | 설치 패키지 MIT | 의존 라이선스 고지 보존 |
 | Three.js0.186.1 | 지구 관찰 패널 | 설치 패키지 MIT | 원저작자 고지 보존 |
 | Kenney Interface Sounds | CC0 효과음 9종 | Kenney 공식 배포 ZIP의 License.txt 보존, MP3 변환 | 실제 기기 음량 확인 |
-| 과학34 공통 효과음 라이브러리 CC0 5종 (2026-11-18) | 성취 카드 효과음 audio/card-*.mp3 | CC0 1.0(원본 페이지 재확인). 아래 「2026-11-18 성취 카드」 표 | 실제 기기 음량 확인 |
+| 과학34 공통 효과음 라이브러리 CC0 17종 (2026-11-17~19) | 지도 악당 audio/map-*.mp3 8종, 성취 카드 audio/card-*.mp3 5종, 발자국 audio/step-*.mp3 2종, 장소 열림 audio/map-open*.mp3 2종 (Freesound·OpenGameArt·Kenney 제작자) | CC0 1.0(원본 페이지 재확인). 아래 「지도 악당 효과음」「성취 카드」「소리 2차 수정」 표. 앱 설정의 「효과음」「지도·카드 효과음」 출처 줄과 같은 내용(2026-11-20) | 실제 기기 음량 확인 |
 | 배경음 2곡 (Suno 생성) | audio/bgm/main-theme.mp3 (첫 탭부터 시작·지도·활동 반복), audio/bgm/final-theme.mp3 (엔딩·인증서, 지도 파이널 영상 대화상자) | 2026-11-17 사용자가 Suno로 생성해 제공. 프롬프트는 _shared/music-prompts-10-16.html | 원본은 references/suno 보관. 상업 이용 근거: 생성 당시 Suno Premier 유료 요금제(2026-11-18 사용자 확인) |
 | 나눔스퀘어 네오 | 본문·제목·숫자·SVG 글꼴 | 네이버 공식 Regular/Bold/ExtraBold WOFF2, SIL OFL 1.1 원문·출처 동봉 | 새 문구에도 공식 원본 글꼴 사용 |
 | 제공된 배경·로고·캐릭터10종 | 기존 프로젝트의 학습·메인·엔딩 그림 | 제공된 생성형AI 이미지로 기록되어 있음 | 최초 생성 계정·상업 이용권 증빙은 제공자 확인 필요 |

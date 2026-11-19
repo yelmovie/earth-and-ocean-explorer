@@ -2,7 +2,8 @@
 // The main theme loops from the first tap; the final theme plays once on the ending/certificate
 // and while the map finale dialog is open, then the main theme carries on at ×0.45 until the learner leaves.
 // Effects come in three lanes: UI (one at a time), battle·reward (up to four at once, never cut by UI or steps)
-// and footsteps (their own single player).
+// and footsteps (their own single player). The settings' effect volume (sfxVolume, 0–1, default 1) scales every lane,
+// so the default sounds exactly as before.
 export function createAudio(getSettings) {
   let context, started = false, videoQuiet = false, voiceDuck = false, uiEffect, stepPlayer, stepTurn = 0;
   let routeTrack = 'main', mapFinale = false, finalDone = false, finalHold = 0, fadeFrom = 0, holdTimer = 0, fadeTimer = 0;
@@ -20,8 +21,9 @@ export function createAudio(getSettings) {
   const STEP_VOLUME=.18, stepRates={map:.98,flat:.93};
   const settings = () => getSettings();
   const volume = () => Math.max(0, Math.min(1, Number(settings().volume) || 0));
+  const sfxVolume = () => { const v = Number(settings().sfxVolume); return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 1; };
   const canPlayMusic = () => started && !document.hidden && !settings().muted && settings().bgmEnabled !== false && volume() > 0;
-  const effectsOn = () => !videoQuiet && !!context && context.state === 'running' && !document.hidden && !settings().muted && settings().sfxEnabled !== false;
+  const effectsOn = () => !videoQuiet && !!context && context.state === 'running' && !document.hidden && !settings().muted && settings().sfxEnabled !== false && sfxVolume() > 0;
   const halt = player => { player.pause(); player.currentTime = 0; };
   function stopUi(){if(uiEffect){halt(uiEffect);uiEffect=null;}}
   function stopBattle(){for(const player of battle)halt(player);battle.clear();}
@@ -39,7 +41,7 @@ export function createAudio(getSettings) {
     if(lane==='ui')stopUi();
     if(!effectsOn())return;
     const player=load(effects,name,name);
-    player.volume=mapVolumes[name]??(name==='reward'?.34:.26);player.currentTime=0;
+    player.baseVolume=mapVolumes[name]??(name==='reward'?.34:.26);player.volume=player.baseVolume*sfxVolume();player.currentTime=0;
     if(lane==='ui')uiEffect=player;
     else{
       battle.delete(player);
@@ -56,7 +58,7 @@ export function createAudio(getSettings) {
     const file=`step-${stepTurn++%2+1}`,player=load(steps,file,file);
     if(stepPlayer&&stepPlayer!==player)halt(stepPlayer);
     player.preservesPitch=false;player.playbackRate=(stepRates[kind]??1)*(1+(Math.random()*2-1)*.03);
-    player.volume=STEP_VOLUME*(voiceDuck?.5:1);player.currentTime=0;stepPlayer=player;player.play().catch(()=>{});
+    player.volume=stepVolume();player.currentTime=0;stepPlayer=player;player.play().catch(()=>{});
   }
   function track(name){
     let player=music.get(name);
@@ -68,6 +70,9 @@ export function createAudio(getSettings) {
     }
     return player;
   }
+  function stepVolume(){return STEP_VOLUME*(voiceDuck?.5:1)*sfxVolume();}
+  // The effect volume slider moves sounds that are already playing too.
+  function syncEffectVolume(){for(const player of [uiEffect,...battle])if(player&&player.baseVolume!=null)player.volume=player.baseVolume*sfxVolume();if(stepPlayer)stepPlayer.volume=stepVolume();}
   const battlePlaying=()=>[...battle].some(player=>!player.paused&&!player.ended);
   function syncMusic(){
     let name=mapFinale?'final':routeTrack,level=1;
@@ -96,7 +101,7 @@ export function createAudio(getSettings) {
     } catch { return false; }
   }
   function sync() {
-    if(document.hidden||settings().muted||settings().sfxEnabled===false)stopEffect();
+    if(document.hidden||settings().muted||settings().sfxEnabled===false||sfxVolume()<=0)stopEffect();else syncEffectVolume();
     syncMusic();
   }
   function start() {
@@ -119,11 +124,11 @@ export function createAudio(getSettings) {
     sync();
   });
   window.addEventListener('pagehide',()=>{stopEffect();for(const player of music.values())player.pause();context?.suspend().catch(()=>{});});
-  return { start, sync, tone, effect, step, stopStep, effectsAllowed:()=>!settings().muted&&settings().sfxEnabled!==false, quiet(value){videoQuiet=value;if(value)stopEffect();sync();},
+  return { start, sync, tone, effect, step, stopStep, effectsAllowed:()=>!settings().muted&&settings().sfxEnabled!==false,effectVolume:sfxVolume, quiet(value){videoQuiet=value;if(value)stopEffect();sync();},
     // 지도에 새 장소가 열릴 때: 잠금 풀림 + 0.12초 뒤 반짝(전투·보상 갈래라 UI 소리에 끊기지 않는다).
     opened(){effect('map-open');setTimeout(()=>effect('map-open-shine'),120);},
     // 엔딩·인증서는 파이널 곡, 나머지 화면은 메인 테마.
     music(name){name=name==='final'?'final':'main';if(name===routeTrack)return;routeTrack=name;if(name==='final')restartFinal();sync();},
     // 캐릭터 대사가 나오는 동안 배경음만 줄인다(효과음은 그대로, 발자국은 ×0.5).
-    duck(value){voiceDuck=!!value;if(stepPlayer)stepPlayer.volume=STEP_VOLUME*(voiceDuck?.5:1);sync();} };
+    duck(value){voiceDuck=!!value;if(stepPlayer)stepPlayer.volume=stepVolume();sync();} };
 }

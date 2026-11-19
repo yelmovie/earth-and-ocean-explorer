@@ -65,3 +65,10 @@
 - `tests/release-browser.mjs`(빌드 미리보기 4173): 홈부터 실제 클릭으로 5장·확장 20문제·최종 증거 연결 5개·엔딩·인증서 인쇄까지 완주, 새로고침·미션 중 새로고침·교사 기록 분리 통과, 페이지 오류 0.
 - 브라우저 직접 확인: 증거 연결에서 틀린 답을 고르면 「연결 확인」이 다시 보이고(1024×768), 지구는 화살표 키로 돈다.
 - 남은 것: 1024×768에서 긴 문제 문장 도전 화면 63~67%(L6 제안), 인증서 1920 좌우 여백(문서 비율 예외), 3장 비교의 「다시 고르기」 보조 글자 14px 4개(특징 칩 안 보조 표시, 이번 범위 밖).
+
+## 6. 운영 반영
+
+- 커밋 `96e2322`를 푸시한 뒤 `_scratch/deploy-20261118/deploy.sh 10c "10 earthsea" worker-cfg earth-and-ocean-explorer`(직전 배포와 같은 `cfg/10c.json`)로 Workers에 올렸다. Version ID `7ecef4f1-353a-4b02-8ac4-f687c8c7452b`.
+- `cmp.sh`: `index.html`, `assets/index-BNO6cY-n.js`(연결 확인 숨김), `assets/globe-CFe-HPfs.js`(화살표 키 회전), `assets/index-HTgEbnns.css`(비율 규칙) 빌드 = 운영 MATCH.
+- 운영 주소에서 `tests/release-browser.mjs` 홈→인증서 실제 클릭 완주·오류 0, 첫 화면 1.57초(10Mbps·80ms 모사 1.86초)·첫 전송 1.04MB.
+- 최종 납품 점검: `docs/reviews/RELEASE-REVIEW-20261118.md`(조건부 배포 가능 — 교사 최종 검수 대기), `SCORE-20261118.md`(88/100).

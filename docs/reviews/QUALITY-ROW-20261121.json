@@ -1,0 +1,13 @@
+{
+  "no": "10", "name": "푸른행성 조사본부", "appCommit": "633b01e", "measuredAt": "2026-11-21T07:30+09:00",
+  "score": {"total": 92, "noDevice": 95,
+    "items": {"learning": 10, "fun": 8, "function": 10, "code": 10, "design": 8, "a11y": 9, "perf": 9, "firstScreen": 10, "data": 9, "deploy": 9}},
+  "structure": {"zones": 5, "activities": 10, "stepsPerActivityMedian": 4, "autoRunSeconds": 12},
+  "interaction": {"kinds": ["누르기", "끌기", "슬라이더", "지도 걷기", "3D 지구 돌리기", "3D 탐사길 걷기"], "kindsCount": 6, "zonesWithOwnInteraction": 5},
+  "feedback": {"wrongAnswerLevels": 2, "hintBeforeAnswer": true, "retryGoal": false, "rewardEffects": 5, "transitionEffects": 4},
+  "screen": {"playAreaHeightPctMedian": 71.2, "playAreaAreaPctMedian": 69.9, "bodyTextMinPx": 18, "bodyTextMedianPx": 18, "imagesOnScreenMedian": 3},
+  "sound": {"bgm": true, "sfx": true, "voice": true, "voiceLines": 113},
+  "weight": {"firstScreenKB": 1038, "distMB": 65},
+  "robust": {"reloadRestores": true, "corruptSaveHandled": true, "offlineRevisit": true, "backButtonStaysInApp": true, "certificatePrintsOnePage": true},
+  "notes": "구역 5곳마다 관찰·비교(활동 10개)·확장 도전·적용 4단계, 확장 문제 20개와 증거 연결 5상황. wrongAnswerLevels 2: 틀리면 문제 종류별 공통 안내와 문제별 단서·다시 고르기(틀린 이유를 보기마다 따로 말하지는 않음). rewardEffects: 정답 핵심 개념 상자, 장 배지, 성취 카드 공개, 수집 완성 징글, 엔딩·인증서. transitionEffects: 개념 영상, 정답 뒤 자동 넘김, 장소 열림 반짝, 지도 피날레 영상. autoRunSeconds는 tests/release-browser.mjs 자동 완주(운영, 20문제·인쇄 포함). 놀이 영역·글자·그림 수는 1280×800 1장 관찰·2장 관찰·3장 확장 도전의 가운데 값. firstScreenKB는 11-20 운영 실측 첫 전송 1.04MB. voiceLines는 앱이 재생하는 ElevenLabs 대사 파일 수(옛 Qwen 파일 39개 제외). 실기기(태블릿 터치·저사양 프레임·iPad 인쇄)는 재지 않음."
+}

@@ -30,3 +30,5 @@
    본문 두 줄이 고르게 나뉜다(보이는 글과 줄 수는 그대로). 인증서 다짐 문장·보고서 아래 안내 */
 :where(.certificate-promise, .report-bottom p) > b { display: block; }
 :where(.certificate-promise, .report-bottom p) > b + br { display: none; }
+/* 4장 3D 탐사길 출발 화면의 문제 설명: 1024·915·830 폭에서 「…전에 / 안전하게 돌아와요.」로 끝줄이 1/3만 남는다 */
+:where(.challenge-page:has(.walk-start) .page-heading h1 + p) { text-wrap: balance; }

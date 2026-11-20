@@ -88,3 +88,4 @@
 - 고친 곳: `src/korean-linebreak.css` 프로젝트 보정 `:where(.map-encounter-say) { text-wrap: balance; }` → 「게랑 짱뚱어가 사는 갯벌을 / 찾아냈어? 내 표찰은 / 빈 땅이라 써 놨는데!」. 글자 크기·폭·위치는 18px 값 그대로.
 - 후: 90줄 문제 0. 90줄 모두 줄 수 그대로(크기마다 1줄 14·2줄 14·3줄 2), 말풍선이 화면 밖으로 나가거나 악당 몸·명중 표시를 가리는 곳 없음. 격퇴 안내는 원래 `balance`(role=status)라 5줄 모두 2줄, 문제 0.
 - 참고(고치지 않음): 3줄 말풍선이 2개 있다 — 「절벽이랑 동굴을…」, 「게랑 짱뚱어가…」. 18px 지침의 최대 3줄 안이다.
+- 검증·배포: `npm test` 102개, 빌드 통과, `npm run check:layout`(`lbk-browser-1`) 270검사 실패 0과 자동 진행 흐름 통과. 커밋 `8d7e142` → `run-lock.sh lbk-deploy-1 … deploy.sh 10`(cfg/10.json), Version ID `4e615bab-cacf-44e4-aae0-703decc9a574`. `index.html`·`assets/index-CM8WL-7z.css`(운영 CSS에 `:where(.map-encounter-say){text-wrap:balance}` 있음)·`assets/index-DXNmAVdC.js` MATCH, 개념 영상 Range 206 유지.

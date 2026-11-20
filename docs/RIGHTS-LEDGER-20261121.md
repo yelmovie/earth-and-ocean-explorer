@@ -8,7 +8,7 @@
 
 | 파일(묶음) | 만든 곳 | 만든 날·기록 위치 | 이용 조건 | 근거 파일 | 상태 |
 |---|---|---|---|---|---|
-| 기존 제공 배경 8장 `home`·`terrace`·`ending`·`tide`·`observatory`·`mudflat`·`coast`·`lab.webp` | 제공된 생성형 AI 그림(제공자·도구 기록 없음) | 기존 프로젝트에서 받음. PNG 원본 보존 후 WebP 변환 | 최초 생성 계정·상업 이용권 확인 필요(CREDITS 「남은 확인」) | `public/assets/CREDITS.md` 「도구·라이선스 검토」·「이미지」 | 근거 약함 |
+| 기존 배경 8장 `home`·`terrace`·`ending`·`tide`·`observatory`·`mudflat`·`coast`·`lab.webp` | Codex 내장 이미지 도구(GPT 이미지) — 사용자 확인(2026-11-21 「이미지는 다 코덱스로 만들었어」) | 기존 프로젝트 때 생성. 이 맥의 Codex 세션 기록(2026-10-28~)보다 앞이라 생성 로그는 없음. PNG 원본 보존 후 WebP 변환 | ChatGPT 유료 요금제(사용자 확인 2026-11-21 「다 유료 요금제」) | `public/assets/CREDITS.md`, 이 장부 | 확인됨(사용자 확인) |
 | 모아 `moa.webp`·`moa-map.webp` | 내장 image_gen | 2026-10-22, 원본 `assets/moa-original.png` | 생성 계정 이용 조건 | `docs/EXPERIENCE-20261022.md` 48행 | 확인됨 |
 | 탐사 섬 지도 `expedition-map.webp` | 내장 image_gen | 2026-10-22, 원본 `assets/source-png/expedition-map.png` | 생성 계정 이용 조건 | CREDITS 「이미지」 | 확인됨 |
 | 시설 5종 `facility-1~5.webp` | 내장 image_gen(시설 시트에서 분리) | 원본 `references/generated/facilities-atlas.png`, 자르기 `public/assets/facilities-manifest.json` | 생성 계정 이용 조건 | CREDITS 「이미지」 | 확인됨 |
@@ -20,9 +20,9 @@
 | 실험·관측 소품 `tide-rock·tide-pole·tide-boat·lab-*.webp`, `challenge-earth-layers.webp`, 장 배지 `badge-1~5.webp`, 인증서 도장 `seal.webp` | Codex 내장 이미지 도구(GPT 이미지) | 2026-11-17, `assets/generated/20261117/`(배지·도장 원본 포함), 커밋 `1f25de4` | 생성 계정 이용 조건 | CREDITS 「이미지」(배지·도장은 커밋 설명과 원본 폴더로 확인) | 확인됨 |
 | 3D 탐사길 그림 21장 `illustrations/run-stage/*.webp` | Codex 내장 이미지 도구(GPT 이미지) | 2026-11-17, 원본 `assets/generated/20261117-run-stage/`, 프롬프트 `docs/IMAGE-PROMPTS-20261117-run-stage.json` | 생성 계정 이용 조건 | CREDITS 「이미지」 | 확인됨 |
 | 성취 카드 10장 `reward-cards/card-*·thumb-*.webp` | Codex 내장 이미지 도구(GPT 이미지) | 2026-11-18, 원본 `_scratch/reward-cards-20261118/gen/10/` | 생성 계정 이용 조건 | CREDITS 「2026-11-18 성취 카드」 | 확인됨 |
-| 지도 전투 그림 `map-encounter/map-villain-poses-left·map-hero-reaction·map-ally-reaction.webp` | 「새로 그린 시트」라고만 기록(도구 이름 없음) | 2026-11-14, 커밋 `034a6b5`·`f9feb75`, `_scratch/map-redraw-20261114/README.md` | 확인 필요 | 위 README·`docs/MAP-VILLAIN-HANDOFF-20261114.md` | 근거 약함 |
-| 시작 화면 제목 그림 `home-deck-title.webp`, 제목 로고 `logo-title.webp` | 기록 없음(커밋 `f431628` 「Use lighter artwork」만 있음) | 2026-11-14 | 모름 | 없음 | **출처 미확인** |
-| 대화창 초상 4장 `dialogue/buri·jjang·moa·crab.webp` | 기록 없음(커밋 `99ba142`에 그림만 추가) | 2026-11-13 | 모름 | 없음(CREDITS에는 성취 카드의 화풍 참고로만 나옴) | **출처 미확인** |
+| 지도 전투 그림 `map-encounter/map-villain-poses-left·map-hero-reaction·map-ally-reaction.webp` | Codex 내장 이미지 도구(`image_gen`) | 2026-11-13~14, Codex 세션 `~/.codex/sessions/2026/11/13·14`의 `image_gen.generation` 기록(예: 11-13 16:58 UTC 「Draw a production sprite sheet of the exact two attached game characters: Buri, the white spoonbill…」, 6×4 스프라이트 아틀라스들), 커밋 `034a6b5`·`f9feb75`, `_scratch/map-redraw-20261114/README.md` | ChatGPT 유료 요금제(사용자 확인) | 세션 기록 추출 `.tmp/score-fix-20261121/codex-images.json` | 확인됨 |
+| 시작 화면 제목 그림 `home-deck-title.webp`, 제목 로고 `logo-title.webp` | 새로 만든 그림이 아니라 기존 그림을 줄여 다시 압축한 파일: `home-deck-title.webp` = `home-deck.jpg`(Canva)를 1440px·품질 .86으로, `logo-title.webp` = `logo.webp`(기존 그림, Codex)를 960px·품질 .87로 | 2026-11-13~14, Codex 세션 `rollout-2026-11-13T21-43-10-01a1d4ee…`의 변환 스크립트, 커밋 `f431628` | 원본 그림과 같음 | 세션 기록 | 확인됨 |
+| 대화창 초상 4장 `dialogue/buri·jjang·moa·crab.webp` | Codex 내장 이미지 도구(GPT 이미지) | 2026-11-12, `_scratch/npc-dialogue-plan-20261112/HANDOFF-5-16.md` 39행 「10~13: GPT 이미지 시트 4장, 캐릭터 8명 × 2프레임 분리」, Codex 세션 `rollout-2026-11-12T21-49-36-01a1cfce…`의 `image_gen.generation`(「dialogue portrait spritesheet」, 「NPC portrait sprite pair for Moa, a cheerful young Korean river otter」), 커밋 `99ba142` | ChatGPT 유료 요금제(사용자 확인) | 위 문서·세션 기록 | 확인됨 |
 | 파비콘 `favicon.svg` | 코드로 그린 SVG(지구 모양 도형 3개) | 저장소 파일 | 자체 제작 | `public/favicon.svg` | 확인됨 |
 | 육지 경계 `land.geojson` | Natural Earth 1:110m | — | Public Domain | CREDITS 「교육 내용·지리 출처」 | 확인됨 |
 
@@ -30,8 +30,8 @@
 
 | 파일(묶음) | 만든 곳 | 만든 날·기록 위치 | 이용 조건 | 근거 파일 | 상태 |
 |---|---|---|---|---|---|
-| 개념 영상 5편 `concepts/chapter-1~5.mp4·webm·webp` | HyperFrames 자체 도해(효과음 포함) | 2026-11-09, 소스 `films/earth-sea-concepts/`, 자막 `src/concept-data.js` | 자체 제작(안에 쓴 효과음은 아래 CC0 묶음과 같은지 기록 없음) | CREDITS 「이번 개선의 추가 에셋」 | 확인됨(효과음 출처는 근거 약함) |
-| 지도 피날레 영상 `map-encounters/map-finale.mp4` | 기록 없음 | 2026-11-14, 커밋 `8515107`·`6630e36` | 모름 | 없음 | **출처 미확인** |
+| 개념 영상 5편 `concepts/chapter-1~5.mp4·webm·webp` | HyperFrames 자체 도해(효과음 포함) | 2026-11-09, 소스 `films/earth-sea-concepts/`, 자막 `src/concept-data.js` | 자체 제작. 안의 효과음 5종(drop·heat·camera·scan·success)은 Kenney CC0(`films/earth-sea-concepts/SPEC.md` 17행) | CREDITS 「이번 개선의 추가 에셋」, `films/earth-sea-concepts/SPEC.md` | 확인됨 |
+| 지도 피날레 영상 `map-encounters/map-finale.mp4` | Gemini 영상 생성 — 사용자 확인(2026-11-21 「영상은 제미나이」) | 2026-11-14, 커밋 `8515107`·`6630e36` | Gemini 유료 요금제(사용자 확인 「다 유료 요금제」) | 이 장부 | 확인됨(사용자 확인) |
 
 ## 음악·효과음·목소리
 
@@ -48,18 +48,19 @@
 | 파일(묶음) | 만든 곳 | 기록 위치 | 이용 조건 | 근거 파일 | 상태 |
 |---|---|---|---|---|---|
 | 나눔스퀘어 네오 3종 `fonts/NanumSquareNeoTTF-*.woff2` | 네이버 공식 배포 원본 | `public/assets/fonts/SOURCE.md` | SIL OFL 1.1(전문 동봉) | 같은 폴더 `NanumSquareNeo-OFL.txt` | 확인됨 |
-| 제목 글꼴 3종 `fonts/title-400·700·800.woff2`(「Blue Planet Title」) | 기록 없음(커밋 `f431628`에서 추가) | 없음. `_shared/OBSIDIAN-RULES-AUDIT-PROPOSAL-20261117.md` 162행에도 「출처 문서에 이름이 없다」 | 모름 | 없음 | **출처 미확인** |
+| 제목 글꼴 3종 `fonts/title-400·700·800.woff2`(「Blue Planet Title」) | 나눔스퀘어 네오 Regular·Bold·ExtraBold를 fontTools로 제목 글자만 남겨 줄이고 이름을 바꾼 파생 글꼴 | 2026-11-13~14, Codex 세션 `rollout-2026-11-13T21-43-10-01a1d4ee…`의 `subset.Subsetter` 스크립트(`NanumSquareNeoTTF-*.woff2` → 이름표 바꿔 저장), 커밋 `f431628` | SIL OFL 1.1(원본과 같음, 이름을 바꾼 파생본) | 세션 기록, `fonts/NanumSquareNeo-OFL.txt` | 확인됨 |
 | Three.js·Vite | 패키지 | `THIRD-PARTY-NOTICES.txt` | MIT | 같은 파일 | 확인됨 |
 
 ## 요약
 
-- 출처 미확인 **4줄**: 시작 화면 제목 그림 2장, 대화창 초상 4장, 지도 피날레 영상 1편, 제목 글꼴 3종.
-- 근거 약함 3줄: 기존 제공 배경 8장(생성 계정·이용권 증빙), 지도 전투 그림 3장(도구 이름), 개념 영상 안의 효과음 출처.
+- 출처 미확인 **0줄**(2026-11-21 1차 조사 때 4줄 → Codex 세션 기록과 사용자 확인으로 모두 찾음).
+  - 시작 화면 제목 그림·로고: 기존 그림을 줄인 파일(세션 변환 스크립트).
+  - 대화창 초상 4장: GPT 이미지 시트(인계 문서·세션 `image_gen` 기록).
+  - 지도 피날레 영상: Gemini(사용자 확인).
+  - 제목 글꼴: 나눔스퀘어 네오 파생(세션 fontTools 스크립트).
+- 사용자 확인으로 채운 줄: 기존 배경 8장(Codex, 로그는 이 맥 기록보다 앞), 지도 피날레 영상(Gemini), 모든 생성 도구 유료 요금제(2026-11-21 「다 유료 요금제고」).
+- 근거 약함 0줄(개념 영상 효과음은 `films/earth-sea-concepts/SPEC.md` 17행에 Kenney CC0로 적혀 있음).
 
-## 사용자가 줘야 하는 자료
+## 사용자가 줘야 하는 자료 (있으면 좋은 것)
 
-1. 기존 제공 배경 8장(`home`·`terrace`·`ending`·`tide`·`observatory`·`mudflat`·`coast`·`lab`)을 만든 계정·도구와 이용 조건(업체에서 받았다면 받은 메일·계약).
-2. 시작 화면 제목 그림·제목 로고(`home-deck-title.webp`·`logo-title.webp`), 대화창 초상 4장, 지도 피날레 영상을 만든 도구와 날짜(기억나는 도구 이름만이라도). 없으면 3-3단계에서 새로 만들어 바꾼다.
-3. 제목 글꼴 「Blue Planet Title」의 원래 글꼴 이름(어느 글꼴을 줄여 만든 것인지).
-4. 생성 도구 요금제 화면: ChatGPT(내장 image_gen·Codex 이미지), Canva, Suno Premier, ElevenLabs 유료 요금제의 상업 이용 조건 캡처.
-5. 지도 전투 그림을 그린 도구 이름(2026-11-14 「다시 그리기」 작업).
+1. 요금제 화면 캡처(ChatGPT·Gemini·Canva·Suno·ElevenLabs): 업체에 넘길 때 증빙으로 붙이면 좋다. 사용자 확인으로 장부는 채웠다.

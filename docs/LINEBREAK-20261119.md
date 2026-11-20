@@ -78,3 +78,4 @@
 - 허용: 「구멍 난 / 바위」(사진 꾸미기 좁은 사진 버튼·지도 핀 이름, 뜻 단위로 이미 고르게 나뉨 61%).
 - 캔버스 글: `fillText`는 3D 탐사길 안내판 텍스처뿐이다(「물때 안내판」 제목 한 줄, 「06:00」 같은 시각 숫자). 줄을 자르거나 `\n`으로 끊는 곳 없음 — 확인함, 문제없음. 지구본·지도 캔버스에는 글이 없다(지도 이름표는 DOM).
 - 못 연 화면: 없음. 단 카드·안내 문구는 실제로 걸어 가며 띄운 게 아니라, 연 탐사길 창의 같은 요소에 코드의 문구·마크업을 그대로 넣어 쟀다(안내판 카드의 막대그래프는 빼고).
+- 검증·배포: `npm test` 102개, 빌드 통과, `npm run check:layout`(`lbk-browser-1`, 9개 크기) 270검사 실패 0과 자동 진행 흐름 통과. 커밋 `e7b5c97` → `run-lock.sh lbk-deploy-1 … deploy.sh 10`(cfg/10.json), Version ID `4ec47b95-c959-4eaf-bc43-c2ed42ebd3e9`, `index.html`·`assets/index-DhcRn6eJ.css`(새 balance 규칙 포함)·`assets/index-BcT-LWE-.js` MATCH, 개념 영상 Range 206 유지.

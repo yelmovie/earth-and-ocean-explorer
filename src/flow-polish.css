@@ -336,3 +336,20 @@
   #app #main .learning .sample-token:has(> span:not(:empty)) > :is(b, span) { display: inline; }
   #app #main .learning .sample-token:has(> span:not(:empty)) > span { margin-left: .35em; white-space: nowrap; }
 }
+
+/* 2026-11-21 대비(C9): 같은 색 계열에서 밝기만 낮춘다. 크기·배치·문구는 그대로.
+   3장 아직 안 찍은 사진 칸 3.85 → 4.5 이상, 보고서·증거 연결 머리글(그림 배경) 중앙값 2.9~3.6 → 4.5 이상,
+   2장 비커 눈금 4.36, 「더 알아보기」 4.06. */
+#app .activity[data-chapter="3"] .photo-slots span:not(.filled) { color: #4f6157; }
+#app :is(.report-page, .link-page) .page-heading :is(.eyebrow, p:not(.eyebrow)) { color: var(--ink); }
+#app .activity[data-chapter="2"] .beaker-scale { color: #1b4050; }
+#app #main .learning .field-note { color: #065958; }
+/* 잠긴 단계 탭(C13): 흐린 색만이 아니라 자물쇠로도 알린다. */
+#app .step-tabs .tab-lock { width: 18px; height: 18px; margin: -4px 4px -4px 0; vertical-align: middle; }
+/* 낮은 화면(폰 가로)은 탭 폭이 늘면 머리글이 한 줄 늘어 활동 칸이 줄어든다: 자물쇠를 탭 모서리 배지로 띄운다. */
+@media (max-height: 620px) {
+  #app .step-tabs button:has(.tab-lock) { position: relative; }
+  #app .step-tabs .tab-lock { position: absolute; top: -6px; right: -2px; width: 16px; height: 16px; margin: 0; padding: 2px; border-radius: 50%; background: #fffdf6; box-shadow: 0 0 0 1px #8aa3a3; }
+}
+/* 인증서 인쇄물에 화면용 「더 알아보기」가 찍히지 않게. */
+@media print { #app .certificate-page > .field-note { display: none !important; } }

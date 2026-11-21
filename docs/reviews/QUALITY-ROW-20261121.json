@@ -1,18 +1,18 @@
 {
  "no": "10",
  "name": "푸른행성 조사본부",
- "appCommit": "633b01e",
- "measuredAt": "2026-11-21T07:30+09:00",
+ "appCommit": "dc6afdb",
+ "measuredAt": "2026-11-21T10:10+09:00",
  "score": {
-  "total": 93,
-  "noDevice": 96,
+  "total": 96,
+  "noDevice": 99,
   "items": {
    "learning": 10,
-   "fun": 8,
+   "fun": 9,
    "function": 10,
    "code": 10,
-   "design": 8,
-   "a11y": 9,
+   "design": 9,
+   "a11y": 10,
    "perf": 9,
    "firstScreen": 10,
    "data": 10,
@@ -68,5 +68,5 @@
   "backButtonStaysInApp": true,
   "certificatePrintsOnePage": true
  },
- "notes": "구역 5곳마다 관찰·비교(활동 10개)·확장 도전·적용 4단계, 확장 문제 20개와 증거 연결 5상황. wrongAnswerLevels 2: 틀리면 문제 종류별 공통 안내와 문제별 단서·다시 고르기(틀린 이유를 보기마다 따로 말하지는 않음). rewardEffects: 정답 핵심 개념 상자, 장 배지, 성취 카드 공개, 수집 완성 징글, 엔딩·인증서. transitionEffects: 개념 영상, 정답 뒤 자동 넘김, 장소 열림 반짝, 지도 피날레 영상. autoRunSeconds는 tests/release-browser.mjs 자동 완주(운영, 20문제·인쇄 포함). 놀이 영역·글자·그림 수는 1280×800 1장 관찰·2장 관찰·3장 확장 도전의 가운데 값. firstScreenKB는 11-20 운영 실측 첫 전송 1.04MB. voiceLines는 앱이 재생하는 ElevenLabs 대사 파일 수(옛 Qwen 파일 39개 제외). 실기기(태블릿 터치·저사양 프레임·iPad 인쇄)는 재지 않음. 권리 장부 출처 미확인 0줄(Codex 세션 기록·사용자 확인)."
+ "notes": "구역 5곳마다 관찰·비교(활동 10개)·확장 도전·적용 4단계, 확장 문제 20개와 증거 연결 5상황. wrongAnswerLevels 2: 틀리면 문제 종류별 공통 안내와 문제별 단서·다시 고르기(틀린 이유를 보기마다 따로 말하지는 않음). rewardEffects: 정답 핵심 개념 상자, 장 배지, 성취 카드 공개, 수집 완성 징글, 엔딩·인증서. transitionEffects: 개념 영상, 정답 뒤 자동 넘김, 장소 열림 반짝, 지도 피날레 영상. autoRunSeconds는 tests/release-browser.mjs 자동 완주(운영, 20문제·인쇄 포함). 놀이 영역·글자·그림 수는 1280×800 1장 관찰·2장 관찰·3장 확장 도전의 가운데 값. firstScreenKB는 11-20 운영 실측 첫 전송 1.04MB. voiceLines는 앱이 재생하는 ElevenLabs 대사 파일 수(옛 Qwen 파일 39개 제외). 실기기(태블릿 터치·저사양 프레임·iPad 인쇄)는 재지 않음. 권리 장부 출처 미확인 0줄(Codex 세션 기록·사용자 확인). 3-2a: 선택지 섞기·첫 시도 정답 기록(f4f32dc), 폰 가로 주 버튼 고정·14px 하한(dc6afdb)."
 }

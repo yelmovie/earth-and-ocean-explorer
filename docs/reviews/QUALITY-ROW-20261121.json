@@ -1,17 +1,17 @@
 {
  "no": "10",
  "name": "푸른행성 조사본부",
- "appCommit": "dc6afdb",
- "measuredAt": "2026-11-21T10:10+09:00",
+ "appCommit": "9c3b9ab",
+ "measuredAt": "2026-11-21T19:10+09:00",
  "score": {
-  "total": 96,
-  "noDevice": 99,
+  "total": 97,
+  "noDevice": 100,
   "items": {
    "learning": 10,
    "fun": 9,
    "function": 10,
    "code": 10,
-   "design": 9,
+   "design": 10,
    "a11y": 10,
    "perf": 9,
    "firstScreen": 10,

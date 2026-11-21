@@ -353,3 +353,18 @@
 }
 /* 인증서 인쇄물에 화면용 「더 알아보기」가 찍히지 않게. */
 @media print { #app .certificate-page > .field-note { display: none !important; } }
+
+/* 2026-11-21 폰 가로·낮은 화면(높이 620px 이하).
+   C6: 보고서·증거 연결·엔딩·인증서는 내용이 화면보다 길어 주 버튼이 스크롤 아래에 있었다. 주 버튼 줄을 화면 아래에 붙여
+   스크롤하지 않아도 보이게 하고, 내용은 그 위로 스크롤된다.
+   C20: 체크리스트 기준(1024 폭 이하 하한 14px)에 못 미치던 12~13px 글자 6군데를 14px로. */
+@media (max-height: 620px) and (min-width: 700px) {
+  #app :is(.report-page .report-bottom, .link-page .link-actions, .certificate-page .certificate-actions) {
+    position: sticky; bottom: 0; z-index: 4;
+    padding-block: 8px; border-radius: 14px;
+    background: #fffdf5; box-shadow: 0 -6px 16px rgb(18 63 75 / 12%);
+  }
+  /* 엔딩 화면은 반짝이 장식 때문에 넘침을 잘라 sticky가 듣지 않아 화면 아래에 고정한다. */
+  #app .ending-page > [data-action="go"][data-value="certificate"] { position: fixed; bottom: max(10px, env(safe-area-inset-bottom)); left: 0; right: 0; width: max-content; margin-inline: auto; z-index: 6; box-shadow: 0 6px 18px rgb(18 63 75 / 28%); }
+  #app :is(.title-progress, .title-progress b, .link-page .link-status, .report-page .evidence-art b, .ending-page > .eyebrow, .certificate-frame > .eyebrow, .certificate-seal small) { font-size: 14px; }
+}

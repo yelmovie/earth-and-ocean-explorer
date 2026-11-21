@@ -349,7 +349,7 @@
 /* 낮은 화면(폰 가로)은 탭 폭이 늘면 머리글이 한 줄 늘어 활동 칸이 줄어든다: 자물쇠를 탭 모서리 배지로 띄운다. */
 @media (max-height: 620px) {
   #app .step-tabs button:has(.tab-lock) { position: relative; }
-  #app .step-tabs .tab-lock { position: absolute; top: -6px; right: -2px; width: 16px; height: 16px; margin: 0; padding: 2px; border-radius: 50%; background: #fffdf6; box-shadow: 0 0 0 1px #8aa3a3; }
+  #app .step-tabs .tab-lock { position: absolute; top: -6px; right: -2px; width: 16px; height: 16px; margin: 0; padding: 2px; border-radius: 50%; background: var(--paper-warm); box-shadow: 0 0 0 1px #8aa3a3; }
 }
 /* 인증서 인쇄물에 화면용 「더 알아보기」가 찍히지 않게. */
 @media print { #app .certificate-page > .field-note { display: none !important; } }
@@ -362,7 +362,7 @@
   #app :is(.report-page .report-bottom, .link-page .link-actions, .certificate-page .certificate-actions) {
     position: sticky; bottom: 0; z-index: 4;
     padding-block: 8px; border-radius: 14px;
-    background: #fffdf5; box-shadow: 0 -6px 16px rgb(18 63 75 / 12%);
+    background: var(--paper); box-shadow: 0 -6px 16px rgb(18 63 75 / 12%);
   }
   /* 엔딩 화면은 반짝이 장식 때문에 넘침을 잘라 sticky가 듣지 않아 화면 아래에 고정한다. */
   #app .ending-page > [data-action="go"][data-value="certificate"] { position: fixed; bottom: max(10px, env(safe-area-inset-bottom)); left: 0; right: 0; width: max-content; margin-inline: auto; z-index: 6; box-shadow: 0 6px 18px rgb(18 63 75 / 28%); }

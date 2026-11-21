@@ -20,6 +20,24 @@
   --line: #c7d8ce;
   --gold: #f3c98d;
   --apricot: #f8e0bc;
+  /* 여러 파일에 같은 값으로 4번 넘게 직접 적혀 있던 색(2026-11-21 3-4단계). 값은 그대로 옮겼다. */
+  --white: #fff;
+  --black: #000;
+  --clear: #0000;
+  --white-70: #ffffffb3;
+  --white-40: #fff6;
+  --white-33: #ffffff55;
+  --black-27: #0004;
+  --black-33: #0005;
+  --ink-33: #173f4b55;
+  --paper-warm: #fffdf6;
+  --star-gold: #f5c451;
+  --star-gold-deep: #b7832a;
+  --sun-cream: #ffeaa6;
+  --sage: #79a98d;
+  --line-soft: #bdcec1;
+  --sand: #e6d8b2;
+  --mint-pale: #e6f3ec;
   --color-background: #f2f3e9;
   --color-primary: var(--teal);
   --color-primary-hover: #075957;

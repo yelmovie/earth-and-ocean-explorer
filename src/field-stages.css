@@ -23,14 +23,14 @@
   border: 0;
   border-radius: 0;
   background:
-    linear-gradient(#ffffffb3, #ffffffb3) left top / 28px 2px,
-    linear-gradient(#ffffffb3, #ffffffb3) left top / 2px 28px,
-    linear-gradient(#ffffffb3, #ffffffb3) right top / 28px 2px,
-    linear-gradient(#ffffffb3, #ffffffb3) right top / 2px 28px,
-    linear-gradient(#ffffffb3, #ffffffb3) left bottom / 28px 2px,
-    linear-gradient(#ffffffb3, #ffffffb3) left bottom / 2px 28px,
-    linear-gradient(#ffffffb3, #ffffffb3) right bottom / 28px 2px,
-    linear-gradient(#ffffffb3, #ffffffb3) right bottom / 2px 28px;
+    linear-gradient(var(--white-70), var(--white-70)) left top / 28px 2px,
+    linear-gradient(var(--white-70), var(--white-70)) left top / 2px 28px,
+    linear-gradient(var(--white-70), var(--white-70)) right top / 28px 2px,
+    linear-gradient(var(--white-70), var(--white-70)) right top / 2px 28px,
+    linear-gradient(var(--white-70), var(--white-70)) left bottom / 28px 2px,
+    linear-gradient(var(--white-70), var(--white-70)) left bottom / 2px 28px,
+    linear-gradient(var(--white-70), var(--white-70)) right bottom / 28px 2px,
+    linear-gradient(var(--white-70), var(--white-70)) right bottom / 2px 28px;
   background-repeat: no-repeat;
 }
 #app .activity[data-chapter="3"] .camera-viewfinder::after {
@@ -43,7 +43,7 @@
   min-width: 54px;
   min-height: 54px;
   background: #123e4de8;
-  border: 3px solid #fffdf5;
+  border: 3px solid var(--paper);
   box-shadow: 0 0 0 5px #ffffff4d, 0 3px 8px #062f4555;
   line-height: 1;
 }
@@ -61,7 +61,7 @@
   top: 12px;
   left: 12px;
   padding: 8px 12px;
-  color: #fffdf5;
+  color: var(--paper);
   background: #103e4ef2;
   border: 1px solid #ffffff70;
   border-radius: 10px;
@@ -73,7 +73,7 @@
   padding: 10px 16px;
   margin-top: 12px;
   border: 2px solid #b5cec3;
-  background: #fffdf5;
+  background: var(--paper);
 }
 #app .activity[data-chapter="3"] .coast-observation > .pan-control label {
   display: grid;
@@ -115,7 +115,7 @@
   padding: 10px 10px 16px;
   border: 2px solid #c4d7cb;
   box-shadow: 0 4px 0 #c4d7cb60;
-  background: #fffdf5;
+  background: var(--paper);
 }
 #app .activity[data-chapter="3"] .photo-image {
   aspect-ratio: 16 / 10;
@@ -156,8 +156,8 @@
   display: grid;
   place-items: center;
   font-size: 19px;
-  border: 3px solid #fffdf5;
-  box-shadow: 0 0 0 3px #173f4b99, 0 3px 8px #173f4b55;
+  border: 3px solid var(--paper);
+  box-shadow: 0 0 0 3px #173f4b99, 0 3px 8px var(--ink-33);
 }
 
 /* A/B labels have a separate header, so neither can cover a reference object. */
@@ -204,7 +204,7 @@
   float: none;
   padding: 0 8px;
   border-radius: 6px;
-  background: #fffdf5;
+  background: var(--paper);
   color: #075c60;
   font-variant-numeric: tabular-nums;
 }
@@ -250,7 +250,7 @@
   min-width: 0;
   min-height: 48px;
   padding: 10px 12px;
-  background: #fffdf5;
+  background: var(--paper);
   line-height: 1.4;
   white-space: normal;
 }
@@ -275,7 +275,7 @@
 #app .activity[data-chapter="4"] .wipe-line {
   top: var(--compare-header);
   width: 4px;
-  background: #fffdf5;
+  background: var(--paper);
   box-shadow: 0 0 0 1px #103e4e;
 }
 #app .activity[data-chapter="4"] .wipe-label {
@@ -283,7 +283,7 @@
   max-width: calc(50% - 16px);
   padding: 6px 10px;
   border: 1px solid #b4d2c9;
-  background: #fffdf5;
+  background: var(--paper);
   color: #1a5b55;
   line-height: 1.35;
   font-size: var(--label-size);
@@ -342,7 +342,7 @@
   height: 54px;
   border: 3px solid #fff4d8;
   background: #234d48e8;
-  box-shadow: 0 0 0 5px #fffdf555, 0 3px 8px #173f4b55;
+  box-shadow: 0 0 0 5px #fffdf555, 0 3px 8px var(--ink-33);
   font-size: 30px;
   line-height: 1;
 }
@@ -383,13 +383,13 @@
 #app .activity[data-chapter="5"] .trace.found > span {
   background: #267355;
   border-color: #d5efbd;
-  color: #fffdf5; /* 2026-11-09: 찾은 흔적 체크 표시 대비 1.4 → 6:1 */
+  color: var(--paper); /* 2026-11-09: 찾은 흔적 체크 표시 대비 1.4 → 6:1 */
 }
 #app .activity[data-chapter="5"] .trace.selected > span {
   background: #f3ce84;
   color: #193f43;
-  border-color: #fffdf5;
-  box-shadow: 0 0 0 5px #f3ce8480, 0 3px 8px #173f4b55;
+  border-color: var(--paper);
+  box-shadow: 0 0 0 5px #f3ce8480, 0 3px 8px var(--ink-33);
 }
 #app .activity[data-chapter="5"] .survey-lens {
   z-index: 2;

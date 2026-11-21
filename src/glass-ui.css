@@ -11,14 +11,14 @@ body dialog::backdrop{background:var(--scrim)}
  :is(#app,body) :is(.topbar,.arrival,.moa-bubble),#app #main .learning .mission-footer,body dialog{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
- :root{--glass-face:#fffdf5;--glass-read:#fffdf5}
- :is(#app,body) .topbar{background:#fffdf5}
+ :root{--glass-face:var(--paper);--glass-read:var(--paper)}
+ :is(#app,body) .topbar{background:var(--paper)}
 }
 /* Keep action states and focus unambiguous over all backgrounds. */
 :is(#app,body) button:is(.primary,.active,.selected,[aria-pressed=true]){border-color:rgba(12,94,94,.6)}
 :is(#app,body) :is(.modal-footer,.modal-actions,.companion-tools){gap:10px}
-@media(prefers-reduced-transparency:reduce){:root{--glass-face:#fffdf5;--glass-read:#fffdf5}:is(#app,body) .topbar{background:#fffdf5}}
-@media print{body dialog,:is(#app,body) :is(.work-panel,.challenge-card,.evidence-card,.link-board){background:#fff!important;backdrop-filter:none!important;box-shadow:none!important}}
+@media(prefers-reduced-transparency:reduce){:root{--glass-face:var(--paper);--glass-read:var(--paper)}:is(#app,body) .topbar{background:var(--paper)}}
+@media print{body dialog,:is(#app,body) :is(.work-panel,.challenge-card,.evidence-card,.link-board){background:var(--white)!important;backdrop-filter:none!important;box-shadow:none!important}}
 /* Compact rows retain 48px targets, allocating space to reading rather than chrome. */
 @media(max-height:620px) and (min-width:700px){
  #app #main .learning .challenge-layout{grid-template-columns:minmax(0,.6fr) minmax(0,1.7fr)}
@@ -151,7 +151,7 @@ body dialog::backdrop{background:var(--scrim)}
 #app .hub-page .hub-dpad button:is(:active,.is-held,.held,[data-map-held]) {
   transform: translateY(2px);
   background: #245b46;
-  color: #fff;
+  color: var(--white);
   border-color: #143f30;
   box-shadow: inset 0 2px 4px #15382a80;
   filter: none;
@@ -204,10 +204,10 @@ body dialog::backdrop{background:var(--scrim)}
 #app .hub-page .hub-view-tools .icon-button {
   display: grid; place-items: center; width: var(--map-key); min-width: var(--map-key);
   height: var(--map-key); min-height: var(--map-key); padding: 0;
-  border: 2px solid #e6d8b2; background: #fff6dc; color: #233e33;
+  border: 2px solid var(--sand); background: #fff6dc; color: #233e33;
   box-shadow: 0 3px 0 #3f4b39, 0 5px 12px #172a2340;
 }
-#app .hub-page .hub-view-tools .icon-button[aria-pressed="true"] { background: #245b46; border-color: #143f30; color: #fff; }
+#app .hub-page .hub-view-tools .icon-button[aria-pressed="true"] { background: #245b46; border-color: #143f30; color: var(--white); }
 @media (max-width: 640px) {
   #app .hub-page .hub-next-stack {
     max-width: calc(100% - var(--map-left) - var(--map-right) - var(--map-pad-width) - 12px);
@@ -218,8 +218,8 @@ body dialog::backdrop{background:var(--scrim)}
 #app .hub-page [data-hub-direction="down"] > svg { rotate: 90deg; }
 /* 2026-11-19 저사양 대체: 늘 떠 있는 넓은 면(위 띠·안내 말풍선·미션 아래 띠·창·제목 카드)의 흐림을 끄고,
    흐림 미지원 브라우저용으로 이미 정한 불투명 면을 쓴다. 투명도 줄이기 설정에서도 같다. 첫 화면 제목 알약은 작고 움직이지 않아 그대로 둔다. */
-:root.lite-glass{--glass-face:#fffdf5;--glass-read:#fffdf5}
-:where(.lite-glass) :is(#app,body) .topbar{background:#fffdf5}
+:root.lite-glass{--glass-face:var(--paper);--glass-read:var(--paper)}
+:where(.lite-glass) :is(#app,body) .topbar{background:var(--paper)}
 :root.lite-glass #app #main .learning .page-heading>div:first-child{background:#fafcf8}
 :where(.lite-glass) :is(:is(#app,body) :is(.topbar,.arrival,.moa-bubble),#app #main .learning .mission-footer,#app #main .learning .page-heading>div:first-child,body dialog){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 @media(prefers-reduced-transparency:reduce){:is(:is(#app,body) :is(.topbar,.arrival,.moa-bubble),#app #main .learning .mission-footer,#app #main .learning .page-heading>div:first-child,body dialog){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}

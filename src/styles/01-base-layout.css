@@ -101,7 +101,7 @@ button svg {
 .primary {
   background: var(--teal);
   border-color: var(--teal);
-  color: #fffdf6;
+  color: var(--paper-warm);
   box-shadow: var(--shadow-small);
   padding: 14px 24px;
   white-space: normal;
@@ -132,7 +132,7 @@ button svg {
 }
 
 .active,.selected {
-  background: #e6f3ec;
+  background: var(--mint-pale);
   border-color: var(--teal);
   box-shadow: inset 0 0 0 1px var(--teal);
 }
@@ -362,7 +362,7 @@ button svg {
 }
 
 .home-actions .secondary {
-  background: #fffdf6;
+  background: var(--paper-warm);
 }
 
 .save-caption {
@@ -572,7 +572,7 @@ button svg {
   text-align: left;
   min-height: 70px;
   padding: 12px 15px;
-  background: #fffdf6;
+  background: var(--paper-warm);
   box-shadow: 0 3px 0 #dce6d8;
 }
 
@@ -610,7 +610,7 @@ button svg {
 
 .location.done .location-no {
   background: #447e6b;
-  color: #fff;
+  color: var(--white);
 }
 
 .final-location {
@@ -647,7 +647,7 @@ button svg {
   gap: 12px;
   padding: 10px 20px 10px 0;
   margin-top: 24px;
-  border-top: 1px solid #bdcec1;
+  border-top: 1px solid var(--line-soft);
 }
 
 .guide-strip .character {
@@ -681,12 +681,12 @@ button svg {
 
 .step-tabs button {
   font-size: 16px;
-  background: #fffdf6;
+  background: var(--paper-warm);
   padding: 11px 16px;
 }
 
 .step-tabs button.active {
-  background: #e6f3ec;
+  background: var(--mint-pale);
   border-color: var(--teal);
   color: var(--teal);
 }

@@ -169,7 +169,7 @@
   gap: 10px;
   min-width: 0;
   padding-bottom: 10px;
-  border-bottom: 1px solid #bdcec1;
+  border-bottom: 1px solid var(--line-soft);
   color: #315c5c;
   line-height: 1.45;
 }
@@ -186,7 +186,7 @@
   gap: clamp(12px, 2vw, 30px);
   padding: 8px 0 10px !important;
   margin: 8px 0;
-  border-bottom: 2px solid #bdcec1;
+  border-bottom: 2px solid var(--line-soft);
   align-items: start;
 }
 
@@ -309,7 +309,7 @@
   text-align: center;
   border: 1px solid #b4cbc6;
   border-radius: 8px;
-  background: #fffdf5;
+  background: var(--paper);
   color: var(--ink);
   font-size: var(--label-size);
   line-height: 1.45;

@@ -34,7 +34,7 @@
 .evidence-card {
   border: 1px solid #d0dccb;
   border-radius: 17px;
-  background: #fffdf5;
+  background: var(--paper);
   box-shadow: var(--shadow);
   overflow: hidden;
   display: flex;

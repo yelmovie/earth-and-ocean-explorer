@@ -81,7 +81,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px;
-  background: #fffdf5;
+  background: var(--paper);
   border: 2px solid #447d81;
   box-shadow: 0 4px 8px #103e4e24;
 }
@@ -132,7 +132,7 @@
 .ocean-tide figcaption { text-align: center; margin-top: 4px; }
 .ocean-tide p { margin: 8px 0 0; }
 .ocean-tide-scene { height: 80px; position: relative; overflow: hidden; border: 1px solid #6d969a; border-radius: 8px; background: #dceef0; }
-.ocean-tide-pole { position: absolute; bottom: 0; left: 45%; width: 12px; height: 72px; background: repeating-linear-gradient(to top,#725d46 0 12px,#fffdf5 12px 16px); border: 1px solid #725d46; }
+.ocean-tide-pole { position: absolute; bottom: 0; left: 45%; width: 12px; height: 72px; background: repeating-linear-gradient(to top,#725d46 0 12px,var(--paper) 12px 16px); border: 1px solid #725d46; }
 .ocean-tide-water { position: absolute; bottom: 0; left: 0; right: 0; height: 20px; background: #2181a1b8; border-top: 3px solid white; }
 .ocean-tide-scene.later .ocean-tide-water { height: 52px; }
 @media (min-width:1600px) {

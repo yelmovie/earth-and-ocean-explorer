@@ -1,14 +1,14 @@
 /* 개념 영상 전체 화면 재생 (2026-11-18)
    자막은 영상 그림 안(아래쪽)에 들어 있다. 영상은 화면 전체(검은 바탕, contain),
    조작은 위쪽 막대에만 두고 재생 중에는 잠시 뒤 숨긴다. 영상 아래쪽은 DOM이 덮지 않는다. */
-:is(#app,body) dialog.settings-modal.concept-dialog:is(.concept-dialog,.reward-dialog){position:fixed;inset:0;width:100vw;width:100dvw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:#000;box-shadow:none;color:#fff;overflow:hidden;text-align:left}
+:is(#app,body) dialog.settings-modal.concept-dialog:is(.concept-dialog,.reward-dialog){position:fixed;inset:0;width:100vw;width:100dvw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:var(--black);box-shadow:none;color:var(--white);overflow:hidden;text-align:left}
 :is(#app,body) dialog.settings-modal.concept-dialog:is(.concept-dialog,.reward-dialog)[open]{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-rows:auto auto auto minmax(0,1fr);align-items:center}
-:is(#app,body) dialog.settings-modal.concept-dialog::backdrop{background:#000}
+:is(#app,body) dialog.settings-modal.concept-dialog::backdrop{background:var(--black)}
 :is(#app,body) .concept-dialog :is(.modal-head,.concept-body){display:contents}
 
 /* 영상: 모든 칸을 차지하는 맨 아래층 */
-:is(#app,body) .concept-dialog .concept-player{grid-area:1/1/-1/-1;align-self:stretch;justify-self:stretch;position:relative;z-index:0;min-height:0;background:#000}
-:is(#app,body) .concept-dialog .concept-player :is(video,.concept-poster){position:absolute;inset:0;width:100%;height:100%;max-height:none;aspect-ratio:auto;object-fit:contain;background:#000}
+:is(#app,body) .concept-dialog .concept-player{grid-area:1/1/-1/-1;align-self:stretch;justify-self:stretch;position:relative;z-index:0;min-height:0;background:var(--black)}
+:is(#app,body) .concept-dialog .concept-player :is(video,.concept-poster){position:absolute;inset:0;width:100%;height:100%;max-height:none;aspect-ratio:auto;object-fit:contain;background:var(--black)}
 :is(#app,body) .concept-dialog .concept-player [hidden]{display:none}
 :is(#app,body) .concept-dialog .concept-timeline{top:0;bottom:auto;height:5px;background:#ffffff30;z-index:2}
 /* 영상이 재생되면 아래 글 상자는 화면에서만 숨긴다(영상 속 자막과 겹치지 않게). 영상이 안 되면 그림 위에 그대로 보인다. */
@@ -16,10 +16,10 @@
 :is(#app,body) .concept-dialog .concept-caption{z-index:1;left:4%;right:4%;bottom:5%;font-size:clamp(20px,2.4vw,34px)}
 
 /* 위쪽 조작 막대: 제목 · 재생/처음부터 · 다음 · 닫기 */
-:is(#app,body) .concept-dialog::before{content:"";grid-area:1/1/2/-1;align-self:stretch;z-index:1;background:linear-gradient(#000000c8,#00000070 70%,#0000);pointer-events:none}
+:is(#app,body) .concept-dialog::before{content:"";grid-area:1/1/2/-1;align-self:stretch;z-index:1;background:linear-gradient(#000000c8,#00000070 70%,var(--clear));pointer-events:none}
 :is(#app,body) .concept-dialog .modal-head>div{grid-area:1/1;z-index:2;min-width:0;padding:8px 8px 8px 18px}
 :is(#app,body) .concept-dialog .modal-head .eyebrow{margin:0;color:#cfe8dc;font-size:15px;line-height:1.3}
-:is(#app,body) .concept-dialog .modal-head h2{margin:0;color:#fff;font-size:clamp(20px,2vw,28px);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#app,body) .concept-dialog .modal-head h2{margin:0;color:var(--white);font-size:clamp(20px,2vw,28px);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 :is(#app,body) .concept-dialog .concept-controls{grid-area:1/2;z-index:2;padding:8px 6px;gap:8px;background:none}
 :is(#app,body) .concept-dialog .concept-controls span{display:none}
 :is(#app,body) .concept-dialog .concept-controls button{min-height:46px;padding:6px 14px;font-size:17px}

@@ -45,7 +45,7 @@
 }
 
 .challenge-progress button.active {
-  background: #e6f3ec;
+  background: var(--mint-pale);
   border-color: var(--teal);
 }
 
@@ -128,7 +128,7 @@
 .challenge-option.selected,
 .challenge-item.selected {
   border-color: var(--teal);
-  background: #e6f3ec;
+  background: var(--mint-pale);
   box-shadow: inset 0 0 0 1px var(--teal);
 }
 

@@ -55,8 +55,8 @@
 .tide-walk .tw-guide { justify-self: center; display: grid; gap: 8px; max-width: 640px; padding: 10px 16px; text-align: center; }
 .tide-walk .tw-guide p { margin: 0; font-size: clamp(18px, 2.3vmin, 21px); font-weight: 700; line-height: 1.35; word-break: keep-all; }
 .tide-walk .tw-seen { display: flex; justify-content: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.tide-walk .tw-seen li { padding: 3px 12px; border: 2px solid var(--line); border-radius: 999px; font-size: 18px; font-weight: 700; color: var(--muted); background: #fff; }
-.tide-walk .tw-seen li.is-seen { border-color: #216343; color: #fff; background: #216343; }
+.tide-walk .tw-seen li { padding: 3px 12px; border: 2px solid var(--line); border-radius: 999px; font-size: 18px; font-weight: 700; color: var(--muted); background: var(--white); }
+.tide-walk .tw-seen li.is-seen { border-color: #216343; color: var(--white); background: #216343; }
 .tide-walk .tw-seen li.is-seen::before { content: '✓ '; }
 
 .tide-walk .tw-tools { display: flex; gap: 8px; align-items: center; }
@@ -101,7 +101,7 @@
 .tide-walk .tw-pad .tw-pad-left { grid-area: 2 / 1; }
 .tide-walk .tw-pad .tw-pad-right { grid-area: 2 / 3; }
 .tide-walk .tw-pad .tw-pad-down { grid-area: 3 / 2; }
-.tide-walk .tw-pad button.is-held { color: #fff; background: var(--teal); transform: translateY(3px); box-shadow: 0 2px 0 #103e4e66; }
+.tide-walk .tw-pad button.is-held { color: var(--white); background: var(--teal); transform: translateY(3px); box-shadow: 0 2px 0 #103e4e66; }
 .tide-walk .tw-action {
   position: absolute;
   right: var(--tw-edge);
@@ -183,10 +183,10 @@
   font-size: 19px;
   font-weight: 800;
   color: var(--teal);
-  background: #fff;
+  background: var(--white);
   cursor: pointer;
 }
-.tide-walk .tw-card button.primary { color: #fff; background: var(--teal); }
+.tide-walk .tw-card button.primary { color: var(--white); background: var(--teal); }
 .tide-walk .tw-card-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .tide-walk .tw-spot-card { top: auto; bottom: calc(var(--tw-edge) + 64px); transform: translateX(-50%); display: flex; gap: 16px; align-items: center; width: min(460px, calc(100vw - 32px)); cursor: pointer; }
 .tide-walk .tw-spot-card img { width: 112px; height: 112px; object-fit: contain; flex: none; }

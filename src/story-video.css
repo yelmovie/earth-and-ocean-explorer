@@ -1,15 +1,17 @@
-.story-video-dialog{width:min(1280px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:14px 16px 16px;border:2px solid #7fa798;border-radius:20px;background:#102629;color:#fff;box-shadow:0 22px 90px #103e5066;text-align:center;overflow:hidden}
-.story-video-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:10px}
-.story-video-dialog::backdrop{background:#06161ad9}
-.story-video-dialog h2{margin:0;font-size:24px;line-height:1.25}
-.story-video-dialog video{display:block;width:100%;max-height:calc(100dvh - 160px);aspect-ratio:16/9;object-fit:contain;border-radius:12px;background:#061012}
-.story-video-status{margin:0;font-size:18px}
-.story-video-actions{display:flex;justify-content:center}
-.story-video-actions button{min-height:48px;padding:8px 22px;font-size:18px}
-@media (max-height:620px){
-  .story-video-dialog{padding:8px 12px 10px;gap:6px}
-  .story-video-dialog[open]{gap:6px}
-  .story-video-dialog h2{font-size:18px}
-  .story-video-dialog video{max-height:calc(100dvh - 118px)}
-  .story-video-actions button{min-height:44px;padding:6px 18px}
+/* 인트로·파이널 영상: 전체 화면, 검은 바탕, contain(자막이 영상 안에 있어서 잘리면 안 된다). 아래 22%는 자막 자리라 비워 둔다. */
+.story-video-dialog{position:fixed;inset:0;width:100dvw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#000;color:#fff;overflow:hidden}
+.story-video-dialog[open]{display:block}
+.story-video-dialog::backdrop{background:#000}
+.story-video-dialog video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
+.story-video-skip{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));min-width:48px;min-height:48px;padding:8px 20px;border:2px solid #ffffffb3;border-radius:999px;background:#0c3340cc;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
+.story-video-skip:hover{background:#086c6bee}
+.story-video-skip:focus-visible{outline:3px solid #ffd35c;outline-offset:3px}
+.story-video-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:72px max(24px,8vw) 32px;background:#0c3340;overflow:auto;font-size:20px;line-height:1.5}
+.story-video-fallback[hidden]{display:none}
+.story-video-fallback p{margin:0}
+.story-video-fallback b{color:#ffd35c}
+.story-video-status{font-size:18px;color:#b8decb}
+/* 낮은 화면(폰 가로)에서는 인증서 버튼이 화면 아래 가운데에 붙으므로, 다시 보기 버튼은 아래 왼쪽에 붙인다. */
+@media (max-height:620px) and (min-width:700px){
+  #app .ending-page > .ending-replay{position:fixed;bottom:max(10px,env(safe-area-inset-bottom));left:max(12px,env(safe-area-inset-left));z-index:6;box-shadow:0 6px 18px rgb(18 63 75 / 22%)}
 }

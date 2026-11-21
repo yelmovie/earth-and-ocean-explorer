@@ -44,8 +44,6 @@ export function normalize(raw) {
   base.settings.voiceEnabled = typeof raw.settings?.voiceEnabled==='boolean'?raw.settings.voiceEnabled:base.settings.sfxEnabled;
   if (Number.isFinite(raw.settings?.sfxVolume)) base.settings.sfxVolume = Math.max(0, Math.min(1, raw.settings.sfxVolume));
   base.research = normalizeResearch(raw.research);
-  // 인트로·파이널 영상을 이미 봤는지(2026-11-21). 처음 한 번만 저절로 열린다.
-  for (const key of ['intro', 'finale']) base.storyVideos[key] = raw.storyVideos?.[key] === true;
   base.expeditions=normalizeExpeditions(raw.expeditions);
   if (Number.isFinite(raw.settings?.volume)) base.settings.volume = Math.max(0, Math.min(1, raw.settings.volume));
   for(let n=1;n<=5;n++)base.drafts[n]=sanitizedDraft(n,raw.drafts?.[n]);
@@ -68,6 +66,10 @@ export function normalize(raw) {
   base.history = Array.isArray(raw.history) ? raw.history.filter(r => routes.includes(r)).slice(-40) : [];
   base.revised = Number.isInteger(raw.revised) ? Math.max(0, raw.revised) : 0;
   if (Number.isFinite(raw.mapPosition?.x) && Number.isFinite(raw.mapPosition?.y)) base.mapPosition = { x: raw.mapPosition.x, y: raw.mapPosition.y };
+  // 인트로·파이널 영상을 이미 봤는지(2026-11-21). 처음 한 번만 저절로 열린다.
+  // 이 기록이 없는 옛 저장은 이미 탐사를 시작했으면 인트로를, 다섯 기록을 다 연결했으면 파이널을 본 것으로 둔다(이어 하기에서 영상이 끼어들지 않게).
+  if (object(raw.storyVideos)) for (const key of ['intro', 'finale']) base.storyVideos[key] = raw.storyVideos[key] === true;
+  else base.storyVideos = { intro: base.completed.length > 0 || aReady(base, 1) || base.drafts[1].samples.length > 0, finale: allLinked(base) };
   return base;
 }
 // Each loaded state tracks the exact persisted value it owns. A stale tab or

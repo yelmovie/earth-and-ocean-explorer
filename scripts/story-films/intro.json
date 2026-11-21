@@ -1,0 +1,72 @@
+{
+ "name": "intro",
+ "clip": "../../assets/generated/20261121-story/intro.mp4",
+ "hold": 5.0,
+ "xfade": 0.4,
+ "endcard": "title",
+ "endLine": "사라진 조사 기록 다섯 가지를 찾아 줘!",
+ "out": "../../public/assets/story/intro.mp4",
+ "posterAt": 0.3,
+ "theme": {
+  "box": "#0c3340",
+  "accent": "#f3c98d",
+  "hot": "#ffd35c"
+ },
+ "speakers": {
+  "부리": [
+   "#fff3c4",
+   "#22382c"
+  ],
+  "짱이": [
+   "#9fd8ee",
+   "#103e4e"
+  ],
+  "모아": [
+   "#9fe0cc",
+   "#103e4e"
+  ],
+  "물때 교란 부표": [
+   "#ff9a5c",
+   "#2a1408"
+  ]
+ },
+ "voices": [
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-intro-1.mp3",
+   "at": 0.4,
+   "text": "큰 파도가 지나간 뒤, 푸른행성 조사본부의 [기록]이 흩어졌어요.",
+   "reuse": "el-story-1"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-intro-2.mp3",
+   "at": 5.8,
+   "who": "부리",
+   "text": "어? 어? 이 기록지, 아직 [빛나고] 있어!"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-intro-3.mp3",
+   "at": 9.9,
+   "who": "짱이",
+   "text": "흩어진 기록은 저 [섬] 어딘가에 있을 거야!"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-intro-4.mp3",
+   "at": 13.45,
+   "who": "부리",
+   "text": "육지와 바다, 갯벌에는 어떤 [비밀]이 숨어 있을까?"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-intro-5.mp3",
+   "at": 17.8,
+   "who": "모아",
+   "text": "어서 와요! [길]은 내가 안내할게요."
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-intro-6.mp3",
+   "at": 20.7,
+   "who": "짱이",
+   "text": "조사원, [네 도움]이 필요해. 우리랑 같이 가자!"
+  }
+ ],
+ "crf": 28
+}

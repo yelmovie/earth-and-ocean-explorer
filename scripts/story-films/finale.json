@@ -1,0 +1,74 @@
+{
+ "name": "finale",
+ "clip": "../../assets/generated/20261121-story/finale.mp4",
+ "hold": 5.0,
+ "xfade": 0.4,
+ "endcard": "complete",
+ "endLine": "모든 기록 복구 완료!",
+ "endSub": "이제 조사원 인증서를 받을 차례야",
+ "out": "../../public/assets/story/finale.mp4",
+ "posterAt": 0.3,
+ "zoom": 0.05,
+ "theme": {
+  "box": "#0c3340",
+  "accent": "#f3c98d",
+  "hot": "#ffd35c"
+ },
+ "speakers": {
+  "부리": [
+   "#fff3c4",
+   "#22382c"
+  ],
+  "짱이": [
+   "#9fd8ee",
+   "#103e4e"
+  ],
+  "모아": [
+   "#9fe0cc",
+   "#103e4e"
+  ],
+  "물때 교란 부표": [
+   "#ff9a5c",
+   "#2a1408"
+  ]
+ },
+ "voices": [
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-final-1.mp3",
+   "at": 0.4,
+   "text": "다섯 시설에 [불빛]이 다시 켜졌어요!"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-final-2.mp3",
+   "at": 3.9,
+   "who": "물때 교란 부표",
+   "text": "으악, [기록]이 다 돌아왔잖아!"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-final-3.mp3",
+   "at": 6.9,
+   "who": "짱이",
+   "text": "우리가 [해냈어]!"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-final-4.mp3",
+   "at": 9.0,
+   "who": "부리",
+   "text": "네가 관찰하고 비교한 [기록] 덕분이야. 정말 고마워!"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-final-5.mp3",
+   "at": 13.6,
+   "who": "짱이",
+   "text": "탐사, 정말 [재미있었어]!"
+  },
+  {
+   "file": "../../assets/generated/20261121-story/voice/film-final-6.mp3",
+   "at": 17.0,
+   "who": "부리",
+   "text": "이제 너도 푸른행성 [조사원]이야!",
+   "reuse": "el-ending-buri"
+  }
+ ],
+ "crf": 28
+}

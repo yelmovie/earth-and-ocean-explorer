@@ -32,7 +32,7 @@
 |---|---|---|---|---|---|
 | 개념 영상 5편 `concepts/chapter-1~5.mp4·webm·webp` | HyperFrames 자체 도해(효과음 포함) | 2026-11-09, 소스 `films/earth-sea-concepts/`, 자막 `src/concept-data.js` | 자체 제작. 안의 효과음 5종(drop·heat·camera·scan·success)은 Kenney CC0(`films/earth-sea-concepts/SPEC.md` 17행) | CREDITS 「이번 개선의 추가 에셋」, `films/earth-sea-concepts/SPEC.md` | 확인됨 |
 | 지도 피날레 영상 `map-encounters/map-finale.mp4` | Gemini 영상 생성 — 사용자 확인(2026-11-21 「영상은 제미나이」) | 2026-11-14, 커밋 `8515107`·`6630e36` | Gemini 유료 요금제(사용자 확인 「다 유료 요금제」) | 이 장부 | 확인됨(사용자 확인) |
-| 인트로·파이널 영상 `story/intro.mp4·jpg`, `story/finale.mp4·jpg` | 장면 그림 6장은 Codex 내장 이미지 도구(GPT 이미지, `gpt-image.sh`), 영상은 Google Flow(Omni 1.2 Flash, 시작·끝 장면 지정, 8초 × 3편씩, 소리 포함)로 만들고 ffmpeg로 0.4초 겹쳐 이음 | 2026-11-21, 원본 `assets/generated/20261121-story/`(그림·클립·프롬프트 txt·이음매 확인 그림), 기획 `.tmp/intro-plan/intro-finale-video.html` | 생성 계정 이용 조건(ChatGPT 유료, Google AI Pro — 사용자 확인 「다 유료 요금제」) | 이 장부, 원본 폴더 프롬프트 | 확인됨 |
+| 인트로·파이널 영상 `story/intro.mp4·jpg`, `story/finale.mp4·jpg`(각 약 27.8초) | 장면 그림 6장은 Codex 내장 이미지 도구(GPT 이미지, `gpt-image.sh`), 장면 영상 6편은 Google Flow(Omni 1.2 Flash, 기본 계정 PRO 표시, 시작·끝 장면 지정, 8초씩)로 만들고 ffmpeg로 0.4초 겹쳐 이음. Flow가 붙인 소리는 버리고 앱 목소리(아래 「이야기 영상 대사」)만 넣음. 자막·끝 카드(제목 로고 `logo-title.webp`, 인증 도장 `illustrations/seal.webp`, 꽃가루·반짝임)는 자체 합성(`scripts/story-films/compose.py`, 공용 `burn.py`, 주아체 OFL) | 2026-11-21, 원본 `assets/generated/20261121-story/`(그림·클립·프롬프트 txt·목소리), 큐 `scripts/story-films/` | 생성 계정 이용 조건(ChatGPT 유료, Google AI Pro — 사용자 확인 「다 유료 요금제」) | 이 장부, `docs/FILM-VOICE-20261121.json` | 확인됨 |
 
 ## 음악·효과음·목소리
 
@@ -42,6 +42,7 @@
 | Kenney 효과음 9종 `audio/*.mp3`(버튼·정답 등) | Kenney Interface Sounds | 원래 이름 `audio/sources.json` | CC0 1.0, `audio/Kenney-License.txt` 동봉 | CREDITS | 확인됨 |
 | 공통 라이브러리 효과음 17종 `audio/map-*`(8)·`card-*`(5)·`step-*`(2)·`map-open*`(2) | Freesound·OpenGameArt·Kenney 제작자(표에 이름·주소) | 2026-11-17~19, `_shared/sfx-library-20261117/` | CC0 1.0(원본 페이지 재확인) | CREDITS 세 표 | 확인됨 |
 | 캐릭터 목소리 `audio/voices/el-*.mp3` | ElevenLabs eleven_v4 AI 합성(실제 사람 흉내 없음) | 2026-11-12·11-18, voiceId·generationId·SHA-256 `docs/VOICE-FILL-20261118.json`·`docs/NPC-DIALOGUE-20261112.json`, `_shared/voice-provenance-20261118.md` | 유료 요금제 상업 이용 | CREDITS 「캐릭터 목소리(2026-11-18)」 | 확인됨(요금제 화면 증빙은 사용자 자료) |
+| 이야기 영상 대사 12줄(인트로·파이널 영상 안 소리 트랙) | ElevenLabs eleven_v4 AI 합성, 앱과 같은 목소리(부리 Jusen, 짱이 Bee, 모아 Taek, 내레이터 Mina, 물때 교란 부표 Harry). 새로 10줄, 앱 음원 다시 씀 2줄(`el-story-1`·`el-ending-buri`) | 2026-11-21, 요청 ID·SHA-256·받아쓰기 `docs/FILM-VOICE-20261121.json`, 원본 `assets/generated/20261121-story/voice/` | ElevenLabs Creator 유료 요금제 상업 이용 | `docs/FILM-VOICE-20261121.json` | 확인됨 |
 | 옛 목소리 `audio/voices/<대사 id>.mp3`(Qwen3-TTS, 앱에서 재생 안 함) | 모모 로컬 Qwen3-TTS | 2026-11-10, `docs/VOICE-PROVENANCE-20261110.json` | Apache-2.0 | CREDITS 「캐릭터 목소리(2026-11-10)」 | 확인됨(배포에서 빼도 됨) |
 
 ## 글꼴·코드 라이브러리

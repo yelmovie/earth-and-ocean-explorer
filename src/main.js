@@ -254,9 +254,11 @@ function settings(){
   overlay.addEventListener('close',()=>{overlay.remove();render();if(!document.querySelector('dialog[open]'))(focusBeforeModal?.isConnected?focusBeforeModal:document.querySelector('[data-action="settings"]'))?.focus();},{once:true});
 }
 function closeSettings(){document.querySelector('.settings-panel')?.close();}
-// 첫 「탐사 시작하기」는 인트로, 실제 엔딩으로 넘어가는 첫 순간은 파이널 영상을 먼저 보여 준다(2026-11-21).
-function storyBefore(button,value){if(button.classList.contains('title-start')&&!state.storyVideos?.intro)return 'intro';if(value==='ending'&&state.route!=='ending'&&!state.settings.unlockAll&&allLinked(state)&&!state.storyVideos?.finale)return 'finale';return null;}
-function playStory(kind,{closeLabel,onDone}={}){return openStoryVideo(kind,{muted:!audioPlayer.effectsAllowed(),closeLabel,onOpen:()=>{voice.stop();audioPlayer.quiet(true);if(state.storyVideos&&!state.storyVideos[kind]){state.storyVideos[kind]=true;save();}},onDone:()=>{audioPlayer.quiet(false);onDone?.();}});}
+// 저장 기록이 없는 첫 「탐사 시작하기」는 인트로, 다섯 기록을 처음 다 연결하고 엔딩으로 넘어가는 순간은 파이널 영상을 먼저 보여 준다(2026-11-21).
+function storyBefore(button,value){const started=state.completed.length||aReady(state,1)||state.drafts[1].samples.length;if(button.classList.contains('title-start')&&!started&&!state.storyVideos?.intro)return 'intro';if(value==='ending'&&state.route!=='ending'&&!state.settings.unlockAll&&allLinked(state)&&!state.storyVideos?.finale)return 'finale';return null;}
+// 영상 소리 트랙은 대사뿐이다: 목소리가 꺼져 있으면 음소거(자막은 영상 안에 남음). 배경 음악은 앱이 튼다(인트로 주제곡, 파이널 마무리 곡)
+// 배경 음악 스위치를 그대로 따르고, 대사가 들리는 구간에서만 낮춘다. 끝나면 그 화면의 곡으로 돌아간다.
+function playStory(kind,{closeLabel,onDone,focus}={}){const audible=voiceOn();return openStoryVideo(kind,{muted:!audible,closeLabel,onOpen:()=>{voice.stop();if(kind==='finale')audioPlayer.music('final');if(state.storyVideos&&!state.storyVideos[kind]){state.storyVideos[kind]=true;save();}},onSpeech:on=>audioPlayer.quiet(on&&audible),onDone:()=>{audioPlayer.quiet(false);if(onDone)onDone();else{audioPlayer.music(['ending','certificate'].includes(state.route)?'final':'main');if(!document.querySelector('dialog[open]'))document.querySelector(focus)?.focus();}}});}
 function showStory(){
   const dialog=document.createElement('dialog');dialog.className='settings-modal story-dialog';dialog.setAttribute('aria-labelledby','story-title');
   dialog.innerHTML=`<div class="modal-head"><h2 id="story-title">${esc(copy.storyTitle)}</h2><button class="icon-button" data-action="close-story" aria-label="이야기 닫기">${icon('close')}</button></div><div class="settings-body"><div class="story-friends" aria-hidden="true">${character('buri')}${character('jjang')}</div>${paragraphs(copy.storyLines)}</div><footer class="modal-footer"><span></span><button class="primary" data-action="close-story">${esc(copy.close)}</button></footer>`;
@@ -335,7 +337,7 @@ document.addEventListener('click',async e=>{
   const button=e.target.closest('[data-action]');if(!button||button.disabled)return;const action=button.dataset.action,value=button.dataset.value;const match=/^s([1-5])/.exec(state.route),n=match?+match[1]:0,d=state.drafts[n];
   if(['challenge-pick','challenge-task','case','tide-save','marker','link-stage'].includes(action))sound(action==='tide-save'?'scan':'click');
   if(action==='go'||action==='home'){tone();const story=action==='go'?storyBefore(button,value):null;if(story&&playStory(story,{onDone:()=>navigate(value)}))return;navigate(action==='home'?'home':value);return;}
-  if(action==='story-video'){closeSettings();playStory(value,{closeLabel:'닫기',onDone:()=>document.querySelector('[data-action="settings"]')?.focus()});return;}
+  if(action==='story-video'){const back=button.closest('.settings-panel')?'[data-action="settings"]':`[data-action="story-video"][data-value="${value}"]`;closeSettings();playStory(value,{closeLabel:'닫기',focus:back});return;}
   if(action==='back'){previous();return;}
   if(action==='sound'){const enable=allSoundOff();if(!enable)voice.stop();state.settings.muted=!enable;state.settings.bgmEnabled=enable;state.settings.sfxEnabled=enable;state.settings.voiceEnabled=enable;save();audioPlayer.sync();render();if(enable)tone();return;}
   if(action==='settings'){await openOptional(loadSettings,settings,()=>button.isConnected);return;}

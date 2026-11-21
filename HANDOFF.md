@@ -1,3 +1,11 @@
+# 2026-11-21 갯벌 탐사길 3D 말뚝(Meshy)
+
+지침 `_shared/MESHY-3D-UPGRADE-20261121.md` 10번 줄. `src/tide-walk.js`의 나무 말뚝(탐사길·끝 전망대 InstancedMesh 상자 27개 + 데크 기둥 상자 5개)을 Meshy 말뚝 모형 `public/assets/models/tide-post.glb`(30.5KB, 501삼각형, 512px 텍스처, meshopt) 하나로 바꿔 InstancedMesh 32개로 그린다(약 1.6만 삼각형, 그리기 1번). GLB 노드 변환은 덮어쓰지 않고 자리 행렬에 곱하고, 바운딩 박스로 예전 상자와 같은 폭(0.22·0.2)·높이(진흙 아래 0.5 ~ 0.97)에 맞춘다. 불러오는 동안·실패하면 예전 상자 말뚝이 그대로 보인다. 물 높이 눈금·안내판 글자·판정·충돌은 그대로. 원본과 만든 순서는 `assets/meshy-20261121/README.md`(원본 GLB는 Git 제외). 갯벌 장식은 더하지 않았다(소품 그림이 이미 많음).
+
+검증: `npm test` 104개, 빌드 통과. 헤드리스 `.tmp/meshy-20261121/check.mjs`(소리 끔): 말뚝 GLB 200, 데크·탐사길에서 말뚝이 보이고 콘솔 오류 0, GLB를 막으면 상자 말뚝으로 그려짐. `tests/tide-walk-browser.mjs`는 걷기·판정 단계를 모두 지난 뒤 143행 저장 필드 검사(`firstTry`·`missed`가 `f4f32dc`부터 생김)에서 멈춘다 — 이번 변경과 무관한 예전 검사.
+
+---
+
 # 2026-11-20 제작·저작권 표기(시작 화면 우측 하단)
 
 지침 `_shared/CREDIT-LINE-20261120.md` 10번 줄. 타이틀 화면(`src/screens.js` `home()`의 `.title-screen` 끝)에 「기획·제작: 옐샘 & ⓒ 아이스크림미디어」 한 줄(`.title-credit`). 스타일은 `src/experience.css` `#app .title-credit`: 오른쪽 `clamp(16px,2.4vw,32px)`(홈 상단 바 여백과 같음)·아래 `clamp(8px,1.5vh,14px)`, `clamp(10px,.9vw,13px)`·700, 반투명 바탕 `#062b3cb3`, `pointer-events:none`. 타이틀에서만 그려진다. 설정 창의 서명 줄·저작권 줄은 `8ad69f6`에서 같은 문구로 바뀌어 있다.

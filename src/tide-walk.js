@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import './tide-walk.css';
 import { asset, creatures, tideHeight } from './data.js';
 import { illustration } from './illustrations.js';
@@ -15,6 +17,9 @@ const READY = new Set(['backdrop', 'mud', 'planks', 'water', 'grass', 'buri-walk
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const clamp = (v, low, high) => Math.max(low, Math.min(high, v));
 const modelSlots = [0, 1, 2, 3];
+// Meshy로 만든 3D 모형(public/assets/models). 보이는 모습만 바꾸고, 불러오지 못하면 기본 도형이 그대로 보인다.
+const MODEL_VERSION = '20261121';
+const model = name => new URL(`${import.meta.env?.BASE_URL ?? '/'}assets/models/${name}.glb?v=${MODEL_VERSION}`, document.baseURI).href;
 // 탐사길 윗면(높이 0)에 해당하는 물 높이 눈금. 물 높이 표시의 맨 위 기준이다.
 const pathLevel = tideHeight(0) + (0 - waterY(tideHeight(0))) / (waterY(tideHeight(WALK_LAST_SLOT)) - waterY(tideHeight(0))) * (tideHeight(WALK_LAST_SLOT) - tideHeight(0));
 // 가장 낮은 물(06:00)도 막대로 보이도록 0부터 탐사길 높이까지를 한 칸으로 잡는다.
@@ -110,8 +115,9 @@ function buildStage(canvas) {
     rail(course.deck.x0, course.deck.x1, -course.deck.z, y); railZ(-course.deck.z, course.deck.z, course.deck.x0, y);
     railZ(-course.deck.z, -course.path.z, course.deck.x1, y); railZ(course.path.z, course.deck.z, course.deck.x1, y);
   }
-  for (let x = course.deck.x0; x <= course.deck.x1; x += 3.5) box(0.2, 1, 0.2, woodMaterial, x, 0.47, -course.deck.z);
-  box(0.2, 1, 0.2, woodMaterial, course.deck.x0, 0.47, course.deck.z); box(0.2, 1, 0.2, woodMaterial, course.deck.x1, 0.47, course.deck.z);
+  const deckPosts = [];
+  for (let x = course.deck.x0; x <= course.deck.x1; x += 3.5) deckPosts.push(box(0.2, 1, 0.2, woodMaterial, x, 0.47, -course.deck.z));
+  deckPosts.push(box(0.2, 1, 0.2, woodMaterial, course.deck.x0, 0.47, course.deck.z), box(0.2, 1, 0.2, woodMaterial, course.deck.x1, 0.47, course.deck.z));
   const unit = new THREE.BoxGeometry(1, 1, 1), matrix = new THREE.Matrix4();
   const postMesh = new THREE.InstancedMesh(unit, woodMaterial, posts.length);
   // 기둥 눈금은 모형의 네 물 높이(06·08·10·12시)에 코드로 그린다. 10:00 높이는 주황 경고 눈금이다.
@@ -122,6 +128,26 @@ function buildStage(canvas) {
     for (const slot of modelSlots) { const y = waterY(tideHeight(slot)); if (y > mudY(x) + 0.04) (slot === WALK_WARN_SLOT ? warns : marks).push([x, y, z + 0.115]); }
   });
   scene.add(postMesh);
+  // 3D 말뚝: Meshy 말뚝 모형 하나를 탐사길·데크 기둥 자리에 상자와 같은 크기로 여러 개(InstancedMesh) 그린다.
+  // gltfpack이 노드에 남긴 양자화 변환(matrixWorld)은 덮어쓰지 않고 각 자리 행렬에 곱한다. 불러오는 동안과 실패하면 상자 말뚝이 보인다.
+  const stakes = [...posts.map(([x, z]) => [x, z, 0.22, mudY(x) - 0.5]), ...deckPosts.map(mesh => [mesh.position.x, mesh.position.z, 0.2, -0.03])];
+  new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(model('tide-post'), gltf => {
+    const meshes = []; gltf.scene.traverse(object => { if (object.isMesh) meshes.push(object); });
+    const source = meshes[0], look = source && !Array.isArray(source.material) ? source.material : null, ok = !disposed && !!look;
+    const keepMap = ok ? look.map ?? null : null, keepGeometry = ok ? source.geometry : null;
+    // 쓰지 않는 것은 바로 정리한다. 남긴 지오메트리·텍스처는 장면을 떠날 때 다른 것과 함께 정리된다.
+    for (const mesh of meshes) { if (mesh.geometry !== keepGeometry) mesh.geometry.dispose(); for (const material of [].concat(mesh.material ?? [])) { for (const value of Object.values(material)) if (value?.isTexture && value !== keepMap) value.dispose(); material.dispose(); } }
+    if (!ok) return;
+    gltf.scene.updateMatrixWorld(true);
+    const bounds = new THREE.Box3().setFromObject(source), size = bounds.getSize(new THREE.Vector3()), center = bounds.getCenter(new THREE.Vector3());
+    const fit = new THREE.Matrix4().makeTranslation(-center.x, -center.y, -center.z).multiply(source.matrixWorld);
+    const material = new THREE.MeshLambertMaterial({ map: keepMap, color: keepMap ? '#ffffff' : '#8f6a43' });
+    if (keepMap) textures.add(keepMap);
+    const stakeMesh = new THREE.InstancedMesh(source.geometry, material, stakes.length);
+    stakes.forEach(([x, z, width, bottom], i) => { const height = 0.97 - bottom; stakeMesh.setMatrixAt(i, matrix.makeScale(width / size.x, height / size.y, width / size.z).setPosition(x, bottom + height / 2, z).multiply(fit)); });
+    stakeMesh.computeBoundingSphere();
+    scene.add(stakeMesh); postMesh.visible = false; for (const mesh of deckPosts) mesh.visible = false;
+  }, undefined, () => {});
   const markMaterial = new THREE.MeshBasicMaterial({ color: '#fff7df' }), warnMaterial = new THREE.MeshBasicMaterial({ color: '#ff8a3d' });
   const instanced = (list, material, height) => { if (!list.length) return; const mesh = new THREE.InstancedMesh(unit, material, list.length); list.forEach(([x, y, z], i) => mesh.setMatrixAt(i, matrix.makeScale(0.25, height, 0.02).setPosition(x, y, z))); scene.add(mesh); };
   instanced(marks, markMaterial, 0.05); instanced(warns, warnMaterial, 0.13);

@@ -18,3 +18,5 @@ __pycache__/
 # HyperFrames 작업 캐시·스냅샷(렌더 원본은 TMPDIR)
 films/**/.hyperframes/
 films/**/renders/
+# Meshy 원본 GLB(기록은 같은 폴더 README.md)
+assets/meshy-*/*.glb

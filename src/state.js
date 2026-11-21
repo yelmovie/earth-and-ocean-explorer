@@ -10,7 +10,7 @@ export function freshState() {
     3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand', photoVersion: 2 },
     4: { time: 0, a: null, b: null, markers: [], direction: '', concept: '' },
     5: { found: [], features: {}, selected: '', value: '', action: '' },
-  }, expeditions: {}, restoration: {}, mapHits: {}, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null };
+  }, expeditions: {}, restoration: {}, mapHits: {}, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null, storyVideos: { intro: false, finale: false } };
 }
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 function sanitizedDraft(n,d) {
@@ -44,6 +44,8 @@ export function normalize(raw) {
   base.settings.voiceEnabled = typeof raw.settings?.voiceEnabled==='boolean'?raw.settings.voiceEnabled:base.settings.sfxEnabled;
   if (Number.isFinite(raw.settings?.sfxVolume)) base.settings.sfxVolume = Math.max(0, Math.min(1, raw.settings.sfxVolume));
   base.research = normalizeResearch(raw.research);
+  // 인트로·파이널 영상을 이미 봤는지(2026-11-21). 처음 한 번만 저절로 열린다.
+  for (const key of ['intro', 'finale']) base.storyVideos[key] = raw.storyVideos?.[key] === true;
   base.expeditions=normalizeExpeditions(raw.expeditions);
   if (Number.isFinite(raw.settings?.volume)) base.settings.volume = Math.max(0, Math.min(1, raw.settings.volume));
   for(let n=1;n<=5;n++)base.drafts[n]=sanitizedDraft(n,raw.drafts?.[n]);

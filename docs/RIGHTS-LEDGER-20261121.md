@@ -32,6 +32,7 @@
 |---|---|---|---|---|---|
 | 개념 영상 5편 `concepts/chapter-1~5.mp4·webm·webp` | HyperFrames 자체 도해(효과음 포함) | 2026-11-09, 소스 `films/earth-sea-concepts/`, 자막 `src/concept-data.js` | 자체 제작. 안의 효과음 5종(drop·heat·camera·scan·success)은 Kenney CC0(`films/earth-sea-concepts/SPEC.md` 17행) | CREDITS 「이번 개선의 추가 에셋」, `films/earth-sea-concepts/SPEC.md` | 확인됨 |
 | 지도 피날레 영상 `map-encounters/map-finale.mp4` | Gemini 영상 생성 — 사용자 확인(2026-11-21 「영상은 제미나이」) | 2026-11-14, 커밋 `8515107`·`6630e36` | Gemini 유료 요금제(사용자 확인 「다 유료 요금제」) | 이 장부 | 확인됨(사용자 확인) |
+| 인트로·파이널 영상 `story/intro.mp4·jpg`, `story/finale.mp4·jpg` | 장면 그림 6장은 Codex 내장 이미지 도구(GPT 이미지, `gpt-image.sh`), 영상은 Google Flow(Omni 1.2 Flash, 시작·끝 장면 지정, 8초 × 3편씩, 소리 포함)로 만들고 ffmpeg로 0.4초 겹쳐 이음 | 2026-11-21, 원본 `assets/generated/20261121-story/`(그림·클립·프롬프트 txt·이음매 확인 그림), 기획 `.tmp/intro-plan/intro-finale-video.html` | 생성 계정 이용 조건(ChatGPT 유료, Google AI Pro — 사용자 확인 「다 유료 요금제」) | 이 장부, 원본 폴더 프롬프트 | 확인됨 |
 
 ## 음악·효과음·목소리
 

@@ -255,10 +255,25 @@ function settings(){
 }
 function closeSettings(){document.querySelector('.settings-panel')?.close();}
 // 저장 기록이 없는 첫 「탐사 시작하기」는 인트로, 다섯 기록을 처음 다 연결하고 엔딩으로 넘어가는 순간은 파이널 영상을 먼저 보여 준다(2026-11-21).
-function storyBefore(button,value){const started=state.completed.length||aReady(state,1)||state.drafts[1].samples.length;if(button.classList.contains('title-start')&&!started&&!state.storyVideos?.intro)return 'intro';if(value==='ending'&&state.route!=='ending'&&!state.settings.unlockAll&&allLinked(state)&&!state.storyVideos?.finale)return 'finale';return null;}
+function storyBefore(button,value){
+  const started=state.completed.length||aReady(state,1)||state.drafts[1].samples.length;
+  if(button.classList.contains('title-start')&&!started&&!state.storyVideos?.intro)return 'intro';
+  if(value==='ending'&&state.route!=='ending'&&!state.settings.unlockAll&&allLinked(state)&&!state.storyVideos?.finale)return 'finale';
+  return null;
+}
 // 영상 소리 트랙은 대사뿐이다: 목소리가 꺼져 있으면 음소거(자막은 영상 안에 남음). 배경 음악은 앱이 튼다(인트로 주제곡, 파이널 마무리 곡)
 // 배경 음악 스위치를 그대로 따르고, 대사가 들리는 구간에서만 낮춘다. 끝나면 그 화면의 곡으로 돌아간다.
-function playStory(kind,{closeLabel,onDone,focus}={}){const audible=voiceOn();return openStoryVideo(kind,{muted:!audible,closeLabel,onOpen:()=>{voice.stop();if(kind==='finale')audioPlayer.music('final');if(state.storyVideos&&!state.storyVideos[kind]){state.storyVideos[kind]=true;save();}},onSpeech:on=>audioPlayer.quiet(on&&audible),onDone:()=>{audioPlayer.quiet(false);if(onDone)onDone();else{audioPlayer.music(['ending','certificate'].includes(state.route)?'final':'main');if(!document.querySelector('dialog[open]'))document.querySelector(focus)?.focus();}}});}
+function playStory(kind,{closeLabel,onDone,focus}={}){
+  const audible=voiceOn();
+  const opened=()=>{voice.stop();if(kind==='finale')audioPlayer.music('final');if(state.storyVideos&&!state.storyVideos[kind]){state.storyVideos[kind]=true;save();}};
+  const closed=()=>{
+    audioPlayer.quiet(false);
+    if(onDone){onDone();return;}
+    audioPlayer.music(['ending','certificate'].includes(state.route)?'final':'main');
+    if(!document.querySelector('dialog[open]'))document.querySelector(focus)?.focus();
+  };
+  return openStoryVideo(kind,{muted:!audible,closeLabel,onOpen:opened,onSpeech:on=>audioPlayer.quiet(on&&audible),onDone:closed});
+}
 function showStory(){
   const dialog=document.createElement('dialog');dialog.className='settings-modal story-dialog';dialog.setAttribute('aria-labelledby','story-title');
   dialog.innerHTML=`<div class="modal-head"><h2 id="story-title">${esc(copy.storyTitle)}</h2><button class="icon-button" data-action="close-story" aria-label="이야기 닫기">${icon('close')}</button></div><div class="settings-body"><div class="story-friends" aria-hidden="true">${character('buri')}${character('jjang')}</div>${paragraphs(copy.storyLines)}</div><footer class="modal-footer"><span></span><button class="primary" data-action="close-story">${esc(copy.close)}</button></footer>`;

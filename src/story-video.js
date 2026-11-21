@@ -19,7 +19,11 @@ export function openStoryVideo(kind, { base = '/assets/story/', muted = false, c
   dialog.className = 'story-video-dialog';
   dialog.setAttribute('aria-label', info.title);
   const lines = cues.map(c => `<p>${c.who ? `<b>${esc(c.who)}</b> ` : ''}${esc(c.text)}</p>`).join('');
-  dialog.innerHTML = `<video playsinline preload="auto" poster="${base}${kind}.jpg" aria-label="${info.title}"><source src="${base}${kind}.mp4" type="video/mp4"></video><p class="sr-only story-video-live" aria-live="polite"></p><div class="story-video-fallback" hidden><p class="story-video-status" role="status">지금은 영상을 열 수 없어. 이야기를 글로 읽어 줘.</p>${lines}</div><button type="button" class="story-video-skip" data-story-video="done">${esc(closeLabel || info.skip)}</button>`;
+  dialog.innerHTML = `<video playsinline preload="auto" poster="${base}${kind}.jpg" aria-label="${info.title}">`
+    + `<source src="${base}${kind}.mp4" type="video/mp4"></video>`
+    + '<p class="sr-only story-video-live" aria-live="polite"></p>'
+    + `<div class="story-video-fallback" hidden><p class="story-video-status" role="status">지금은 영상을 열 수 없어. 이야기를 글로 읽어 줘.</p>${lines}</div>`
+    + `<button type="button" class="story-video-skip" data-story-video="done">${esc(closeLabel || info.skip)}</button>`;
   const video = dialog.querySelector('video'), live = dialog.querySelector('.story-video-live'), fallback = dialog.querySelector('.story-video-fallback'), skip = dialog.querySelector('[data-story-video="done"]');
   video.muted = muted;
   document.body.append(dialog);

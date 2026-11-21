@@ -143,3 +143,36 @@ test('a legacy unfinished tide draft with a turning interval offers an observati
  assert.match(run.calls.feedback.at(-1)[0],/한 방향/);
  assert.deepEqual(run.calls.rewards,[]);
 });
+
+// 2026-11-21 반복 선택 결정: 다시 고르기는 그대로, 처음 낸 답이 맞은 문제만 firstTry에 남고 틀린 적 있으면 missed에 남는다.
+test('first try correct answers are recorded apart from retried ones and survive a save round trip', () => {
+ const run = session();
+ const first = challenges[1].find(t => t.type === 'choice');
+ const retried = challenges[1].filter(t => t.type === 'choice')[1];
+ run.visit(1, challenges[1].indexOf(first));
+ solve(run, first);
+ run.visit(1, challenges[1].indexOf(retried));
+ run.send('challenge-answer', retried.options.find(o => o.id !== retried.answer).id);
+ run.send('challenge-answer', retried.answer);
+ const r = run.state.research[1];
+ assert.ok(r.solved.includes(first.id) && r.solved.includes(retried.id), 'both still solved: retrying keeps working');
+ assert.deepEqual(r.firstTry, [first.id]);
+ assert.deepEqual(r.missed, [retried.id]);
+ const restored = normalize(JSON.parse(JSON.stringify(run.state)));
+ assert.deepEqual(restored.research[1].firstTry, [first.id]);
+ assert.deepEqual(restored.research[1].missed, [retried.id]);
+ const legacy = JSON.parse(JSON.stringify(run.state)); delete legacy.research[1].firstTry; delete legacy.research[1].missed;
+ assert.deepEqual(normalize(legacy).research[1].firstTry, [], 'an older save without the field loads with an empty list');
+});
+
+test('choice options are shown in a shuffled order but keep their ids', () => {
+ const task = challenges[1].find(t => t.type === 'multi');
+ // 같은 열쇠는 같은 순서, 다른 열쇠는 순서가 달라질 수 있다(정답이 늘 같은 자리에 오지 않게).
+ return import('../src/shuffle.js').then(({ shuffled }) => {
+  const ids = task.options.map(o => o.id);
+  assert.deepEqual(shuffled(task.options, 'k').map(o => o.id), shuffled(task.options, 'k').map(o => o.id), 'stable for the same key');
+  const firstSlots = new Set(Array.from({ length: 60 }, (_, i) => shuffled(ids, 'opt:' + i)[0]));
+  assert.equal(firstSlots.size, ids.length, 'every option reaches the first slot across keys');
+  assert.deepEqual([...shuffled(ids, 'x')].sort(), [...ids].sort(), 'nothing lost or added');
+ });
+});

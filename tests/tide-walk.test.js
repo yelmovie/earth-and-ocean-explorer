@@ -73,7 +73,9 @@ test('a safe walk is recorded in the same fields as the choice task', () => {
   assert.ok(run.state.research[4].solved.includes(WALK_TASK));
   assert.equal(run.calls.saved, 1);
   assert.equal(run.calls.rendered, 1);
-  assert.deepEqual(Object.keys(run.state.research[4]).sort(), ['answers', 'c', 'd', 'solved'], 'no new save field');
+  // 걷기는 새 저장 칸을 만들지 않는다. firstTry·missed는 2026-11-21 사용자 결정(첫 시도 정답 따로 표시)으로 모든 문제에 생긴 칸이다.
+  assert.deepEqual(Object.keys(run.state.research[4]).sort(), ['answers', 'c', 'd', 'firstTry', 'missed', 'solved'], 'no new save field');
+  assert.deepEqual(run.state.research[4].firstTry, [WALK_TASK], 'a first safe walk counts as first try');
   const restored = normalize(JSON.parse(JSON.stringify(run.state)));
   assert.ok(restored.research[4].solved.includes(WALK_TASK), 'the record survives a save round trip');
   assert.deepEqual(restored.research[4].answers[WALK_TASK], ['0', '2']);

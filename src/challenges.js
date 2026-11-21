@@ -3,6 +3,7 @@ import { chapters, asset, tideHeight, timeLabel } from './data.js';
 import { pageChallenges, correctResponse, pageReady, researchReady, mistakeHint, PAGE_SIZE, CHAPTER_TASKS } from './challenge-data.js';
 import { aReady, baseStageValid, completeStage, tideIntervalDirection } from './state.js';
 import { icon } from './icons.js';
+import { shuffled } from './shuffle.js';
 import { specimen } from './specimens.js';
 import { illustration } from './illustrations.js';
 import { WALK_TASK, walkResponse, walkHint } from './tide-walk-rules.js';
@@ -79,8 +80,8 @@ function progressText(task,response){
  return task.items.filter(item=>response?.[item.id]).length+' / '+task.items.length+'개 연결 · 강조된 카드의 자리를 골라요.';
 }
 function interaction(task,response,key,wrong=new Set()){
- if(task.type==='choice'||task.type==='multi')return '<div class="challenge-options">'+task.options.map((o,i)=>{const chosen=task.type==='multi'?(response??[]).includes(o.id):response===o.id;return '<button class="challenge-option '+(chosen?'selected':'')+(wrong.has(o.id)?' recheck':'')+'" data-action="challenge-answer" data-value="'+esc(o.id)+'" aria-pressed="'+chosen+'"><span class="option-key">'+(i+1)+'</span><span>'+esc(o.label)+'</span>'+(task.type==='multi'?icon(chosen?'check':'circle'):'')+'</button>';}).join('')+'</div>';
- if(task.type==='order')return '<div class="challenge-sequence" aria-label="내가 만든 순서">'+(response??[]).map((id,i)=>'<div><b>'+(i+1)+'</b>'+esc(task.items.find(x=>x.id===id)?.label)+'</div>').join('')+'</div><div class="challenge-items">'+task.items.map(item=>button(esc(item.label),'challenge-order',item.id,'challenge-item',(response??[]).includes(item.id))).join('')+'</div>'+button('마지막 카드 되돌리기','challenge-undo','','text-button',!(response??[]).length);
+ if(task.type==='choice'||task.type==='multi')return '<div class="challenge-options">'+shuffled(task.options,'opt:'+key).map((o,i)=>{const chosen=task.type==='multi'?(response??[]).includes(o.id):response===o.id;return '<button class="challenge-option '+(chosen?'selected':'')+(wrong.has(o.id)?' recheck':'')+'" data-action="challenge-answer" data-value="'+esc(o.id)+'" aria-pressed="'+chosen+'"><span class="option-key">'+(i+1)+'</span><span>'+esc(o.label)+'</span>'+(task.type==='multi'?icon(chosen?'check':'circle'):'')+'</button>';}).join('')+'</div>';
+ if(task.type==='order')return '<div class="challenge-sequence" aria-label="내가 만든 순서">'+(response??[]).map((id,i)=>'<div><b>'+(i+1)+'</b>'+esc(task.items.find(x=>x.id===id)?.label)+'</div>').join('')+'</div><div class="challenge-items">'+shuffled(task.items,'ord:'+key).map(item=>button(esc(item.label),'challenge-order',item.id,'challenge-item',(response??[]).includes(item.id))).join('')+'</div>'+button('마지막 카드 되돌리기','challenge-undo','','text-button',!(response??[]).length);
  const current=activeItem(task,response,key);
  return '<div class="challenge-sort-area"><div class="challenge-items">'+task.items.map(item=>'<button class="challenge-item '+(current===item.id?'selected':'')+' '+(response?.[item.id]?'assigned':'')+(wrong.has(item.id)?' recheck':'')+'" draggable="true" data-challenge-item="'+item.id+'" data-action="challenge-pick" data-value="'+item.id+'" aria-pressed="'+(current===item.id)+'"><span>'+esc(item.label)+'</span><small>'+(wrong.has(item.id)?'다시 보기':esc(task.bins.find(b=>b.id===response?.[item.id])?.label??''))+'</small></button>').join('')+'</div><div class="challenge-bins">'+task.bins.map(bin=>button('<strong>'+esc(bin.label)+'</strong><span>'+task.items.filter(x=>response?.[x.id]===bin.id).length+'개 연결</span>','challenge-bin',bin.id,'challenge-bin',!current)).join('')+'</div></div>';
 }
@@ -172,8 +173,10 @@ export function handleChallenge(ctx){
  function check(){
   if(correctResponse(task,r.answers[task.id])){
    if(!r.solved.includes(task.id))r.solved.push(task.id);
+   firstTryMark(r,task.id,true);
    errors.delete(key);return true;
   }
+  firstTryMark(r,task.id,false);
   errors.add(key);revealHint.add(key);s.revised++;return false;
  }
  if(changed){
@@ -208,6 +211,8 @@ export function handleChallenge(ctx){
  }
  return true;
 }
+// 처음 낸 답이 맞으면 firstTry, 틀리면 missed에 남긴다. 다시 고르기는 그대로 되고 판정도 바뀌지 않는다.
+function firstTryMark(r,id,correct){r.firstTry??=[];r.missed??=[];if(correct){if(!r.missed.includes(id)&&!r.firstTry.includes(id))r.firstTry.push(id);}else if(!r.missed.includes(id))r.missed.push(id);}
 // 걷기에서 한 행동을 기존 보기 id로 기록하고, 기존 판정(correctResponse)으로 맞았는지 정한다.
 export function judgeWalk(ctx,log){
  const s=ctx.state,v=ids(s);if(!v||v.task.id!==WALK_TASK)return null;
@@ -216,6 +221,7 @@ export function judgeWalk(ctx,log){
  r.answers[task.id]=walkResponse(log);
  r.solved=r.solved.filter(id=>id!==task.id);
  const correct=correctResponse(task,r.answers[task.id]);
+ firstTryMark(r,task.id,correct);
  if(correct){r.solved.push(task.id);errors.delete(key);walk.fails=0;walk.again=false;}
  else{errors.add(key);s.revised++;walk.fails++;}
  ctx.save();ctx.sound?.(correct?'success':'retry');ctx.render();

@@ -70,7 +70,7 @@ export const settingsContent = {
     ['효과음', 'Kenney Interface Sounds · kenney.nl · CC0 1.0 · 확인·촬영·기록·힌트·보상 소리, 개념 영상 속 소리, 장소 열림 소리'],
     ['지도·카드 효과음', '과학34 공통 효과음 라이브러리 · Freesound·OpenGameArt 제작자들의 CC0 1.0 소리 · 악당 공격·성취 카드·발자국·장소 열림 반짝 소리 · 제작자별 상세는 assets/CREDITS.md'],
     ['글꼴', '네이버 나눔스퀘어 네오 · SIL OFL 1.1 · 공식 원본 글꼴과 라이선스를 함께 제공해요.'],
-    ['캐릭터 목소리', 'ElevenLabs · 유료 요금제 상업 이용 · AI 합성 음성(docs/VOICE-FILL-20261118.json, docs/NPC-DIALOGUE-20261112.json)'],
+    ['캐릭터 목소리', 'ElevenLabs · AI 합성 음성 · 부리·짱이·모아·게·부표·이야기 목소리와 인트로·파이널 영상 대사'],
     ['프로그램', 'Three.js · MIT / Vite · MIT / HyperFrames·FFmpeg 자체 제작 개념 영상'],
   ],
   legal: [

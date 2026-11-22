@@ -1,3 +1,4 @@
+import { certificatePaper } from './certificate.js';
 import { activityControls } from './activity-flow.js';
 import { companion } from './companion.js';
 import { tideComparison } from './interactions.js';
@@ -104,4 +105,9 @@ function firstTryLine(s) {
   const first = rs.reduce((sum, r) => sum + (r.firstTry ?? []).filter(id => r.solved?.includes(id)).length, 0);
   return `<small class="certificate-first-try"> · 첫 시도에 맞힌 활동 ${first}개</small>`;
 }
-export function certificate(s) {const actual=!s.settings.unlockAll&&allLinked(s)&&s.issuedAt;const researchCount=chapters.reduce((sum,chapter)=>sum+(s.evidence[chapter.id]?.research?.solved?.length??0),0);return `<section class="certificate-page"><article class="certificate"><div class="certificate-frame"><span class="eyebrow">푸른행성 조사본부 HQ</span><div class="certificate-seal"><img src="${illustration('seal')}" alt="" width="240" height="240" decoding="async"><small>${actual?'인증':'예시'}</small></div><p class="tag">${actual?'탐사 완료 인증서':'미리보기 · 인증되지 않음'}</p><h1>푸른행성 조사원</h1><p class="certificate-sub">관찰하고, 비교하고, 증거로 설명하는 탐험가</p><div class="certificate-line"></div><p>지구와 바다의 다섯 가지 기록을 모으고<br>생명이 살아가는 갯벌을 지킬 방법을 탐구했어.</p><div class="certificate-evidence">${chapters.map(c=>`<span class="${s.evidence[c.id]?'is-earned':''}"><img src="${illustration(`badge-${c.id}`)}" alt="" width="40" height="40" decoding="async">${s.evidence[c.id]?'✓':'○'} ${c.short}</span>`).join('')}</div><p><b>${actual?`기록 5묶음 · 확장 활동 ${researchCount}개 · 증거 연결 5개 완성`:'실제 조사와 증거 연결 완료 후 인증돼'}</b>${actual?firstTryLine(s):''}</p><small>${actual?new Date(s.issuedAt).toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul'}):'연습용 예시'} · 푸른행성 조사본부</small><p class="certificate-promise"><b>나의 갯벌 지킴 메시지</b><br>${esc(conservationMessage(s))}</p><span class="certificate-credit">기획·제작: 옐샘 &amp; ⓒ 아이스크림미디어</span></div></article><div class="certificate-actions">${btn('인증서 인쇄 / PDF 저장','print','','primary',!actual)}${go('탐사 지도로 돌아가기','hub')}</div>${note('학교의 공식 수료증이 아닌, 이 게임의 학습 완료 기록이야. 개인정보는 포함하지 않아.')}</section>`;}
+export function certificate(s) {
+  const actual=!s.settings.unlockAll&&allLinked(s)&&s.issuedAt;
+  const researchCount=chapters.reduce((sum,chapter)=>sum+(s.evidence[chapter.id]?.research?.solved?.length??0),0);
+  const date=actual?new Date(s.issuedAt).toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul'}):'연습용 예시';
+  return certificatePaper({actual,date,researchCount,firstTry:actual?firstTryLine(s):'',promise:conservationMessage(s)});
+}

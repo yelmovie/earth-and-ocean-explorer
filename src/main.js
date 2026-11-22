@@ -1,3 +1,4 @@
+import { saveCertificatePng } from './certificate-png.js';
 let cleanupExpedition;
 import './npc-button.css';
 import { showChapterReward } from './chapter-reward.js';
@@ -13,6 +14,7 @@ import './responsive-stages.css';
 import './glass-ui.css';
 import './flow-polish.css';
 import './reward-cards.css';
+import './certificate.css';
 // 저사양 기기(메모리 4GB 이하 또는 코어 4개 이하)는 넓은 면의 흐림(backdrop-filter)을 끄고 불투명 면을 쓴다(glass-ui.css `.lite-glass`).
 if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add('lite-glass');
 const loadConcepts = () => import('./concepts.js');
@@ -431,6 +433,14 @@ document.addEventListener('click',async e=>{
   if(action==='link-stage'){state.finalDraft.stage=+value;save();render();autoLink();return;}
   if(action==='check-link'){runLinkCheck(+value);return;}
   if(action==='print'){if(!studentState&&allLinked(state))window.print();return;}
+  if(action==='cert-png'){
+    if(studentState||!allLinked(state)||!state.issuedAt)return;
+    const paper=app.querySelector('.cert-paper'),message=app.querySelector('.cert-error');
+    if(!paper||button.disabled)return;
+    button.disabled=true;if(message)message.textContent='';
+    saveCertificatePng(paper,'푸른행성-조사원-인증서.png').catch(()=>{if(message)message.textContent='PNG를 저장하지 못했어. 다시 눌러 줘.';}).finally(()=>{button.disabled=false;});
+    return;
+  }
 });
 window.addEventListener('popstate',()=>{const r=location.hash.slice(1)||'home';if(canAccess(state,r))navigate(r,{back:true,push:false});else{window.history.replaceState({route:'hub'},'','#hub');navigate('hub',{back:true,push:false});}});
 const requested=location.hash.slice(1);if(routes.includes(requested)&&canAccess(state,requested))state.route=requested;

@@ -1,3 +1,9 @@
+# 2026-11-22 파이널 영상은 스테이지 완료 때 한 번만
+
+지침 `_shared/FINALE-ONCE-20261122.md` 덩어리 E. 마지막 악당 3타 뒤 지도 피날레(`map-finale.mp4`)를 띄우던 `src/map-encounters.js`의 `finaleAt` 한 줄만 막았다(`requiredFoes`는 `victory` 신호 판단에도 쓰여 그대로). 이제 악당 격퇴는 성취 카드만, 파이널(`story/finale.mp4`)은 다섯 기록을 모두 연결하고 「복구된 이야기 보기」를 누를 때 한 번(`storyVideos.finale`). 설정의 다시 보기는 `allLinked` 그대로. 커밋 `c5b0e91`, Version ID `00f40b35-194a-46e9-ae92-9c839afa51a4`, 주 번들·index MATCH. 검증: `npm test` 104, 빌드, 헤드리스 `.tmp/finale-once-20261122/verify.mjs` 로컬 34/34(시나리오 1 영상 0·2 영상 1·3 합계 1), 운영 시나리오 1·2 통과.
+
+---
+
 # 2026-11-21 갯벌 탐사길 3D 말뚝(Meshy)
 
 지침 `_shared/MESHY-3D-UPGRADE-20261121.md` 10번 줄. `src/tide-walk.js`의 나무 말뚝(탐사길·끝 전망대 InstancedMesh 상자 27개 + 데크 기둥 상자 5개)을 Meshy 말뚝 모형 `public/assets/models/tide-post.glb`(30.5KB, 501삼각형, 512px 텍스처, meshopt) 하나로 바꿔 InstancedMesh 32개로 그린다(약 1.6만 삼각형, 그리기 1번). GLB 노드 변환은 덮어쓰지 않고 자리 행렬에 곱하고, 바운딩 박스로 예전 상자와 같은 폭(0.22·0.2)·높이(진흙 아래 0.5 ~ 0.97)에 맞춘다. 불러오는 동안·실패하면 예전 상자 말뚝이 그대로 보인다. 물 높이 눈금·안내판 글자·판정·충돌은 그대로. 원본과 만든 순서는 `assets/meshy-20261121/README.md`(원본 GLB는 Git 제외). 갯벌 장식은 더하지 않았다(소품 그림이 이미 많음).

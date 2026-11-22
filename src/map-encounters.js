@@ -147,7 +147,7 @@ export function mountMapEncounters({
     if(n===HITS)later(()=>tone(allClear?'victory':'exit',n),allClear?VICTORY_CUE:EXIT_CUE);
     speak(foe, n===HITS?foe.s.finish??'앗, 물러날게!':foe.s.hit?.[n-1]??(n===1?'앗, 들켰네!':'이번 건 제법인데!'),time+(n===HITS?2750:1800),n===HITS?HIT_CUE+300:0);
     live.textContent+=n===HITS?' 세 번 명중! 악당이 물러나요.':` ${n}번 명중. ${HITS-n}번 남았어요.`;
-    if(allClear)finaleAt=time+2920;
+    // 2026-11-22: 악당을 다 물리치면 성취 카드만. 파이널 영상은 스테이지를 모두 마쳤을 때 한 번만 나온다(지도 피날레 끔).
     update({...last,now:time});
   }
   attack.addEventListener('click',hit,{signal});

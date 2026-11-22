@@ -22,7 +22,8 @@
       "text": "기획·제작: 옐샘 & ⓒ 아이스크림미디어",
       "where": [
         "settings",
-        "start"
+        "start",
+        "certificate(화면·인쇄)"
       ]
     },
     "settings": {
@@ -48,7 +49,9 @@
       "close": [
         "esc"
       ],
-      "closeLabel": "닫기"
+      "closeLabel": "닫기",
+      "closeButtonTop": false,
+      "outsideClickCloses": false
     },
     "certificate": {
       "fields": [
@@ -58,9 +61,11 @@
         "장별 증거 표시"
       ],
       "buttons": [
-        "인증서 인쇄 / PDF",
+        "인증서 인쇄 / PDF 저장",
         "탐사 지도로 돌아가기"
-      ]
+      ],
+      "dateFormat": "2026. 11. 22.",
+      "print": "A4 한 쪽(인쇄할 때만 90%), 버튼·배경 숨김"
     },
     "rewardCards": {
       "count": 5,
@@ -79,7 +84,8 @@
         "탐사 시작하기(진행이 있으면 이어서 탐사하기)",
         "탐사 지도 보기(이어서 갈 곳이 지도가 아닐 때만)"
       ]
-    }
+    },
+    "unifiedAt": "2026-11-22 · 3f1d796·786fde3 · Worker 0fe31473"
   },
   "ledger": {
     "rows": 30,

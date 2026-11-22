@@ -1,7 +1,7 @@
 let cleanupExpedition;
-import { mountNpcGuide } from './npc-guide.js';
+import './npc-button.css';
 import { showChapterReward } from './chapter-reward.js';
-let disposeNpc, closeResidentScene;
+let closeResidentScene, closeGuideScene;
 import './styles.css';
 import './settings.css';
 import './diagnostics.js';
@@ -157,12 +157,12 @@ function runLinkCheck(index){
 }
 function autoLink(){const d=state.finalDraft;if(state.route==='link'&&Number.isInteger(d?.caseIndex)&&d.stage!==null&&d.reason!==null&&!state.links[d.caseIndex])runLinkCheck(d.caseIndex);}
 const allSoundOff=()=>state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false&&state.settings.voiceEnabled===false);
-function header(){const silent=allSoundOff();return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button></div><span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span><div class="nav-group">${['hub','home'].includes(state.route)?'':`<button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button>`}${state.route==='hub'?rewardSlotsHtml(state.mapHits):''}<button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
+function header(){const silent=allSoundOff();return `<header class="topbar" aria-label="공통 도구"><div class="nav-group"><button class="icon-button" data-action="home" aria-label="홈" ${state.route==='home'?'disabled':''}>${icon('home')}</button><button class="icon-button" data-action="back" aria-label="이전 화면" ${state.route==='home'?'disabled':''}>${icon('back')}</button></div>${state.route==='home'?'':`<span class="sr-only" id="save-status" role="status">${studentState?'미리보기 · 저장하지 않음':warning?'저장 확인 필요':'자동 저장됨'}</span>`}<div class="nav-group">${['hub','home'].includes(state.route)?'':`<button class="icon-button" data-action="voice-replay" aria-label="대사 다시 듣기" title="대사 다시 듣기" ${lastVoice?'':'hidden'}>${icon('play')}</button>`}${state.route==='hub'?rewardSlotsHtml(state.mapHits):''}<button class="icon-button" data-action="sound" aria-label="${silent?'소리 켜기':'소리 끄기'}" aria-pressed="${silent}">${icon(silent?'mute':'sound')}</button><button class="icon-button" data-action="settings" aria-label="설정">${icon('settings')}</button></div></header>`;}
 async function render(){
   if(state.route!=='s4d')closeWalk?.();
   cleanupExpedition?.();cleanupExpedition=null;
   cleanupActivityFlow?.();cleanupActivityFlow=null;
-  disposeNpc?.();closeResidentScene?.();closeResidentScene=null;
+  closeResidentScene?.();closeResidentScene=null;
   if(state.route==='s4b'&&app.classList.contains('route-s4b'))local.tideWipe=app.querySelector('[data-compare]')?.value??local.tideWipe;
   const focused=document.activeElement?.closest('[data-action],[data-field]');const focusSelector=focused?.dataset.action?`[data-action="${CSS.escape(focused.dataset.action)}"][data-value="${CSS.escape(focused.dataset.value??'')}"]${focused.dataset.field?`[data-field="${CSS.escape(focused.dataset.field)}"]`:''}`:focused?.dataset.field?`[data-field="${CSS.escape(focused.dataset.field)}"]`:null;
   cleanupInteractions?.();cleanupInteractions=null;cleanupChallenges?.();cleanupChallenges=null;controller?.dispose();controller=null;const ticket=++epoch;const r=state.route,m=/^s([1-5])([abcd])$/.exec(r);
@@ -175,7 +175,6 @@ async function render(){
   const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
   app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">교사 미리보기 · 체험 내용은 저장되지 않아요</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
   app.querySelectorAll('.learning [data-note]').forEach(note=>app.querySelector('.moa-bubble')?.append(note));
-  if(r==='home')disposeNpc=mountNpcGuide(app.querySelector('.title-actions'),{name:'탐사원 부리',portrait:asset('dialogue/buri'),src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:voiceOn,quiet:value=>{homeGuideTalking=value;if(value){pendingEntry=null;voice.stop();}audioPlayer.quiet(value);},title:'부리 목소리 듣기',onError:()=>feedback('대화를 불러오지 못했어. 다시 눌러 줘.'),note:'부리 · AI로 만든 목소리예요. 자막은 소리 없이도 볼 수 있어요.'});
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());
   cleanupInteractions=mountInteractions(app,context());
@@ -236,6 +235,27 @@ async function openOptional(load, open, valid = () => true){
   try{const module=await load();if(isCurrent())open(module);}
   catch{if(isCurrent())feedback('불러오지 못했어. 다시 눌러 줘.');}
 }
+// 첫 화면에 있던 부리 안내 목소리는 설정의 「안내 목소리 듣기」에서 연다(2026-11-22).
+const welcomeGuide=()=>({name:'탐사원 부리',portrait:asset('dialogue/buri'),src:import.meta.env.BASE_URL+'assets/audio/voices/el-welcome.mp3',text:'탐사대에 온 걸 환영해! 육지와 바다의 모습을 관찰하고, 사진과 실험에서 찾은 증거로 지구 탐사 지도를 완성해 보자.',enabled:voiceOn,quiet:value=>{homeGuideTalking=value;if(value){pendingEntry=null;voice.stop();}audioPlayer.quiet(value);}});
+async function openWelcomeGuide(){
+  closeSettings();
+  try{
+    const {openNpcScene}=await import('./npc-scene.js');
+    if(document.querySelector('dialog[open]'))return;
+    closeGuideScene?.();closeGuideScene=openNpcScene({...welcomeGuide(),trigger:document.querySelector('[data-action="settings"]')});
+  }catch{feedback('대화를 불러오지 못했어. 다시 눌러 줘.');}
+}
+function resetProgress(){const sounds={muted:state.settings.muted,volume:state.settings.volume,sfxVolume:state.settings.sfxVolume,bgmEnabled:state.settings.bgmEnabled,sfxEnabled:state.settings.sfxEnabled,voiceEnabled:state.settings.voiceEnabled};state=freshState();Object.assign(state.settings,sounds);warning='';if(studentState)state.settings.unlockAll=true;save({reset:true});audioPlayer.sync();}
+// 첫 화면 「새로 시작」: 기록이 있을 때만 확인창을 띄우고, 지우면 처음 시작 흐름(인트로 영상 → 지도)을 그대로 탄다.
+function confirmRestart(){
+  if(document.querySelector('dialog[open]'))return;
+  const dialog=document.createElement('dialog');dialog.className='settings-modal restart-dialog';dialog.setAttribute('aria-labelledby','restart-title');
+  dialog.innerHTML=`<div class="modal-head"><h2 id="restart-title">기존 탐사 기록을 지우고 새로 시작할까요?</h2></div><div class="settings-body"><p>복구한 기록과 탐사 내용이 이 기기에서 모두 지워져요. 소리 설정은 그대로예요.</p></div><footer class="modal-footer"><button data-restart="cancel">취소</button><button class="danger" data-restart="confirm">기록 지우고 시작</button></footer>`;
+  document.body.append(dialog);
+  dialog.addEventListener('click',event=>{const choice=event.target.closest('[data-restart]')?.dataset.restart;if(!choice)return;event.stopPropagation();dialog.close(choice);});
+  dialog.addEventListener('close',()=>{const ok=dialog.returnValue==='confirm';dialog.remove();if(!ok){document.querySelector('.title-start')?.focus();return;}resetProgress();render();const story=storyBefore(document.querySelector('.title-start'),state.resume);if(story&&playStory(story,{onDone:()=>navigate(state.resume)}))return;navigate(state.resume);},{once:true});
+  dialog.showModal();dialog.querySelector('[data-restart="cancel"]').focus();
+}
 function settings(){
   if(document.querySelector('dialog[open]'))return;
   focusBeforeModal=document.activeElement;
@@ -248,7 +268,7 @@ function settings(){
   const teacherContent=paragraphs(copy.teacherLines)+details(copy.standardTitle,paragraphs([copy.standardIntro,...copy.standards]))+details(copy.toolsTitle,`<p>${esc(copy.toolsIntro)}</p><button class="admin-toggle" data-action="toggle-unlock" aria-pressed="${state.settings.unlockAll}">${icon(state.settings.unlockAll?'unlock':'lock')}<span>${esc(state.settings.unlockAll?copy.unlocked:copy.unlock)}</span></button><p>${esc(copy.toolsNote)}</p><label class="switch-row">${esc(copy.flatGlobe)}<input type="checkbox" data-setting="flatGlobe" ${state.settings.flatGlobe?'checked':''}></label>`);
   const sources=`<p>${esc(copy.sourceIntro)}</p>`+copy.sources.map(([title,text])=>`<p class="settings-source"><b>${esc(title)}</b>${esc(text)}</p>`).join('');
   const credits=paragraphs(copy.creditLines)+details(copy.sourcesTitle,sources)+copy.legal.map(text=>`<p class="legal-copy">${esc(text)}</p>`).join('');
-  overlay.innerHTML=`<div class="modal-head"><div><h2 id="settings-title">설정</h2></div></div><div class="settings-body science-settings-body"><section aria-label="소리" class="science-settings-audio">${audioSwitch('bgmEnabled',copy.sounds.bgm)}${volumeSlider('volume','music-volume-output',copy.sounds.volume,'bgmEnabled')}${audioSwitch('sfxEnabled',copy.sounds.sfx)}${volumeSlider('sfxVolume','sfx-volume-output',copy.sounds.sfxVolume,'sfxEnabled')}${audioSwitch('voiceEnabled',copy.sounds.voice)}</section><div class="settings-replays science-settings-actions"><button class="secondary" data-action="replay-story">${icon('play')}${esc(copy.replay)}</button><button class="secondary" data-action="story-video" data-value="intro">${icon('play')}인트로 영상 보기</button>${finalReady?`<button class="secondary" data-action="story-video" data-value="finale">${icon('play')}파이널 영상 보기</button>`:''}${finalReady?`<button data-action="settings-go" data-value="ending">${icon('star')}${esc(copy.endingReplay)}</button>`:''}<button data-action="settings-go" data-value="certificate" ${!finalReady?'disabled':''}>${icon(finalReady?'award':'lock')}${esc(copy.certificate)}</button>${!finalReady?`<p class="settings-locked">${esc(copy.finalLocked)}</p>`:''}</div>${['hub','home'].includes(state.route)&&lastVoice?`<button class="secondary" data-action="voice-replay">${icon('play')}대사 다시 듣기</button>`:''}${details(copy.appTitle,appContent)}${details(copy.studentTitle,paragraphs([...copy.studentLines,'탐사지도에서 교란 부표 악당에게 다가가면 원형 공격 버튼이나 스페이스바로 공격해요.']))}${details(copy.teacherTitle,teacherContent)}${details(copy.copyrightTitle,credits)}<section id="reset-confirm" hidden aria-labelledby="reset-title"><h3 id="reset-title">${esc(copy.resetTitle)}</h3><p>${esc(copy.resetDescription)}</p><div class="reset-actions"><button data-action="reset-cancel">${esc(copy.resetCancel)}</button><button data-action="reset-confirm" class="danger">${esc(copy.resetConfirm)}</button></div></section></div><footer class="modal-footer science-settings-footer"><button class="text-button" data-action="reset-ask">${icon('reset')}${esc(copy.reset)}</button><button class="primary" data-action="close-settings">${esc(copy.close)}</button></footer>`;
+  overlay.innerHTML=`<div class="modal-head"><div><h2 id="settings-title">설정</h2></div></div><div class="settings-body science-settings-body"><section aria-label="소리" class="science-settings-audio">${audioSwitch('bgmEnabled',copy.sounds.bgm)}${volumeSlider('volume','music-volume-output',copy.sounds.volume,'bgmEnabled')}${audioSwitch('sfxEnabled',copy.sounds.sfx)}${volumeSlider('sfxVolume','sfx-volume-output',copy.sounds.sfxVolume,'sfxEnabled')}${audioSwitch('voiceEnabled',copy.sounds.voice)}</section><div class="settings-replays science-settings-actions"><button class="secondary" data-action="replay-story">${icon('play')}${esc(copy.replay)}</button><button class="secondary" data-action="story-video" data-value="intro">${icon('play')}인트로 영상 보기</button><button class="secondary" data-action="guide-voice">${icon('sound')}안내 목소리 듣기<small class="ai-voice-tag">AI 생성 음성</small></button>${finalReady?`<button class="secondary" data-action="story-video" data-value="finale">${icon('play')}파이널 영상 보기</button>`:''}${finalReady?`<button data-action="settings-go" data-value="ending">${icon('star')}${esc(copy.endingReplay)}</button>`:''}<button data-action="settings-go" data-value="certificate" ${!finalReady?'disabled':''}>${icon(finalReady?'award':'lock')}${esc(copy.certificate)}</button>${!finalReady?`<p class="settings-locked">${esc(copy.finalLocked)}</p>`:''}</div>${['hub','home'].includes(state.route)&&lastVoice?`<button class="secondary" data-action="voice-replay">${icon('play')}대사 다시 듣기</button>`:''}${state.resume!=='hub'&&state.route!=='hub'?`<button class="secondary settings-map" data-action="settings-map">${icon('map')}탐사 지도 보기</button>`:''}${details(copy.appTitle,appContent)}${details(copy.studentTitle,paragraphs([...copy.studentLines,'탐사지도에서 교란 부표 악당에게 다가가면 원형 공격 버튼이나 스페이스바로 공격해요.']))}${details(copy.teacherTitle,teacherContent)}${details(copy.copyrightTitle,credits)}<section id="reset-confirm" hidden aria-labelledby="reset-title"><h3 id="reset-title">${esc(copy.resetTitle)}</h3><p>${esc(copy.resetDescription)}</p><div class="reset-actions"><button data-action="reset-cancel">${esc(copy.resetCancel)}</button><button data-action="reset-confirm" class="danger">${esc(copy.resetConfirm)}</button></div></section></div><footer class="modal-footer science-settings-footer"><button class="text-button" data-action="reset-ask">${icon('reset')}${esc(copy.reset)}</button><span class="settings-record-count">복구한 기록 ${state.completed.length} / 5</span><button class="primary" data-action="close-settings">${esc(copy.close)}</button></footer>`;
   document.body.append(overlay);overlay.showModal();
   overlay.querySelector('[data-action="close-settings"]').focus();
   overlay.addEventListener('close',()=>{overlay.remove();render();if(!document.querySelector('dialog[open]'))(focusBeforeModal?.isConnected?focusBeforeModal:document.querySelector('[data-action="settings"]'))?.focus();},{once:true});
@@ -366,7 +386,10 @@ document.addEventListener('click',async e=>{
   if(action==='settings-go'){if(!allLinked(state))return;closeSettings();navigate(value);return;}
   if(action==='reset-ask'){const confirmation=document.querySelector('#reset-confirm');confirmation.hidden=false;confirmation.scrollIntoView({block:'nearest'});confirmation.querySelector('[data-action="reset-cancel"]').focus();return;}
   if(action==='reset-cancel'){document.querySelector('#reset-confirm').hidden=true;document.querySelector('[data-action="reset-ask"]').focus();return;}
-  if(action==='reset-confirm'){const sounds={muted:state.settings.muted,volume:state.settings.volume,sfxVolume:state.settings.sfxVolume,bgmEnabled:state.settings.bgmEnabled,sfxEnabled:state.settings.sfxEnabled,voiceEnabled:state.settings.voiceEnabled};state=freshState();Object.assign(state.settings,sounds);warning='';if(studentState)state.settings.unlockAll=true;save({reset:true});audioPlayer.sync();closeSettings();navigate('home');return;}
+  if(action==='reset-confirm'){resetProgress();closeSettings();navigate('home');return;}
+  if(action==='restart'){tone();confirmRestart();return;}
+  if(action==='guide-voice'){openWelcomeGuide();return;}
+  if(action==='settings-map'){closeSettings();navigate('hub');return;}
   if(n===4&&['next','complete'].includes(action)&&!tideIntervalDirection(d.a,d.b)){
     feedback('1. 관찰에서 물이 한 방향으로 변하는 두 순간을 다시 골라요.');return;
   }

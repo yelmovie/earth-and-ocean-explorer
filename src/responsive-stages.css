@@ -470,19 +470,9 @@
 #app #main .activity[data-chapter="5"] .trace[data-value="reed"] small{left:-4px;transform:none}
 #app #main .activity[data-chapter="5"] .trace[data-value="reed"] small::after{left:22px}
 
-/* Keep progress fractions and the home voice action together at compact widths. */
+/* Keep progress fractions together at compact widths. */
 #app .page-heading>.tag{flex-shrink:0;white-space:nowrap}
-@media(max-height:560px) and (min-width:700px){
-  #app .title-actions{display:grid;grid-template-columns:max-content max-content;gap:8px 12px}
-  #app .title-actions>button{flex-shrink:0}
-  #app .title-actions>button[aria-haspopup="dialog"]{grid-column:1/-1;justify-self:start;white-space:nowrap}
-  #app .title-logo-art{max-width:360px;margin-bottom:-4%}
-}
 @media(max-width:699px){
-  #app .title-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:8px}
-  #app .title-start{grid-column:1/-1;justify-content:center}
-  #app .title-map{padding:8px;font-size:16px;gap:8px;min-height:48px;white-space:nowrap}
-  #app .title-actions>button[aria-haspopup="dialog"]{padding:8px!important;font-size:16px!important;white-space:nowrap}
   #app.route-s4b #main .learning .compare-slider{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr);align-items:center;gap:8px;margin:0;padding:0 8px;font-size:14px;line-height:1.3}
   #app.route-s4b #main .learning .activity{grid-template-rows:minmax(0,1.3fr) minmax(0,1fr)}
   #app.route-s4b #main .learning .tide-wipe{--compare-header:28px}
@@ -523,7 +513,6 @@
   #app .hub-page .photo-restoration[open]{max-height:calc(100dvh - 290px)}
 }
 @media(orientation:portrait){
-  #app .title-friends{top:clamp(80px,9vh,96px)}
   #app .title-friends .buri{height:clamp(140px,20vh,180px)}
   #app .title-friends .jjang{height:clamp(90px,13vh,120px)}
 }

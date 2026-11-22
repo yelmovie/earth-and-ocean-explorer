@@ -9,7 +9,7 @@
 | 프로젝트 | 푸른행성 조사본부 (패키지 이름 `blue-planet-research-hq` 1.0.0) |
 | 운영 주소 | https://earth-and-ocean-explorer.yelsam.workers.dev/ |
 | 저장소 | https://github.com/yelmovie/earth-and-ocean-explorer (브랜치 `main`) |
-| 앱 코드 마지막 커밋 | `cd79090` (2026-11-21) |
+| 앱 코드 마지막 커밋 | `0f37293` (2026-11-22, 인증서 고도화) |
 
 ## 2. 폴더 구조
 
@@ -86,3 +86,9 @@ npm run check:layout  # node tests/activity_viewport.mjs (개발 서버를 켠 �
 
 - 조율 세션이 운영 주소의 `index`와 스크립트·스타일 파일 17개를 저장소 `origin/main`과 대조했습니다. 결과는 모두 일치입니다(불일치 0).
 - 위 본문에 「운영 반영 확인 필요」로 적힌 칸은 이 대조로 확인된 것입니다. 이후 앱을 다시 배포하면 `_scratch/final-recheck-20261120/prodcmp.sh 10`로 다시 대조합니다.
+
+## 인증서 운영 반영 · 2026-11-22
+
+- 그림268e967, 앱0f37293, 안내·장부fc94f6e. 기존 Workers earth-and-ocean-explorer 버전848aacd9-228f-43a6-993d-dbc0c4742b5f에 배포했습니다. 공식 운영 주소는 그대로입니다.
+- 단위 시험104개·빌드 통과. 운영1280×800/1024×768/1920×1080에서 종이·버튼 전체 표시, 겹침/넘침/콘솔오류0. 인쇄PDF는 A4가로1쪽, 학교54.9mm·이름68.3mm·쓰기높이11.3mm. PNG2400×1697 저장·직접열기 확인.
+- 운영 index+코드/스타일17개와 새 테두리 SHA-256이 배포 빌드와 일치합니다. 비교 `.tmp/cert-design-20261122/compare.png`. 기존 기록·확장활동·첫시도·갯벌메시지와 완료 판정·저장 형식은 유지했습니다.

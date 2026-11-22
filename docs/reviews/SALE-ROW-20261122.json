@@ -14,7 +14,7 @@
   "minutes": null,
   "stages": 10,
   "thumbnail": "10 earthsea/thumbnails/thumbnail-16x8.png",
-  "appCommit": "cd79090",
+  "appCommit": "e7ee8b4",
   "host": "workers",
   "note": "stages는 QUALITY-ROW의 활동 수(5장 x 관찰·연결). 장마다 관찰·연결·도전·적용 4화면이라 학습 화면은 총 20(PRD). 도전·적용 문제 20개.",
   "consistency": {
@@ -106,15 +106,22 @@
   },
   "teacherGuide": {
     "needsConfirm": [
-      "예상 수업 시간(성적표 B16: 학생 40분 수업 미확인)",
-      "학년 대조: 운영 시트는 3학년 2학기, 저장소 교사 검토지는 4학년"
+      "예상 수업 시간(성적표 B16: 학생 40분 수업 미확인)"
     ]
   },
   "files": {
     "teacherGuide": "docs/TEACHER-GUIDE.md",
     "handoff": "docs/DELIVERY-HANDOFF.md"
   },
-  "gradeRepo": "4학년",
+  "gradeRepo": "3학년 2학기(교사 검수표·가이드도 운영 시트와 일치)",
   "unitRepo": "지구와 바다",
-  "gradeUnitSource": "운영 시트 「이예리 선생님」 탭, 2026-11-22 확인"
+  "gradeUnitSource": "운영 시트 「이예리 선생님」 탭, 2026-11-22 확인",
+  "production": {
+    "checkedAt": "2026-11-22 20:23 KST",
+    "appCommit": "e7ee8b4",
+    "workerVersion": "5a3b9970-63fc-4ec9-832a-c5c5dae4f6e7",
+    "url": "https://earth-and-ocean-explorer.yelsam.workers.dev/",
+    "sha256MatchFiles": 20,
+    "result": "공식 운영 주소의 index·JS/CSS·서비스워커·인증서 핵심 파일이 최신 검증 빌드와 모두 일치. 앱 재배포 없이 기존 활성 버전 유지."
+  }
 }

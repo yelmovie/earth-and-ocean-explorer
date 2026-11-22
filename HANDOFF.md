@@ -1,3 +1,9 @@
+# 2026-11-22 첫 화면을 1번 우당탕 양식으로
+
+지침 `_shared/START-SCREEN-UDANGTANG-20261122.md` 10번 줄. 첫 화면(`src/screens.js` `home()`)은 배경·부리·짱이, 가운데 위 로고(원본 960px 이하), 아래 가운데 「시작하기/새로 시작」(`.title-start`)과 「이어 하기」(`.title-continue`, 기록 없으면 비활성, `resume`으로 감), 소리·설정 아이콘, 제작 표기만 남았다. 기록이 있을 때 「새로 시작」은 확인창(「취소 / 기록 지우고 시작」) 뒤 초기화하고 인트로 → 지도로 간다. 부제·설명·말풍선·0/5·「이 기기에 자동 저장」·부리 목소리 버튼·「탐사 지도 보기」는 첫 화면에서 빠졌다. 설정에는 「안내 목소리 듣기」(같은 부리 대화창·음성, AI 생성 음성 표시), 저장된 곳이 지도가 아닐 때 「탐사 지도 보기」, 초기화 옆 「복구한 기록 N / 5」가 들어갔다. `npc-guide.js`는 지웠고 `npc-button.css`는 `main.js`에서 바로 불러온다. 커밋 `afcddbc`, Version ID `c3dc7170-1039-42f3-9eb4-670cde3bab60`, 주 번들·CSS·index MATCH. 검증: `npm test` 104, 빌드, 헤드리스 `.tmp/start-screen-20261122/check.mjs` 로컬 56/56(1280×720·1024×768·844×390), 운영 10/10, 콘솔 오류 0.
+
+---
+
 # 2026-11-22 파이널 영상은 스테이지 완료 때 한 번만
 
 지침 `_shared/FINALE-ONCE-20261122.md` 덩어리 E. 마지막 악당 3타 뒤 지도 피날레(`map-finale.mp4`)를 띄우던 `src/map-encounters.js`의 `finaleAt` 한 줄만 막았다(`requiredFoes`는 `victory` 신호 판단에도 쓰여 그대로). 이제 악당 격퇴는 성취 카드만, 파이널(`story/finale.mp4`)은 다섯 기록을 모두 연결하고 「복구된 이야기 보기」를 누를 때 한 번(`storyVideos.finale`). 설정의 다시 보기는 `allLinked` 그대로. 커밋 `c5b0e91`, Version ID `00f40b35-194a-46e9-ae92-9c839afa51a4`, 주 번들·index MATCH. 검증: `npm test` 104, 빌드, 헤드리스 `.tmp/finale-once-20261122/verify.mjs` 로컬 34/34(시나리오 1 영상 0·2 영상 1·3 합계 1), 운영 시나리오 1·2 통과.

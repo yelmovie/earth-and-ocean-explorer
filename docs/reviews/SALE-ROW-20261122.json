@@ -56,7 +56,6 @@
     "certificate": {
       "fields": [
         "학교·학년·반·번호·이름 밑줄 빈칸(출력 후 손기입)",
-        "기록 묶음·확장 활동·첫 시도 수와 갯벌 지킴 메시지",
         "완료 날짜·푸른행성 조사본부·제작 표기"
       ],
       "buttons": [
@@ -70,7 +69,9 @@
       "dateFormat": "2026. 11. 22.",
       "print": "A4 가로1쪽, 버튼·배경·기입안내 숨김",
       "recipient": "학교54.9mm·이름68.3mm·쓰기높이11.3mm",
-      "frame": "public/assets/certificate-frame-20261122.webp"
+      "frame": "public/assets/certificate-frame-20261122.webp",
+      "numericProgress": "사용자 최신 지시: 미션/기록/복구율/활동개수 숫자 요약은 인증서 종이에 표시하지 않음(판정·저장은 유지)",
+      "title": "900 굵기와 동색 얇은 스트로크, PNG도 같은 굵기"
     },
     "rewardCards": {
       "count": 5,

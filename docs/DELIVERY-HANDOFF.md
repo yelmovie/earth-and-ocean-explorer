@@ -9,7 +9,7 @@
 | 프로젝트 | 푸른행성 조사본부 (패키지 이름 `blue-planet-research-hq` 1.0.0) |
 | 운영 주소 | https://earth-and-ocean-explorer.yelsam.workers.dev/ |
 | 저장소 | https://github.com/yelmovie/earth-and-ocean-explorer (브랜치 `main`) |
-| 앱 코드 마지막 커밋 | `0f37293` (2026-11-22, 인증서 고도화) |
+| 앱 코드 마지막 커밋 | `e7ee8b4` (2026-11-22, 인증서 진행 숫자 미표시·굵은 제목) |
 
 ## 2. 폴더 구조
 

@@ -118,3 +118,7 @@
 | audio/step-2.mp3 | 지도·갯벌 탐사길 발자국(번갈아) | `sfx/step-02.mp3` | concrete footstep 4 · Yoyodaman234 | CC0 1.0 | https://freesound.org/people/Yoyodaman234/sounds/166506 |
 | audio/map-open.mp3 | 지도에 새 장소가 처음 열릴 때(잠금 풀림) | `sfx/open-01.mp3` | maximize_008 · Kenney(Interface Sounds 1.0) | CC0 1.0 | https://kenney.nl/assets/interface-sounds |
 | audio/map-open-shine.mp3 | 장소 열림 0.12초 뒤 반짝(작은 종소리) | `sfx/twinkle-03.mp3` | Fantasy_ui_Button_2.wav · ZenithInfinitiveStudios | CC0 1.0 | https://freesound.org/people/ZenithInfinitiveStudios/sounds/376746 |
+
+## 인증서 테두리 · 2026-11-22
+
+- `public/assets/certificate-frame-20261122.webp`: Codex 기본 imagegen(GPT 이미지), 1회 생성. 부리·파도·조개·갯벌 게·등대·지구본 수채 테두리, 글자는 앱에서 따로 표시합니다. 원본 `assets/source-png/certificate-20261122.png`, 프롬프트 `assets/source-png/PROMPT-10.txt`. 1800×1273, 207,582 bytes.

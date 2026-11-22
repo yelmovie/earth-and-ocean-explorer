@@ -32,5 +32,5 @@
 :where(.certificate-promise, .report-bottom p) > b + br { display: none; }
 /* 4장 3D 탐사길 출발 화면의 문제 설명: 1024·915·830 폭에서 「…전에 / 안전하게 돌아와요.」로 끝줄이 1/3만 남는다 */
 :where(.challenge-page:has(.walk-start) .page-heading h1 + p) { text-wrap: balance; }
-/* 지도 악당 말풍선(18px·최대 300px): 「…빈 땅이라 / 써 놨는데!」처럼 끝줄이 1/3만 남는다. 줄 수는 그대로 */
+/* 지도 악당 말풍선(18px·최대 320px): 「…빈 땅이라 / 써 놨는데!」처럼 끝줄이 1/3만 남는다. 줄 수는 그대로 */
 :where(.map-encounter-say) { text-wrap: balance; }

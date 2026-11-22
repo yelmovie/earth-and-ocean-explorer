@@ -89,7 +89,7 @@ export function mountMapEncounters({
   live.className='map-encounter-sr';live.role='status';live.setAttribute('aria-live','polite');layer.append(live);
   const callback=doc.createElement('p');
   callback.className='map-encounter-clear';callback.hidden=true;callback.setAttribute('role','status');layer.append(callback);
-  let clearReady=null,clearUntil=0,clearId=null,lastSpeechLayout=-Infinity;
+  let clearReady=null,clearUntil=0,clearId=null,lastSpeechLayout=-Infinity,launchBox=null;
   const attack=doc.createElement('button');
   attack.type='button';attack.className='map-encounter-attack';attack.hidden=true;
   attack.setAttribute('aria-keyshortcuts','J Space');
@@ -199,6 +199,14 @@ export function mountMapEncounters({
       const {el,actor}=foe;
       el.style.transform=`translate(${point.x.toFixed(1)}px,${point.y.toFixed(1)}px)`;
       el.style.setProperty('--encounter-size',size.toFixed(1)+'px');
+      // Nudge the hit meter off the expedition button by the shortest move: up, right or left (size and text unchanged).
+      const mw=foe.meterW??0,mb=point.y-size+1,ml=point.x-mw/2,box=launchBox;
+      let nudge='';
+      if(box&&mw&&ml+mw>box.l-4&&ml<box.r+4&&mb>box.t-4&&mb-(foe.meterH??0)<box.b){
+        const up=mb-box.t+6,right=box.r+6-ml,left=ml+mw-box.l+6,move=Math.ceil(Math.min(up,right,left));
+        nudge=move===Math.ceil(up)?`0 ${-move}px`:move===Math.ceil(right)?`${move}px 0`:`${-move}px 0`;
+      }
+      if(nudge!==(foe.meterNudge??'')){foe.meterNudge=nudge;foe.meter.style.translate=nudge;}
       const d=distance(hero,foe.point);
       if(!stop&&foe.hits<HITS&&point.x>=0&&point.x<=width&&point.y>=0&&point.y<=height&&d<=reach&&d<best){nearest=foe;best=d;}
       if(now>=foe.poseUntil){
@@ -273,6 +281,9 @@ export function mountMapEncounters({
     if(attack.hidden&&hasFocus){host.querySelector('canvas,[tabindex="0"]')?.focus({preventScroll:true});}
     if(now-lastSpeechLayout>=110){
       lastSpeechLayout=now;
+      const launch=doc.querySelector('.expedition-launch');
+      if(launch&&!launch.hidden&&launch.offsetParent){const b=host.getBoundingClientRect(),q=launch.getBoundingClientRect(),sx=b.width/host.clientWidth||1,sy=b.height/host.clientHeight||1;launchBox={l:(q.left-b.left)/sx,r:(q.right-b.left)/sx,t:(q.top-b.top)/sy,b:(q.bottom-b.top)/sy};}else launchBox=null;
+      for(const foe of foes)if(!foe.el.hidden){foe.meterW=foe.meter.offsetWidth;foe.meterH=foe.meter.offsetHeight;}
       layoutSpeech(host,[{el:callback},...foes.map(foe=>({el:foe.bubble,anchor:foe.actor}))]);
     }
     return {hero:output('hero',now),ally:output('ally',now)};
@@ -289,7 +300,7 @@ const STYLES=`
 .map-encounter-meter{position:absolute;left:0;bottom:calc(var(--encounter-size) - 1px);transform:translateX(-50%);color:#fff;background:#251833ec;border:1px solid #ffffffa8;border-radius:10px;padding:1px 7px;font:700 18px/1.2 NanumSquareNeo,system-ui;letter-spacing:1px;white-space:nowrap}
 .map-encounter-foe[data-pose="exit"][data-exited="true"] > :not(.map-encounter-say){visibility:hidden}
 .map-encounter-clear{position:absolute;top:12px;left:50%;width:max-content;max-width:min(460px,calc(100% - 24px));transform:translateX(-50%);z-index:3;margin:0;padding:9px 14px;border:2px solid var(--encounter-color);border-radius:12px;background:#282138;color:white;box-shadow:0 2px 8px #16102477;text-align:center;pointer-events:none;font:700 18px/1.4 NanumSquareNeo,system-ui;word-break:keep-all}
-.map-encounter-say{position:absolute;left:0;bottom:calc(var(--encounter-size) + 18px);transform:translateX(-50%);width:max-content;max-width:300px;word-break:keep-all;background:#fff;color:#292137;border:1px solid #514364;border-radius:10px;padding:6px 11px;text-align:center;font:700 18px/1.3 NanumSquareNeo,system-ui;box-shadow:0 2px 5px #15111950}
+.map-encounter-say{position:absolute;left:0;bottom:calc(var(--encounter-size) + 18px);transform:translateX(-50%);width:max-content;max-width:320px;word-break:keep-all;background:#fff;color:#292137;border:1px solid #514364;border-radius:10px;padding:6px 11px;text-align:center;font:700 18px/1.3 NanumSquareNeo,system-ui;box-shadow:0 2px 5px #15111950}
 .map-encounter-prop{position:absolute;width:calc(.36 * var(--encounter-size));height:calc(.36 * var(--encounter-size));bottom:4px;left:calc(.28 * var(--encounter-size));color:var(--encounter-color);fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #161024) drop-shadow(0 0 2px #161024)}
 .map-encounter-fx{position:absolute;bottom:6px;left:calc(-.35 * var(--encounter-size));width:calc(.7 * var(--encounter-size));height:calc(.58 * var(--encounter-size));border:3px solid var(--encounter-color);border-radius:45% 58% 52% 43%;opacity:0}
 .map-encounter-foe[data-pose="mischief"] .map-encounter-prop{animation:map-encounter-prop .6s ease-out}

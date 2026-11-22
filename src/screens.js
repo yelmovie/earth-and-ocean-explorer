@@ -107,7 +107,6 @@ function firstTryLine(s) {
 }
 export function certificate(s) {
   const actual=!s.settings.unlockAll&&allLinked(s)&&s.issuedAt;
-  const researchCount=chapters.reduce((sum,chapter)=>sum+(s.evidence[chapter.id]?.research?.solved?.length??0),0);
   const date=actual?new Date(s.issuedAt).toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul'}):'연습용 예시';
-  return certificatePaper({actual,date,researchCount,firstTry:actual?firstTryLine(s):'',promise:conservationMessage(s)});
+  return certificatePaper({actual,date,promise:conservationMessage(s)});
 }

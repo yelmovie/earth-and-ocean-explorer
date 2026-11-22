@@ -45,12 +45,12 @@ function restoreDraft(state) {
   runInNewContext(restoreSource+'\nrestoreLinkDraft();',{state});
 }
 
-test('certificates count archived extension records without inventing legacy completion',()=>{
+test('certificates omit numeric progress while preserving archived extension records',()=>{
   for(const [state,count] of [[completedState(),20],[legacyState(),0],[legacyState([1,3]),12]]){
     assert.equal(allLinked(state),true);
     const output=certificate(state);
     assert.match(output,/탐사 완료 인증서/);
-    assert.ok(output.includes(`확장 활동 ${count}개`));
+    assert.doesNotMatch(output,/확장 활동 \d+개|기록 5묶음|증거 연결 5개 완성/);
     assert.equal(Object.values(state.evidence).reduce((sum,evidence)=>sum+(evidence.research?.solved.length??0),0),count);
   }
 });

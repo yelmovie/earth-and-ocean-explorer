@@ -1,7 +1,7 @@
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 
 // Completion and preview decisions remain in screens.js; this module only lays out the award.
-export function certificatePaper({actual, date, researchCount, firstTry, promise}) {
+export function certificatePaper({actual, date, promise}) {
   return `<section class="certificate-page cert-design">
     <article class="cert-paper" aria-label="푸른행성 조사원 인증서">
       <img class="cert-frame" src="/assets/certificate-frame-20261122.webp" alt="" aria-hidden="true">
@@ -13,7 +13,6 @@ export function certificatePaper({actual, date, researchCount, firstTry, promise
           <div class="cert-name">이름 <span class="cert-blank name" data-cert-blank="name"></span></div>
         </div>
         <p class="cert-award">위 조사원은 지구와 바다의 다섯 가지 기록을 모으고,<br>생명이 살아가는 갯벌을 지킬 방법을 탐구하였으므로<br>이 인증서를 드립니다.</p>
-        <p class="cert-summary">${actual ? `기록 5묶음 · 확장 활동 ${researchCount}개 · 증거 연결 5개 완성${firstTry}` : '미리보기 · 실제 조사와 증거 연결 완료 후 인증돼'}</p>
         <p class="cert-promise"><b>나의 갯벌 지킴 메시지</b><span>${escape(promise)}</span></p>
         <div class="cert-bottom">
           <p class="cert-date"><small>완료한 날</small>${escape(date)}</p>

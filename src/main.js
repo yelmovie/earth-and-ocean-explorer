@@ -1,3 +1,4 @@
+import {mountCertificateWax} from './certificate-wax.js';
 import { saveCertificatePng } from './certificate-png.js';
 let cleanupExpedition;
 import './npc-button.css';
@@ -176,6 +177,7 @@ async function render(){
   app.className=`app route-${r}`;app.style.setProperty('--scene',`url("${asset(bg)}")`);
   const teacher=teacherNav(r);app.classList.toggle('has-teacher-nav',!!teacher);
   app.innerHTML=`${header()}${warning?`<div class="storage-warning" role="alert">${esc(warning)}</div>`:''}${state.settings.unlockAll?'<div class="admin-label">교사 미리보기 · 체험 내용은 저장되지 않아요</div>':''}<main id="main">${content}</main>${teacher}<span class="orientation-hint">가로로 돌리면 탐사 화면을 더 넓게 볼 수 있어.</span>`;
+  if(r==='certificate')mountCertificateWax(app.querySelector('.cert-paper'),{label:'푸른행성\n탐사 인증',onImpact:()=>audioPlayer.effect('map-hit-2')});
   app.querySelectorAll('.learning [data-note]').forEach(note=>app.querySelector('.moa-bubble')?.append(note));
   if(r==='s4b'&&local.tideWipe!==undefined){app.querySelector('[data-compare]').value=local.tideWipe;app.querySelector('.tide-wipe').style.setProperty('--wipe',`${local.tideWipe}%`);}
   cleanupChallenges=mountChallenges(app,context());

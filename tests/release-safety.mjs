@@ -135,7 +135,8 @@ try {
   assert.deepEqual((await saved()).evidence[3].data.pins, legacy.evidence[3].data.pins);
   await page.evaluate(() => location.hash = 'certificate');
   await page.locator('#app.route-certificate').waitFor();
-  assert.match(await page.locator('.certificate').innerText(), /확장 활동 0개/);
+  assert.doesNotMatch(await page.locator('.cert-paper').innerText(), /확장 활동 \d+개/);
+  assert.equal(Object.values((await saved()).evidence).reduce((sum,e)=>sum+(e.research?.solved.length??0),0),0);
   assert.equal((await saved()).issuedAt, legacy.issuedAt);
   results.legacyEvidenceDisplay = true;
 

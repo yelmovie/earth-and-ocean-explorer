@@ -66,7 +66,7 @@ export function stageGuide(state) {
     if(next)return ['남은 ＋를 눌러 촬영해요.',`[data-action="target"][data-value="${next.id}"]`];
   }
   if(route==='s3b') {
-    const next=terrains.find(t=>!d.pins[t.id]||!d.features[t.id]);
+    const next=terrains.find(t=>!d.pins[t.id]||d.features[t.id]!==t.feature);
     if(next)return !d.pins[next.id]?[`${next.name} 사진에서 특징이 보이는 곳을 눌러요.`,`[data-action="pin"][data-value="${next.id}"]`]:[`${next.name} 사진에 알맞은 특징을 골라요.`,choice(`features.${next.id}`)];
     if(!d.compare)return ['동굴과 구멍 난 바위의 차이를 골라요.',choice('compare')];
   }

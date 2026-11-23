@@ -10,13 +10,13 @@ export function mountInteractions(app,ctx){
  const listeners=[];const on=(el,type,fn,options)=>{el?.addEventListener(type,fn,options);listeners.push(()=>el?.removeEventListener(type,fn,options));};
  app.querySelectorAll('[data-challenge-item]').forEach(el=>el.draggable=false);
  function selectSample(pick){app.querySelectorAll('[data-sample]').forEach(el=>{el.classList.toggle('selected',el===pick);el.setAttribute('aria-pressed',String(el===pick));});}
- selectSample([...app.querySelectorAll('[data-sample]')].find(el=>!['육지','바다'].includes(d.classifications?.[el.dataset.sample])));
+ selectSample(app.querySelector('[data-sample].recheck')||[...app.querySelectorAll('[data-sample]')].find(el=>!['육지','바다'].includes(d.classifications?.[el.dataset.sample])));
  function assignSample(id,type){d.classifications[id]=type;save();render();sound('drop');}
  function updateLabStatus(){
   const status=app.querySelector('[data-lab-status]');if(!status)return;
   const inputs=['fresh','sea','heatFresh','heatSea'].map(field=>app.querySelector(`input[data-field="${field}"]`));if(inputs.some(input=>!input))return;
   const [fresh,sea,heatFresh,heatSea]=inputs.map(input=>Number(input.value)),sameAmount=fresh===sea,sameHeat=heatFresh===heatSea;
-  status.classList.toggle('ready',sameAmount&&sameHeat);status.textContent=!sameAmount?'조건 확인 · 물의 양이 달라요.':!sameHeat?'조건 확인 · 가열 세기가 달라요.':'조건 확인 · 양과 가열 세기가 같아요.';
+  status.classList.toggle('ready',sameAmount&&sameHeat);status.textContent=!sameAmount?'조건 확인 · 물의 양이 달라요.':!sameHeat?'조건 확인 · 가열 세기가 달라요.':'조건 확인 · 양·세기 같음 · 같은 시간 후 함께 종료';
  }
  updateLabStatus();
  on(app,'click',e=>{

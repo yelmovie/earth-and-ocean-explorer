@@ -74,6 +74,6 @@ test('a wrong complete answer points at what to recheck without revealing the an
       assert.equal(mistakeHint(t,Object.fromEntries(t.items.map(x=>[x.id,x.answer]))),null);
     }
     if(t.type==='multi'){const bad=t.options.find(o=>!t.answer.includes(o.id)).id;const h=mistakeHint(t,[t.answer[0],bad]);assert.deepEqual(h.wrong,[]);assert.match(h.text,/관찰한 근거/);}
-    if(t.type==='order'){const swapped=[...t.answer];[swapped[0],swapped[1]]=[swapped[1],swapped[0]];assert.match(mistakeHint(t,swapped).text,/두 카드 사이/);}
+    if(t.type==='order'){const swapped=[...t.answer],i=t.before?.length?1:0;[swapped[i],swapped[i+1]]=[swapped[i+1],swapped[i]];assert.match(mistakeHint(t,swapped).text,t.before?.length?/가열 전/:/두 카드 사이/);}
   }
 });

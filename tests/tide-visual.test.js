@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { tideScene } from '../src/screens.js';
+import { tideScene, learning } from '../src/screens.js';
 import { tideHeight } from '../src/data.js';
 import { freshState } from '../src/state.js';
 import { challengeScreen } from '../src/challenges.js';
@@ -32,4 +32,14 @@ test('tide evidence challenges reuse the terrain without baking water or labels 
       assert.match(html,/fill="#3299ad"/);
     }
   }
+});
+
+
+test('tide states are distinct from the incoming and outgoing processes and official field guidance',()=>{
+ assert.match(tideScene(0),/data-tide-state="물이 가장 낮은 상태"/);
+ assert.match(tideScene(3),/data-tide-state="물이 가장 높은 상태"/);
+ const s=freshState(),html=learning(s,4,'b');
+ assert.match(html,/밀물은 물이 들어오며 높아지는 과정.*썰물은 빠지며 낮아지는 과정/);
+ assert.match(html,/1. 물 높이의 상태 비교/);
+ assert.match(learning(s,4,'a'),/해당 장소·날짜의 국립해양조사원 공식 물때/);
 });

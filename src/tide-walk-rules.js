@@ -9,7 +9,7 @@ export const WALK_WARN_SLOT = 2;
 // 한 칸(2시간)을 화면에서 보여 주는 시간(초).
 export const SLOT_SECONDS = 24;
 export const WALK_NOTE = '한 칸은 2시간인 학습용 관측 모형이에요. 실제 밀물·썰물 시각과 높이는 장소와 날짜에 따라 달라요.';
-export const WALK_SAFETY = '실제 갯벌에서는 물때를 미리 확인하고 어른과 함께 가요.';
+export const WALK_SAFETY = '실제 갯벌에서는 어른과 함께 해당 장소·날짜의 국립해양조사원 공식 물때와 현장 안내를 확인해요.';
 
 // 단위는 미터. x는 데크(음수)에서 바다 쪽(양수)으로 커지고, 탐사길 윗면의 높이가 0이다.
 export const course = {

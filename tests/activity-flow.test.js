@@ -131,3 +131,13 @@ test('an older unfinished tide draft that crosses a turn returns to observation'
   state.route = 's4a';
   assert.equal(activityReady(state), false);
 });
+
+
+test('coast retry guidance stays with the misclassified photo instead of pointing to another terrain',()=>{
+ const state=observed(3);state.route='s3b';
+ state.drafts[3].pins.sand={x:40,y:60};
+ state.drafts[3].features.sand=terrains.find(t=>t.id==='cliff').feature;
+ assert.equal(stageGuide(state)[1],'[data-field="features.sand"]');
+ assert.match(stageGuide(state)[0],/모래사장 사진에 알맞은 특징/);
+ assert.deepEqual(state.drafts[3].pins.sand,{x:40,y:60});
+});

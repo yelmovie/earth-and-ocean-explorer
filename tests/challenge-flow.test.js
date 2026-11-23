@@ -176,3 +176,18 @@ test('choice options are shown in a shuffled order but keep their ids', () => {
   assert.deepEqual([...shuffled(ids, 'x')].sort(), [...ids].sort(), 'nothing lost or added');
  });
 });
+
+
+test('lab preparation may precede prediction while both must precede heating and comparison',()=>{
+ const task=challenges[2].find(t=>t.id==='lab-order');
+ const permutations=items=>items.length?items.flatMap((id,i)=>permutations(items.filter((_,j)=>i!==j)).map(rest=>[id,...rest])):[[]];
+ const accepted=permutations(['a','b','c','d']).filter(answer=>correctResponse(task,answer));
+ assert.deepEqual(accepted,[['a','b','c','d'],['b','a','c','d']]);
+ for(const answer of accepted){
+  const run=session();run.visit(2,0);answer.forEach(id=>run.send('challenge-order',id));
+  assert.ok(run.state.research[2].solved.includes(task.id));
+  assert.deepEqual(run.state.research[2].firstTry,[task.id]);
+  assert.deepEqual(normalize(JSON.parse(JSON.stringify(run.state))).research[2].answers[task.id],answer);
+ }
+ for(const invalid of [['a','a','c','d'],['a','b','c'],['a','b','c','unknown']])assert.equal(correctResponse(task,invalid),false);
+});

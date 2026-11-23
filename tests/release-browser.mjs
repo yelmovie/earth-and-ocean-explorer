@@ -2,7 +2,7 @@
 // GAME_URL, QA_OUTPUT, BROWSER_PATH and PLAYWRIGHT_RUNNER can point to an existing QA setup.
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { sites, terrains, creatures, finalCases } from '../src/data.js';
 import { challenges, PAGE_SIZE } from '../src/challenge-data.js';
@@ -33,6 +33,17 @@ try {
   const route = name => page.waitForFunction(name => document.querySelector('#app')?.classList.contains(`route-${name}`), name);
   const saved = () => page.evaluate(key => JSON.parse(localStorage.getItem(key)), key);
   const shot = name => page.screenshot({ path: path.join(out, `${name}.png`), fullPage: true });
+  async function story(kind) {
+    const dialog=page.locator('.story-video-dialog');await dialog.waitFor();
+    await page.waitForFunction(()=>{const v=document.querySelector('.story-video-dialog video');return v?.readyState>=2&&v.currentTime>0&&!v.paused;});
+    const video=await dialog.locator('video').evaluate(v=>({source:v.currentSrc,duration:v.duration,width:v.videoWidth,height:v.videoHeight}));
+    assert.ok(video.duration>10&&video.width>0&&video.height>0);
+    await shot(`story-${kind}`);
+    // Let the real media end, rather than dispatching an ended event or skipping it.
+    await dialog.waitFor({state:'detached',timeout:45000});
+    assert.equal((await saved()).storyVideos[kind],true);
+    report.story??={};report.story[kind]={...video,naturalEnd:true};
+  }
   async function slider(field, value) {
     const input = page.locator(`[data-field="${field}"]`);
     const config = await input.evaluate(el => ({ min: Number(el.min), step: Number(el.step) || 1 }));
@@ -103,6 +114,7 @@ try {
   await page.locator('.title-start').waitFor();
   await shot('home');
   await click('go', 'hub');
+  await story('intro');
   await route('hub');
   await page.goto(`${base}/#s1a`, { waitUntil: 'domcontentloaded' });
   await route('s1a');
@@ -216,6 +228,7 @@ try {
   assert.equal(await page.locator('[data-action="check-link"]').isDisabled(),true);
   report.guidance.finalEvidenceSteps=true;
   await click('go', 'ending');
+  await story('finale');
   await route('ending');
   await click('go', 'certificate');
   await route('certificate');
@@ -232,6 +245,14 @@ try {
   report.printPages = (pdf.toString('latin1').match(/\/Type\s*\/Page\b/g) || []).length;
   report.printBytes = pdf.length;
   assert.equal(report.printPages, 1, 'certificate prints on one sheet');
+  const downloadPromise=page.waitForEvent('download');
+  await click('cert-png');const download=await downloadPromise;
+  const pngPath=path.join(out,'certificate.png');await download.saveAs(pngPath);
+  const png=await readFile(pngPath);
+  assert.deepEqual([...png.subarray(0,8)],[137,80,78,71,13,10,26,10]);
+  report.png={width:png.readUInt32BE(16),height:png.readUInt32BE(20),bytes:png.length};
+  assert.equal(report.png.width,2400);assert.ok(report.png.height>1000);
+
   await writeFile(path.join(out, 'completed-state.json'), JSON.stringify(completed, null, 2));
 
   await click('settings');

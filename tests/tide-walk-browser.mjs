@@ -140,7 +140,9 @@ try {
     s = await saved(page);
     assert.deepEqual(s.research[4].answers['tide-safety'], ['0', '2']);
     assert.ok(s.research[4].solved.includes('tide-safety'));
-    assert.deepEqual(Object.keys(s.research[4]).sort(), ['answers', 'c', 'd', 'solved']);
+    assert.deepEqual(Object.keys(s.research[4]).sort(), ['answers', 'c', 'd', 'firstTry', 'missed', 'solved']);
+    assert.ok(!s.research[4].firstTry.includes('tide-safety'), '재시도 정답은 첫 시도 정답으로 기록하지 않는다');
+    assert.ok(s.research[4].missed.includes('tide-safety'), '앞의 오답 이력은 재시도 뒤에도 남는다');
     await page.screenshot({ path: path.join(out, 'walk-success-1280.png') });
     await page.locator('dialog.tide-walk [data-tw-action="done"]').click();
     await walk(page).waitFor({ state: 'detached' });

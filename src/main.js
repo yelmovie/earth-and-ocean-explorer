@@ -21,7 +21,7 @@ if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcu
 const loadConcepts = () => import('./concepts.js');
 import { mountInteractions } from './interactions.js';
 import { chapters, sites, terrains, creatures, routes, asset, tideHeight, finalCases } from './data.js';
-import { freshState, loadState, saveState, recordPrediction, recordTideObservation, tideIntervalDirection, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
+import { freshState, loadState, saveState, selectFinalCase, recordPrediction, recordTideObservation, tideIntervalDirection, previewState, aReady, canAccess, completeStage, allLinked, linkEvidence } from './state.js';
 import { home, hub, learning, report, link, ending, certificate, recordDetail, tideScene, esc, character } from './screens.js';
 import { icon } from './icons.js';
 import { openStoryVideo } from './story-video.js';
@@ -156,7 +156,7 @@ function runLinkCheck(index){
   const next=finalCases.findIndex((_,i)=>!state.links[i]);
   if(next<0)return;
   document.querySelector('.link-actions .next-target, [data-action="case"].next-target')?.classList.add('auto-advance','counting');
-  linkTimer=setTimeout(()=>{linkTimer=null;if(state.route!=='link'||state.finalDraft.caseIndex!==index||state.links[next])return;const linked=state.links[next];state.finalDraft={caseIndex:next,stage:linked?.stage??null,reason:linked?.reason??null};save();render();},2600);
+  linkTimer=setTimeout(()=>{linkTimer=null;if(state.route!=='link'||state.finalDraft.caseIndex!==index||state.links[next])return;selectFinalCase(state,next);save();render();},2600);
 }
 function autoLink(){const d=state.finalDraft;if(state.route==='link'&&Number.isInteger(d?.caseIndex)&&d.stage!==null&&d.reason!==null&&!state.links[d.caseIndex])runLinkCheck(d.caseIndex);}
 const allSoundOff=()=>state.settings.muted||(state.settings.bgmEnabled===false&&state.settings.sfxEnabled===false&&state.settings.voiceEnabled===false);
@@ -171,7 +171,7 @@ async function render(){
   cleanupInteractions?.();cleanupInteractions=null;cleanupChallenges?.();cleanupChallenges=null;controller?.dispose();controller=null;const ticket=++epoch;const r=state.route,m=/^s([1-5])([abcd])$/.exec(r);
   if(r==='link')restoreLinkDraft();
   audioPlayer.music(r==='ending'||r==='certificate'?'final':'main');
-  let content=r==='home'?home(state):r==='hub'?hub(state):m?learning(state,+m[1],m[2]):r==='report'?report(state):r==='link'?link(state,{caseIndex:state.finalDraft.caseIndex,linkStage:state.finalDraft.stage,linkReason:state.finalDraft.reason}):r==='ending'?ending(state):certificate(state);
+  let content=r==='home'?home(state):r==='hub'?hub(state):m?learning(state,+m[1],m[2],{sampleReview:local.sampleReview}):r==='report'?report(state):r==='link'?link(state,{caseIndex:state.finalDraft.caseIndex,linkStage:state.finalDraft.stage,linkReason:state.finalDraft.reason}):r==='ending'?ending(state):certificate(state);
   const bg=r==='home'?'home':m?chapters[+m[1]-1].asset:r==='ending'?'ending':'terrace';
   document.body.classList.toggle('title-font',r==='home');
   app.className=`app route-${r}`;app.style.setProperty('--scene',`url("${asset(bg)}")`);
@@ -225,6 +225,7 @@ function observeSite(id){
   d.samples.push(id);save();
   const button=app.querySelector(`[data-action="site"][data-value="${id}"]`);button.textContent=`✓ ${sites.find(site=>site.id===id).name}`;button.classList.add('collected');
   const progress=app.querySelector('.mini-progress'),seen=Math.min(d.samples.length,3);progress.querySelector('b').textContent=`${seen} / 3`;progress.querySelector('i').style.width=`${seen/3*100}%`;
+  app.querySelector('[data-observation-remaining]').hidden=d.samples.length<3||d.atmosphere;
   app.querySelector('[data-action="go"][data-value="s1b"]').disabled=!canAccess(state,'s1b');
   feedback(aReady(state,1)?'관찰 준비 완료! 모은 표본을 비교하러 가자.':`${sites.find(site=>site.id===id).name} 기록 완료 · ${d.samples.length}곳 관찰했어.`,true);sound('scan');
 }
@@ -429,9 +430,9 @@ document.addEventListener('click',async e=>{
   if(action==='observe-feature'){const creature=creatures.find(c=>c.id===button.dataset.creature);if(!creature||d.selected!==creature.id)return;const id=creature.id;if(d.features[id]===value&&(value!==creature.feature||d.found.includes(id)))return;d.features[id]=value;if(value!==creature.feature){d.found=d.found.filter(found=>found!==id);state.revised++;save();render();feedback('확대해서 본 생김새와 움직임을 다시 살펴봐. 알맞은 특징을 다시 골라 줘.');return;}if(!d.found.includes(id))d.found.push(id);save();render();feedback(d.found.length===3?stageGuide(state)[0]:`${creature.name} 기록 완료! 다른 흔적도 찾아봐.`,true);return;}
   if(action==='complete'){
     if(!aReady(state,n)){feedback('연습 화면이야. 앞의 관찰을 완료해야 실제 증거로 저장할 수 있어.');return;}
-    if(!completeStage(state,n)){state.revised++;save();const hints=['내 표본을 모두 분류한 뒤, 전체 면적 자료와 구분한 설명을 골라 줘.','가열 전후를 확인해. 어느 쪽에 흔적이 더 남았고, 그 물질은 어디에서 왔을까?','사진 네 장에 핀과 알맞은 특징을 연결하고 두 바위의 차이를 비교해 줘.','기둥과 바위를 모두 비교해. A에서 B로 물 높이가 어떻게 변했는지 살펴봐.','직접 관찰한 생물의 집과 연결되는 가치·보호 행동을 골라 줘.'];feedback(hints[n-1]);openWrongStep(n);return;}save();navigate('hub');feedback(chapters[n-1].reward,true);return;
+    if(!completeStage(state,n)){state.revised++;save();if(n===1){local.sampleReview=true;render();}const hints=['어떤 부분을 보고 골랐나요? 다시 보기 표본의 땅과 물 단서를 살펴보고, 표본 개수와 전체 면적도 구분해요.','가열 전후를 확인해. 어느 쪽에 흔적이 더 남았고, 그 물질은 어디에서 왔을까?','사진 네 장에 핀과 알맞은 특징을 연결하고 두 바위의 차이를 비교해 줘.','기둥과 바위를 모두 비교해. A에서 B로 물 높이가 어떻게 변했는지 살펴봐.','직접 관찰한 생물의 집과 연결되는 가치·보호 행동을 골라 줘.'];feedback(hints[n-1]);openWrongStep(n);return;}save();navigate('hub');feedback(chapters[n-1].reward,true);return;
   }
-  if(action==='case'){clearTimeout(linkTimer);const linked=state.links[+value];state.finalDraft={caseIndex:+value,stage:linked?.stage??null,reason:linked?.reason??null};save();render();return;}
+  if(action==='case'){clearTimeout(linkTimer);if(selectFinalCase(state,+value)){save();render();}return;}
   if(action==='link-stage'){state.finalDraft.stage=+value;save();render();autoLink();return;}
   if(action==='check-link'){runLinkCheck(+value);return;}
   if(action==='print'){if(!studentState&&allLinked(state))window.print();return;}

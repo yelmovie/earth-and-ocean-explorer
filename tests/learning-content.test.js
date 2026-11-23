@@ -70,3 +70,22 @@ test('six generated observations match the published manifest and credit copies'
   }
   assert.equal(readFileSync(source('assets/CREDITS.md'),'utf8'),readFileSync(source('public/assets/CREDITS.md'),'utf8'));
 });
+
+
+test('only misclassified samples are marked after review, without clearing correct choices',()=>{
+ const s=freshState();Object.assign(s.drafts[1],{samples:['asia','pacific','africa'],atmosphere:true,classifications:{asia:'바다',pacific:'바다',africa:'육지'},conclusion:'global'});
+ const html=learning(s,1,'b',{sampleReview:true});
+ assert.match(html,/data-sample="asia"[^>]*class="sample-token recheck"/);
+ assert.equal((html.match(/sample-token recheck/g)||[]).length,1);
+ assert.match(html,/어떤 부분을 보고 골랐나요/);
+ assert.equal(s.drafts[1].classifications.africa,'육지');
+});
+
+test('a viewed coast photo with the wrong feature is not counted as correctly classified',()=>{
+ const s=freshState();Object.assign(s.drafts[3],{photos:terrains.map(t=>t.id),pins:{sand:{x:40,y:60}},features:{sand:terrains.find(t=>t.id==='cliff').feature}});
+ const html=learning(s,3,'b');
+ assert.match(html,/본 사진 4 \/ 4 · 정확히 분류 0 \/ 4/);
+ assert.doesNotMatch(html,/photo-card [^"]*is-done/);
+ assert.match(html,/모래사장 사진의 특징은/);
+ assert.match(html,/class="chip-redo">다시 고르기/);
+});

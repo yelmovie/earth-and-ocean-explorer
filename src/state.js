@@ -10,7 +10,7 @@ export function freshState() {
     3: { photos: [], pins: {}, features: {}, compare: '', pan: 50, target: 'sand', photoVersion: 2 },
     4: { time: 0, a: null, b: null, markers: [], direction: '', concept: '' },
     5: { found: [], features: {}, selected: '', value: '', action: '' },
-  }, expeditions: {}, restoration: {}, mapHits: {}, completed: [], evidence: {}, links: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null, storyVideos: { intro: false, finale: false } };
+  }, expeditions: {}, restoration: {}, mapHits: {}, completed: [], evidence: {}, links: {}, finalDrafts: {}, finalDraft: { caseIndex: 0, stage: null, reason: null }, issuedAt: null, revised: 0, mapPosition: null, storyVideos: { intro: false, finale: false } };
 }
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 function sanitizedDraft(n,d) {
@@ -60,6 +60,10 @@ export function normalize(raw) {
   if(Number.isInteger(raw.finalDraft?.caseIndex)&&raw.finalDraft.caseIndex>=0&&raw.finalDraft.caseIndex<5)base.finalDraft.caseIndex=raw.finalDraft.caseIndex;
   if([1,2,3,4,5].includes(raw.finalDraft?.stage))base.finalDraft.stage=raw.finalDraft.stage;
   if([0,1,2].includes(raw.finalDraft?.reason))base.finalDraft.reason=raw.finalDraft.reason;
+  for(let i=0;i<finalCases.length;i++)if(object(raw.finalDrafts?.[i])){
+    const draft=raw.finalDrafts[i];
+    base.finalDrafts[i]={stage:[1,2,3,4,5].includes(draft.stage)?draft.stage:null,reason:Number.isInteger(draft.reason)&&draft.reason>=0&&draft.reason<finalCases[i].reasons.length?draft.reason:null};
+  }
   base.issuedAt = allLinked(base) && typeof raw.issuedAt === 'string' && !Number.isNaN(Date.parse(raw.issuedAt)) ? raw.issuedAt : null;
   base.route = routes.includes(raw.route) && canAccess(base, raw.route) ? raw.route : 'home';
   base.resume = routes.includes(raw.resume) && canAccess(base, raw.resume) ? raw.resume : 'hub';
@@ -106,6 +110,16 @@ export function recordPrediction(state, value) {
   const draft = state.drafts[2];
   if (!draft.firstPrediction) draft.firstPrediction = value;
   draft.prediction = value;
+}
+// 상황을 옮겨도 미완 증거·이유 선택을 보관한다. 완료 증거(links)와는 별도다.
+export function selectFinalCase(s,index) {
+  if(!Number.isInteger(index)||index<0||index>=finalCases.length)return false;
+  s.finalDrafts??={};
+  const current=s.finalDraft;
+  s.finalDrafts[current.caseIndex]={stage:current.stage,reason:current.reason};
+  const draft=s.finalDrafts[index]??s.links[index];
+  s.finalDraft={caseIndex:index,stage:draft?.stage??null,reason:draft?.reason??null};
+  return true;
 }
 export function previewState(student) {
   const preview = structuredClone(student);

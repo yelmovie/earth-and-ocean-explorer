@@ -41,9 +41,9 @@ test('the conservation message uses only the creatures in saved observation evid
   const state=freshState();
   assert.match(certificate(state),/갯벌 생물을 관찰하면/);
   state.evidence[5]={data:{found:['crab']}};
-  assert.match(certificate(state),/게의 특징을 관찰했어요/);
+  assert.match(certificate(state),/게의 특징을 관찰함/);
   assert.doesNotMatch(certificate(state),/짱뚱어의 특징을 관찰/);
-  assert.ok(certificate(state).includes(chapters[4].conservation.action));
+  assert.ok(certificate(state).includes('생물의 구멍과 갈대를 건드리지 않고, 쓰레기는 되가져감.'));
 });
 test('the last final case offers a route to the first remaining situation', () => {
   const state=freshState();state.links={0:{},2:{},3:{},4:{}};

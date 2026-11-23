@@ -30,9 +30,8 @@ function coastPhotoStyle(terrain, record) {
 function conservationMessage(s) {
   const record = s.evidence[5]?.data;
   const observed = creatures.filter(creature => record?.found?.includes(creature.id)).map(creature => creature.name);
-  if (!observed.length) return '갯벌 생물을 관찰하면 나의 보호 메시지를 만들 수 있어요.';
-  const message = chapters[4].conservation;
-  return `${observed.join('·')}의 특징을 관찰했어요. ${message.claim} ${message.action}`;
+  if (!observed.length) return '갯벌 생물을 관찰하면 보호 메시지를 작성할 수 있음.';
+  return `${observed.join('·')}의 특징을 관찰함. 갯벌은 여러 생물이 살아가는 소중한 곳임. 생물의 구멍과 갈대를 건드리지 않고, 쓰레기는 되가져감.`;
 }
 
 export function home(s) {

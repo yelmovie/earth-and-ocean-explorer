@@ -12,12 +12,12 @@ export function certificatePaper({actual, date, promise}) {
           <div class="cert-class"><span class="cert-blank school" data-cert-blank="school"></span> 학교 <span class="cert-blank" data-cert-blank="grade"></span> 학년 <span class="cert-blank" data-cert-blank="class"></span> 반 <span class="cert-blank" data-cert-blank="number"></span> 번</div>
           <div class="cert-name">이름 <span class="cert-blank name" data-cert-blank="name"></span></div>
         </div>
-        <p class="cert-award">위 조사원은 지구와 바다의 다섯 가지 기록을 모으고,<br>생명이 살아가는 갯벌을 지킬 방법을 탐구하였으므로<br>이 인증서를 드립니다.</p>
+        <p class="cert-award">위 조사원은 지구와 바다의 다섯 가지 기록을 모으고,<br>생명이 살아가는 갯벌을 지킬 방법을 탐구하였으므로<br>이 인증서를 수여함.</p>
         <p class="cert-promise"><b>나의 갯벌 지킴 메시지</b><span>${escape(promise)}</span></p>
         <div class="cert-bottom">
-          <p class="cert-date"><small>완료한 날</small>${escape(date)}</p>
+          <p class="cert-date"><small>완료일</small>${escape(date)}</p>
           <div class="cert-stamp"><b>푸른행성</b><span>${actual ? '탐사 인증' : '연습용 예시'}</span></div>
-          <p class="cert-issuer"><small>주는 이</small>푸른행성 조사본부</p>
+          <p class="cert-issuer"><small>발급자</small>푸른행성 조사본부</p>
         </div>
         <p class="cert-credit">기획·제작: 옐샘 &amp; ⓒ 아이스크림미디어</p>
       </div>

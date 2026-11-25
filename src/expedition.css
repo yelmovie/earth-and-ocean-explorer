@@ -149,7 +149,16 @@
   .ocean-expedition { --ocean-padding: var(--space-3); width: calc(100vw - 16px); max-height: calc(100dvh - 16px); }
   .ocean-workspace { grid-template-columns: 1fr; }
   .ocean-field { min-height: 320px; }
-  .ocean-expedition [data-research] { width: 100%; }
+  .ocean-expedition footer:has([data-research]:enabled) {
+    position: sticky;
+    bottom: calc(-1 * var(--ocean-padding));
+    z-index: 4;
+    flex-wrap: nowrap;
+    gap: var(--space-2);
+    margin-inline: calc(-1 * var(--ocean-padding));
+    padding: var(--space-2) var(--ocean-padding);
+    background: var(--paper);
+  }
 }
 @media (max-height:650px) and (min-width:651px) {
   .ocean-expedition { --ocean-padding: var(--space-3); padding-inline: var(--space-4); }

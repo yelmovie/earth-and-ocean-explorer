@@ -81,7 +81,7 @@ export function mountExpedition(host, state, save, navigate, sound) {
             ${tideComparison}
           </div>
         </div>
-        <footer><span>조사 기록 <strong>${record.found.length}/3</strong></span><button data-research ${record.found.length < 3 ? 'disabled' : ''}>이 기록으로 탐구하기 ${icon('arrow')}</button></footer>`;
+        <footer><span>조사 기록 <strong>${record.found.length}/3</strong></span><button data-research ${record.found.length < 3 ? 'disabled' : ''}>탐구하기 ${icon('arrow')}</button></footer>`;
 
       dialog.querySelector('[data-close]').onclick = () => dialog.close();
       dialog.querySelector('select').onchange = event => {

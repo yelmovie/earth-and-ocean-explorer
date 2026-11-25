@@ -1,0 +1,383 @@
+#app.route-s1a #main .learning {
+  --earth-field: #092737;
+  --earth-glow: #286478;
+  --earth-pin-color: #e5f8ff;
+  --earth-light: #aeeaf0;
+  --earth-label: clamp(18px, 1.45vw, 22px);
+  --earth-popover-width: clamp(240px, 25vw, 328px);
+  gap: var(--space-2);
+}
+
+#app.route-s1a #main .learning .page-heading > div:first-child {
+  padding-block: var(--space-2);
+}
+
+#app.route-s1a #main .learning .activity {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+#app.route-s1a #main .learning .earth-observation {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  display: block;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--earth-glow);
+  border-radius: var(--radius-large);
+  background: radial-gradient(ellipse at center, var(--earth-glow), var(--earth-field) 77%);
+}
+
+#app.route-s1a #main .learning .earth-observation::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, var(--white-40) 1px, transparent 1.2px) 50% 50% / 32px 32px;
+  opacity: .28;
+  mask-image: radial-gradient(ellipse at center, transparent 27%, black 78%);
+  pointer-events: none;
+}
+
+#app.route-s1a #main .learning #globe {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+}
+
+#app .earth-hud,
+#app .earth-tools {
+  position: absolute;
+  left: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+#app .earth-hud { top: var(--space-4); }
+#app .earth-tools { bottom: var(--space-4); z-index: 2; }
+#app .earth-tools > button { pointer-events: auto; }
+
+#app.route-s1a #main .learning :is(#globe-mode, .earth-progress) {
+  padding: var(--space-2) var(--space-3);
+  margin: 0;
+  border: 1px solid var(--white-40);
+  border-radius: var(--radius-medium);
+  background: var(--earth-field);
+  color: var(--earth-pin-color);
+  font-size: var(--earth-label);
+  line-height: 1.18;
+}
+
+#app .earth-progress b {
+  margin-inline-start: var(--space-1);
+  font-variant-numeric: tabular-nums;
+  color: var(--earth-light);
+}
+
+#app.route-s1a #main .earth-markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#app.route-s1a #main .learning .earth-markers.next-target { outline: 0; }
+
+#app.route-s1a #main .learning .earth-pin {
+  position: absolute;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  min-height: var(--touch-min);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+}
+
+#app.route-s1a #main .learning .earth-pin.next-target { outline: 0; }
+#app.route-s1a #main .learning .earth-pin:active { transform: translate(-50%, -50%); }
+#app.route-s1a #main .learning .earth-pin:active span { transform: scale(.96); }
+
+#app .earth-pin span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  aspect-ratio: 1;
+  border: 2px solid var(--earth-light);
+  border-radius: 50%;
+  background: var(--earth-field);
+  color: var(--earth-pin-color);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--earth-light) 28%, transparent);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+  transition: transform var(--motion-fast) ease-out;
+}
+
+#app :is(.earth-pin.next-target,.earth-pin[aria-expanded="true"]) span {
+  color: var(--earth-field);
+  background: var(--earth-light);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--earth-light) 42%, transparent);
+  transform: scale(1.1);
+}
+
+#app .earth-pin.collected:not([aria-expanded="true"]) span {
+  color: var(--mint);
+  border-color: var(--mint);
+  box-shadow: none;
+}
+
+#app .earth-pin[aria-expanded="true"],
+#app .earth-pin:focus-visible { z-index: 1; }
+
+#app.route-s1a #main .learning .earth-pin:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: -3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #app .earth-pin:hover span { transform: scale(1.1); }
+}
+
+#app.route-s1a #main .learning .earth-reset,
+#app.route-s1a #main .learning .earth-close {
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  min-width: var(--touch-min);
+  height: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 0;
+}
+
+#app.route-s1a #main .learning .earth-reset {
+  border: 1px solid var(--white-40);
+  background: var(--earth-field);
+  color: var(--earth-pin-color);
+  border-radius: var(--radius-medium);
+}
+
+#app.route-s1a #main .learning .earth-atmosphere {
+  min-height: var(--touch-min);
+  padding-inline: var(--space-3);
+  font-size: var(--earth-label);
+  color: var(--earth-pin-color);
+  background: var(--earth-field);
+  border-color: var(--white-40);
+}
+
+#app.route-s1a #main .learning .earth-atmosphere.next-target {
+  color: var(--earth-field);
+  background: var(--earth-pin-color);
+  outline-color: var(--earth-light);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--earth-light) 43%, transparent);
+}
+
+#app.route-s1a #main .learning #site-detail.earth-popover {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+  width: min(var(--earth-popover-width), calc(100% - 24px));
+  max-height: calc(100% - 24px);
+  overflow: auto;
+  padding: var(--space-3);
+  border: 1px solid var(--mint);
+  border-radius: var(--radius-large);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 10px 30px var(--black-33);
+  font-size: var(--earth-label);
+  line-height: 1.4;
+  animation: earth-card-enter var(--motion-fast) ease-out;
+}
+
+@keyframes earth-card-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#app .earth-popover-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+#app .earth-popover-head h2 {
+  font-size: var(--font-heading-size);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+#app.route-s1a #main .learning .earth-close {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-medium);
+  color: var(--navy);
+  background: var(--mint-pale);
+}
+
+#app .earth-close svg,
+#app .earth-reset svg { width: 22px; height: 22px; }
+
+#app .earth-picture {
+  aspect-ratio: 9 / 4;
+  border-radius: var(--radius-medium);
+  background: var(--mint-pale) url('/assets/illustrations/earth-observation-scenes.webp') 0 0 / 200% 300%;
+}
+
+#app .earth-popover[data-picture="pacific"] .earth-picture { background-position: 100% 0; }
+#app .earth-popover[data-picture="africa"] .earth-picture { background-position: 0 50%; }
+#app .earth-popover[data-picture="atlantic"] .earth-picture { background-position: 100% 50%; }
+#app .earth-popover[data-picture="australia"] .earth-picture { background-position: 0 100%; }
+#app .earth-popover[data-picture="indian"] .earth-picture { background-position: 100% 100%; }
+#app .earth-popover[data-picture="atmosphere"] .earth-picture {
+  background: var(--mint-pale) url('/assets/illustrations/challenge-earth-layers.webp') center 29% / cover;
+}
+
+#app.route-s1a #main .learning #site-detail p {
+  display: block;
+  margin: 0;
+}
+
+#app.route-s1a #main .learning :is(.earth-pin,.earth-reset,.earth-text-mode,#globe,#site-detail)[hidden] {
+  display: none;
+}
+
+#app .earth-observation[data-mode="text"] .earth-text-mode {
+  display: block;
+  margin: 76px var(--space-4) var(--space-2);
+  color: var(--paper);
+  font-size: var(--earth-label);
+  text-align: center;
+}
+#app.route-s1a #main .earth-observation[data-mode="text"] .earth-markers {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr));
+  margin: 0 auto;
+  width: min(92%, 680px);
+}
+#app.route-s1a #main .earth-observation[data-mode="text"] .earth-pin {
+  position: static;
+  transform: none;
+  width: auto;
+  height: auto;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--mint);
+  border-radius: var(--radius-medium);
+  background: var(--paper);
+}
+#app.route-s1a #main .earth-observation[data-mode="text"] .earth-pin span {
+  width: auto;
+  aspect-ratio: auto;
+  border: 0;
+  box-shadow: none;
+  transform: none;
+  color: var(--ink);
+  background: transparent;
+  font-size: var(--earth-label);
+  line-height: 1.2;
+}
+#app .earth-observation[data-mode="text"] .earth-tools { justify-content: flex-end; }
+
+#app.route-s1a #main .learning .mission-footer:has(.activity-playback) {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+#app.route-s1a #main .learning .mission-footer > :is(.activity-guide,.activity-playback,.companion-tools,.primary) {
+  grid-area: auto;
+  margin: 0;
+}
+
+#app.route-s1a #main .learning .mission-footer .activity-guide {
+  font-size: var(--earth-label);
+  word-break: keep-all;
+}
+
+#app.route-s1a #main .learning .moa-bubble {
+  left: 0;
+  right: auto;
+}
+
+@media (max-width: 699px) {
+  #app .earth-hud,
+  #app .earth-tools {
+    left: var(--space-2);
+    right: var(--space-2);
+  }
+  #app .earth-hud { top: var(--space-2); }
+  #app .earth-tools { bottom: var(--space-2); }
+
+  #app.route-s1a #main .learning .mission-footer:has(.activity-playback) {
+    grid-template-columns: auto auto minmax(0,1fr);
+    grid-template-areas: 'guide guide guide' 'help play next';
+    gap: var(--space-1) var(--space-2);
+  }
+  #app.route-s1a #main .learning .mission-footer > .activity-guide { grid-area: guide; }
+  #app.route-s1a #main .learning .mission-footer > .activity-playback { grid-area: play; }
+  #app.route-s1a #main .learning .mission-footer > .companion-tools { grid-area: help; }
+  #app.route-s1a #main .learning .mission-footer > .primary { grid-area: next; justify-self: end; }
+}
+
+@media (max-height: 500px) and (min-width: 700px) {
+  #app.route-s1a #main .learning .page-heading > div:first-child {
+    padding-block: var(--space-1);
+  }
+  #app .earth-hud,
+  #app .earth-tools {
+    left: var(--space-2);
+    right: var(--space-2);
+  }
+  #app .earth-hud { top: var(--space-2); }
+  #app .earth-tools { bottom: var(--space-2); }
+  #app.route-s1a #main .learning #site-detail.earth-popover {
+    --earth-popover-width: min(39vw, 320px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: center;
+    padding: var(--space-2);
+    gap: var(--space-2);
+  }
+  #app .earth-popover-head { grid-column: 1 / -1; }
+  #app .earth-popover-head h2 { font-size: 21px; }
+  #app .earth-popover .earth-picture { min-height: 60px; }
+  #app.route-s1a #main .learning #site-detail p { line-height: 1.25; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app .earth-pin span { transition: none; }
+  #app.route-s1a #main .learning #site-detail.earth-popover { animation: none; }
+}
+
+#app .earth-help-steps {
+  margin: 0;
+  padding-inline-start: var(--space-5);
+}
+
+#app .earth-help-steps li + li {
+  margin-block-start: var(--space-2);
+}
+
+#app .earth-help-steps mark {
+  color: var(--ink);
+  background: var(--mint);
+}
+
+#app .earth-observation button {
+  -webkit-tap-highlight-color: transparent;
+}

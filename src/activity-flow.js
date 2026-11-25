@@ -30,8 +30,9 @@ export function activityReady(state) {
   return Boolean(d.value&&d.action);
 }
 
-// 받침이 있으면 '을', 없으면 '를'.
-const objectParticle=word=>{const c=word.charCodeAt(word.length-1)-0xac00;return word+(c>=0&&c<11172&&c%28?'을':'를');};
+function observedKinds(d) {
+  return new Set(sites.filter(site=>d.samples.includes(site.id)).map(site=>site.type));
+}
 export function stageGuide(state) {
   const route=state.route,n=Number(route[1]),d=state.drafts[n];
   if(!d)return null;
@@ -40,10 +41,11 @@ export function stageGuide(state) {
   if(route.endsWith('b')&&!aReady(state,n))return ['앞의 관찰을 먼저 마쳐요. 위의 1. 관찰을 눌러요.',`[data-action="go"][data-value="s${n}a"]`];
   if(route==='s4b'&&!tideIntervalDirection(d.a,d.b))return ['1. 관찰에서 물이 한 방향으로 변하는 두 순간을 다시 골라요.','[data-action="go"][data-value="s4a"]'];
   if(route==='s1a') {
-    if(d.samples.length>=3&&!d.atmosphere)return ['세 곳 이상 관찰했어요. 대기 관찰을 눌러요.','[data-action="atmosphere"]'];
-    const next=sites.find(site=>!d.samples.includes(site.id));
-    if(next)return [d.samples.length<3?`${objectParticle(next.name)} 눌러 관찰해요.`:'땅과 물을 모두 찾을 수 있도록 다른 지점도 관찰해요.',`[data-action="site"][data-value="${next.id}"]`];
-    if(!d.atmosphere)return ['대기 관찰을 눌러 지구를 둘러싼 공기를 살펴봐요.','[data-action="atmosphere"]'];
+    const kinds=observedKinds(d);
+    if(d.samples.length===0)return ['지구 위 +를 눌러 세 곳을 관찰해요.','[data-action="site"][data-value="asia"]'];
+    if(d.samples.length<3)return ['지구를 돌려 다른 +를 눌러요. 육지와 바다를 모두 찾아요.','.earth-markers'];
+    if(kinds.size<2)return [kinds.has('육지')?'지구를 돌려 바다의 +도 눌러요.':'지구를 돌려 육지의 +도 눌러요.','.earth-markers'];
+    return ['대기 관찰을 눌러 지구를 둘러싼 공기를 살펴봐요.','[data-action="atmosphere"]'];
   }
   if(route==='s1b') {
     if(d.samples.some(id=>!d.classifications[id]))return ['강조된 표본을 살펴보고 육지 또는 바다를 눌러요.','[data-sample].selected'];
@@ -156,10 +158,12 @@ export function mountActivityFlow(app,ctx) {
       const now=performance.now();playback.progress=Math.min(1,playback.progress+(now-last)*playback.speed/3200);last=now;sync();
       if(playback.progress===1){Object.assign(playback,{heating:false,playing:false});Object.assign(d,{heated:true,seenBefore:true,seenAfter:true,view:'after'});save();render();return;}
     } else if(route==='s1a') {
+      const stage=app.querySelector('.earth-observation');
+      if(stage.dataset.mode==='loading'){schedule();return;}
       const site=sites.find(site=>!d.samples.includes(site.id));
       if(site)click(`[data-action="site"][data-value="${site.id}"]`);
       else if(!d.atmosphere)click('[data-action="atmosphere"]');
-      else {stop('관찰을 마쳤어요. 다음 · 비교하기를 눌러요.');return;}
+      if(d.samples.length===sites.length&&d.atmosphere){stop();return;}
     } else if(route==='s2a') {
       if(d.fresh!==d.sea)field('sea',d.fresh);
       else if(d.heatFresh!==d.heatSea)field('heatSea',d.heatFresh);
@@ -199,6 +203,7 @@ export function mountActivityFlow(app,ctx) {
   on(app,'pointerdown',e=>{if(e.target.closest('input[data-field],[data-compare],.survey-lens,.coast-view')&&playback.playing)stop();});
   on(app,'input',e=>{if(!automatic&&e.target.matches('[data-field],[data-compare]')){if(route==='s4a')playback.phase=0;if(playback.playing)stop();}});
   on(app,'change',e=>{if(e.target.matches('[data-field],[data-compare]'))queueMicrotask(()=>{if(!disposed)guide();});});
+  on(app,'earth-observation-change',()=>guide());
   on(document,'visibilitychange',()=>{if(document.hidden)stop();});
   activeHeat=heat;guide();sync();schedule();
   return ()=>{disposed=true;clear();listeners.forEach(off=>off());activeHeat=null;};

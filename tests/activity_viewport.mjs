@@ -136,7 +136,7 @@ try {
     await seed('s2b',{fresh:40,sea:40,heatFresh:1,heatSea:1,prepared:true,prediction:'different'});
     await page.locator('[data-action="heat"]').click();await page.locator('[data-action="go"][data-value="s2a"]').click();await page.waitForTimeout(1500);
     assert.equal((await saved()).drafts[2].heated,false);
-    await seed('s1a');await speed(3);await play();await page.waitForFunction(()=>document.querySelector('[data-action="atmosphere"]')?.disabled);
+    await seed('s1a');await speed(3);await play();await page.waitForFunction(()=>document.querySelector('[data-action="atmosphere"]')?.textContent.includes('✓'));
     assert.equal((await saved()).drafts[1].samples.length,6);assert.equal((await saved()).drafts[1].conclusion,'');
     await page.waitForFunction(()=>document.querySelector('[data-autoplay]')?.getAttribute('aria-pressed')==='false');await checkState('globe-observed');
     await seed('s3a');await speed(3);await play();await page.waitForFunction(()=>document.querySelectorAll('.photo-slots .filled').length===4);

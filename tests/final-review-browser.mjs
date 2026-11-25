@@ -1,5 +1,6 @@
 // Focused final-review regressions. Fixtures are labelled; the full unseeded journey is release-browser.mjs.
 import assert from 'node:assert/strict';
+import { revealGlobePin } from './globe-browser-controls.mjs';
 import {createRequire} from 'node:module';
 import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
@@ -38,8 +39,6 @@ async function denseLayout(label){
   const issues=await page.evaluate(()=>{
    const issues=[];
    for(const el of document.querySelectorAll('.learning .activity,.learning .work-panel,.learning .challenge-board'))if(el.scrollHeight>el.clientHeight+3)issues.push(`overflow ${el.className} ${el.scrollHeight}/${el.clientHeight}`);
-   const reminder=document.querySelector('[data-observation-remaining]:not([hidden])');
-   if(reminder){const r=reminder.getBoundingClientRect();if(!r.height||r.bottom>document.querySelector('.mission-footer').getBoundingClientRect().top)issues.push('remaining task hidden or below footer');}
    return issues;
   });
   report.denseLayouts.push({label,width,height,issues});await shot(`${label}-${width}x${height}`);assert.deepEqual(issues,[],`${label} ${width}x${height}`);
@@ -50,8 +49,9 @@ async function slider(field,value){const el=page.locator(`[data-field="${field}"
 try{
  const s=freshState();s.settings.muted=true;s.settings.flatGlobe=true;await seed(s,'s1a');
  await page.waitForFunction(()=>document.querySelector('#globe-mode')?.textContent==='2D 대체 관찰');
- for(const id of ['asia','pacific','africa'])await click('site',id);
- assert.equal(await page.locator('[data-observation-remaining]').innerText(),'남은 일: 대기 확인');assert.equal(await page.locator('[data-observation-remaining]').isVisible(),true);
+ for(const id of ['asia','pacific','africa'])await (await revealGlobePin(page,id)).tap();
+ assert.match(await page.locator('#hint').innerText(),/대기 관찰을 눌러/);
+ assert.equal(await page.locator('[data-action="atmosphere"].next-target').isVisible(),true);
  assert.equal(await page.locator('[data-action="next"]').isDisabled(),true);await denseLayout('01-atmosphere-remaining');
  await click('atmosphere');await click('next');
  for(const id of ['asia','pacific','africa']){await page.locator(`[data-sample="${id}"]`).tap();await page.locator(`[data-sample-bin="${id==='asia'?'바다':sites.find(x=>x.id===id).type}"]`).tap();}
@@ -61,7 +61,7 @@ try{
  // Automatic WebGL-unavailable fallback, independent of the settings switch.
  const flat=await browser.newContext({viewport:{width:1024,height:768},hasTouch:true});await flat.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){return /webgl/i.test(type)?null:original.call(this,type,...args);};});
  const fallback=await flat.newPage();await fallback.goto(`${base}/#s1a`,{waitUntil:'domcontentloaded'});await fallback.waitForFunction(()=>document.querySelector('#globe-mode')?.textContent==='2D 대체 관찰');
- for(const id of ['asia','pacific','africa'])await fallback.locator(`[data-action="site"][data-value="${id}"]`).tap();await fallback.locator('[data-action="atmosphere"]').tap();assert.equal(await fallback.locator('[data-action="next"]').isEnabled(),true);await fallback.screenshot({path:path.join(out,'01-webgl-fallback.png')});await flat.close();note('WebGL 초기화 불가 시 자동 2D 대체에서 같은 관찰 판단 가능');
+ for(const id of ['asia','pacific','africa'])await (await revealGlobePin(fallback,id)).tap();await fallback.locator('[data-action="atmosphere"]').tap();assert.equal(await fallback.locator('[data-action="next"]').isEnabled(),true);await fallback.screenshot({path:path.join(out,'01-webgl-fallback.png')});await flat.close();note('WebGL 초기화 불가 시 자동 2D 대체에서 같은 관찰 판단 가능');
  for(const first of ['prediction','conditions']){
   const s=earned(1);s.drafts[2]=freshState().drafts[2];await seed(s,'s2a');
   if(first==='prediction')await choose('prediction','same');

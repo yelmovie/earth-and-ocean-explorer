@@ -122,3 +122,8 @@
 ## 인증서 테두리 · 2026-11-22
 
 - `public/assets/certificate-frame-20261122.webp`: Codex 기본 imagegen(GPT 이미지), 1회 생성. 부리·파도·조개·갯벌 게·등대·지구본 수채 테두리, 글자는 앱에서 따로 표시합니다. 원본 `assets/source-png/certificate-20261122.png`, 프롬프트 `assets/source-png/PROMPT-10.txt`. 1800×1273, 207,582 bytes.
+
+## 지구 관찰 · 2026-11-25
+
+- `models/earth-globe.glb`의 지표 색은 NASA Earth Observatory의 [Blue Marble: Next Generation with Topography and Bathymetry](https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography-bathymetry/)를 사용했다. 사용자가 제공한 Meshy 지구본의 표면을 바탕으로 닫힌 메시를 만들고 지도 좌표를 맞췄다.
+- `illustrations/earth-observation-scenes.webp`는 Codex 기본 이미지 도구로 만든 관찰 그림 6장이다. 지점들의 육지와 바다 모습을 설명하는 학습 그림이다.

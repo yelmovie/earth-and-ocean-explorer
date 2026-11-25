@@ -62,6 +62,7 @@ export const settingsContent = {
   sourcesTitle: '자료 출처 모아 보기',
   sourceIntro: '미션 화면에는 출처를 표시하지 않고 이곳에 모아 두었어요.',
   sources: [
+    ['3D 지구 표면', 'NASA Earth Observatory · Blue Marble: Next Generation · 위성 영상과 지형 자료'],
     ['지구 관측소', 'Natural Earth · naturalearthdata.com · Public Domain (육지 경계 자료)'],
     ['지구 넓이·밀물과 썰물', 'NOAA · oceanservice.noaa.gov / noaa.gov · 바다의 넓이와 물 높이 변화 교육 자료'],
     ['물에 녹아 있는 물질', 'USGS · usgs.gov · Chloride, Salinity, and Dissolved Solids · 육지의 물에도 녹아 있는 물질이 있어요.'],

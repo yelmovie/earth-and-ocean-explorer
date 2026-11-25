@@ -16,6 +16,7 @@ import './glass-ui.css';
 import './flow-polish.css';
 import './reward-cards.css';
 import './certificate.css';
+import './earth-observation.css';
 // 저사양 기기(메모리 4GB 이하 또는 코어 4개 이하)는 넓은 면의 흐림(backdrop-filter)을 끄고 불투명 면을 쓴다(glass-ui.css `.lite-glass`).
 if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add('lite-glass');
 const loadConcepts = () => import('./concepts.js');
@@ -212,22 +213,120 @@ async function render(){
     }finally{clearTimeout(timeout);}
   }
   if(r==='s1a'){
-    const el=document.querySelector('#globe');try{const {mountGlobe}=await import('./globe.js');if(ticket!==epoch)return;const globe=await mountGlobe(el,{flat:state.settings.flatGlobe,atmosphere:state.drafts[1].atmosphere,selected:local.site||'asia',onReady:text=>{if(ticket===epoch)document.querySelector('#globe-mode').textContent=text;}});if(ticket!==epoch){globe.dispose();return;}controller=globe;if(local.site)siteDetail(local.site);}
-    catch{if(ticket===epoch){el.innerHTML='<div class="globe-unavailable">지구 그림을 불러오지 못했어.<br>관찰 지점의 설명으로 조사를 계속할 수 있어.</div>';document.querySelector('#globe-mode').textContent='텍스트 대체 관찰';if(local.site)siteDetail(local.site);}}
+    const el=app.querySelector('#globe'),stage=el.parentElement;
+    const mode=stage.querySelector('#globe-mode');
+    try{
+      const {mountGlobe}=await import('./globe.js');
+      if(ticket!==epoch)return;
+      const globe=await mountGlobe(el,{
+        flat:state.settings.flatGlobe,
+        atmosphere:state.drafts[1].atmosphere,
+        onReady:(text,source)=>{mode.textContent=text;stage.dataset.mode='globe';stage.dataset.model=source;},
+        onExplore:()=>closeEarthCard(),
+        onLayout:()=>placeEarthCard(stage),
+      });
+      if(ticket!==epoch){globe.dispose();return;}
+      controller=globe;
+    }catch{
+      if(ticket!==epoch)return;
+      stage.dataset.mode='text';
+      mode.textContent='텍스트 대체 관찰';
+      el.hidden=stage.querySelector('.earth-reset').hidden=true;
+      stage.querySelector('.earth-text-mode').hidden=false;
+      stage.querySelectorAll('.earth-pin').forEach(button=>{
+        button.hidden=false;
+        const site=sites.find(site=>site.id===button.dataset.value);
+        button.querySelector('span').textContent=button.classList.contains('collected')?`✓ ${site.name}`:site.name;
+      });
+    }
+    if(local.earthCard==='atmosphere')showEarthCard('atmosphere');
+    else if(local.earthCard){
+      controller?.focus(local.earthCard);
+      showEarthCard(local.earthCard);
+    }
   }
 }
-function siteDetail(id){const p=sites.find(p=>p.id===id);if(!p)return;local.site=id;controller?.focus?.(id);document.querySelector('#site-detail').innerHTML=`<b>${p.name}</b><p>${p.type==='육지'?'땅이 이어져 있고 산과 평지가 보여.':'넓은 물이 이어져 있어. 바다를 관찰했어.'}</p>`;document.querySelectorAll('[data-action="site"]').forEach(el=>{el.classList.toggle('selected',el.dataset.value===id);el.setAttribute('aria-pressed',String(el.dataset.value===id));});}
-function observeSite(id){
-  if(!sites.some(site=>site.id===id))return;
-  siteDetail(id);
+function earthTrigger(stage,id){
+  return id==='atmosphere'?stage.querySelector('.earth-atmosphere'):stage.querySelector(`[data-action="site"][data-value="${id}"]`);
+}
+function placeEarthCard(stage){
+  const card=stage.querySelector('#site-detail');
+  if(card.hidden||!local.earthCard)return;
+  const anchor=earthTrigger(stage,local.earthCard);
+  if(anchor.hidden)return;
+  const margin=12,stageRect=stage.getBoundingClientRect(),pin=anchor.getBoundingClientRect();
+  const x=pin.left-stageRect.left+pin.width/2,y=pin.top-stageRect.top+pin.height/2;
+  const width=card.offsetWidth,height=card.offsetHeight;
+  const stageWidth=stage.clientWidth,stageHeight=stage.clientHeight;
+  const leftEdge=(stageWidth-Math.min(stageWidth,stageHeight)*.92)/2;
+  const rightSide=x>=stageWidth/2;
+  let left,top;
+  if(stageWidth<640){
+    left=(stageWidth-width)/2;
+    top=y>stageHeight/2?margin+44:stageHeight-height-62;
+  }else{
+    if(leftEdge>=width+margin){
+      left=rightSide?stageWidth-leftEdge+margin:leftEdge-width-margin;
+    }else{
+      left=rightSide?x+pin.width/2+margin:x-pin.width/2-width-margin;
+    }
+    const bottomInset=local.earthCard==='atmosphere'?64:margin;
+    top=Math.min(y-height/2,stageHeight-height-bottomInset);
+  }
+  card.style.left=`${Math.max(margin,Math.min(stageWidth-width-margin,left))}px`;
+  card.style.top=`${Math.max(margin,Math.min(stageHeight-height-margin,top))}px`;
+}
+const atmosphereCard={
+  id:'atmosphere',name:'지구를 둘러싼 대기',picture:'육지와 바다 위로 공기층이 이어지는 그림',
+  detail:'지구를 둘러싼 공기를 대기라고 해요. 지구 가장자리의 푸른 띠로 그 공기층을 표시했어요.',
+};
+function showEarthCard(id,keyboard=false){
+  const stage=app.querySelector('.earth-observation'),card=stage.querySelector('#site-detail');
+  const point=id==='atmosphere'?atmosphereCard:sites.find(item=>item.id===id);
+  if(local.earthCard)earthTrigger(stage,local.earthCard).setAttribute('aria-expanded','false');
+  local.earthCard=id;
+  const trigger=earthTrigger(stage,id);
+  trigger.setAttribute('aria-expanded','true');
+  card.querySelector('h2').textContent=point.name;
+  card.querySelector('p').textContent=point.detail;
+  card.querySelector('.earth-picture').setAttribute('aria-label',point.picture);
+  card.dataset.picture=id;
+  card.hidden=false;
+  placeEarthCard(stage);
+  if(keyboard)card.querySelector('h2').focus({preventScroll:true});
+}
+function closeEarthCard(restoreFocus=false){
+  const stage=app.querySelector('.earth-observation'),id=local.earthCard;
+  if(!stage||!id)return;
+  const trigger=earthTrigger(stage,id),card=stage.querySelector('#site-detail');
+  const moveFocus=restoreFocus||card.contains(document.activeElement);
+  local.earthCard=null;
+  trigger.setAttribute('aria-expanded','false');
+  card.hidden=true;
+  if(moveFocus)(trigger.hidden?stage.querySelector('#globe'):trigger).focus({preventScroll:true});
+}
+function observeSite(id,keyboard){
+  const site=sites.find(item=>item.id===id);
+  if(!site)return;
+  const stage=app.querySelector('.earth-observation'),button=earthTrigger(stage,id);
+  if(button.hidden)controller?.focus(id);
+  showEarthCard(id,keyboard);
   if(controller?.validated===false){feedback('지리 자료 확인에 문제가 있어. 화면을 새로 열어 줘.');return;}
-  const d=state.drafts[1];if(d.samples.includes(id))return;
+  const d=state.drafts[1];
+  if(d.samples.includes(id))return;
   d.samples.push(id);save();
-  const button=app.querySelector(`[data-action="site"][data-value="${id}"]`);button.textContent=`✓ ${sites.find(site=>site.id===id).name}`;button.classList.add('collected');
-  const progress=app.querySelector('.mini-progress'),seen=Math.min(d.samples.length,3);progress.querySelector('b').textContent=`${seen} / 3`;progress.querySelector('i').style.width=`${seen/3*100}%`;
-  app.querySelector('[data-observation-remaining]').hidden=d.samples.length<3||d.atmosphere;
-  app.querySelector('[data-action="go"][data-value="s1b"]').disabled=!canAccess(state,'s1b');
-  feedback(aReady(state,1)?'관찰 준비 완료! 모은 표본을 비교하러 가자.':`${sites.find(site=>site.id===id).name} 기록 완료 · ${d.samples.length}곳 관찰했어.`,true);sound('scan');
+  button.classList.add('collected');
+  button.setAttribute('aria-label',`${site.name}, 관찰함`);
+  button.querySelector('span').textContent=stage.dataset.mode==='text'?`✓ ${site.name}`:'✓';
+  stage.querySelector('.earth-progress b').textContent=`${Math.min(d.samples.length,3)}/3`;
+  syncEarthObservation();
+  sound('scan');
+}
+function syncEarthObservation(){
+  const compare=app.querySelector('[data-action="go"][data-value="s1b"]');
+  compare.disabled=!canAccess(state,'s1b');
+  if(!compare.disabled)compare.querySelector('.tab-lock')?.remove();
+  app.dispatchEvent(new Event('earth-observation-change'));
 }
 // 접힌 질문 단계(1·2)에 고를 답이 남아 있으면 그 단계를 다시 펼쳐 보여 준다(✓ 표시만 보고 지나치지 않게).
 function openWrongStep(n){if(n!==2&&n!==4)return;const d=state.drafts[n],rise=tideHeight(d.b)>tideHeight(d.a),want=n===2?{residue:'sea',reason:'dissolved'}:{direction:rise?'up':'down',concept:rise?'in':'out'};const field=Object.keys(want).find(k=>d[k]!==want[k]);if(field)app.querySelectorAll('.question-step').forEach(el=>{el.open=!!el.querySelector(`[data-field="${field}"]`);});}
@@ -364,6 +463,11 @@ document.addEventListener('click',e=>{
 });
 // 도움말 말풍선이 카드·되돌리기 버튼을 덮어도 막히지 않게, 말풍선 글이나 다른 곳을 누르면 접는다.
 document.addEventListener('pointerdown',e=>{for(const hint of document.querySelectorAll('.moa-hint[open]'))if(!hint.querySelector('summary').contains(e.target)&&!e.target.closest?.('.moa-bubble button'))hint.open=false;},true);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&state.route==='s1a'&&local.earthCard&&!document.querySelector('dialog[open]')){
+    e.preventDefault();closeEarthCard(true);
+  }
+});
 document.addEventListener('input',e=>{const key=e.target.dataset.setting;if(!['volume','sfxVolume'].includes(key))return;state.settings[key]=Number(e.target.value)/100;syncSettingControls();});
 document.addEventListener('change',e=>{
   const field=e.target.dataset.field;if(field)updateField(field,e.target.value);
@@ -404,9 +508,19 @@ document.addEventListener('click',async e=>{
   if(action==='travel'){controller?.travel?.(+value-1);return;}
   if(action==='enter'){navigate(`s${value}a`);return;}
   if(action==='choose'){updateField(button.dataset.field,value);tone();return;}
-  if(action==='site'){observeSite(value);return;}
-  if(action==='rotate'){controller?.rotate?.(+value);return;}
-  if(action==='atmosphere'){d.atmosphere=true;save();render();feedback(aReady(state,1)?stageGuide(state)[0]:'지구를 둘러싼 공기인 대기를 관찰했어. 구름만 대기인 것은 아니야.',true);return;}
+  if(action==='site'){observeSite(value,e.isTrusted&&e.detail===0);return;}
+  if(action==='earth-close'){closeEarthCard(true);return;}
+  if(action==='earth-reset'){closeEarthCard();controller?.home();return;}
+  if(action==='atmosphere'){
+    if(!d.atmosphere){
+      d.atmosphere=true;save();controller?.setAtmosphere();
+      button.textContent='✓ 대기 관찰함';
+      syncEarthObservation();
+      sound('scan');
+    }
+    showEarthCard('atmosphere',e.isTrusted&&e.detail===0);
+    return;
+  }
   if(action==='next'){
     if(n===2)d.prepared=d.fresh===d.sea&&d.heatFresh===d.heatSea&&Boolean(d.prediction);
     if(!aReady(state,n)){const hints=['세 곳 이상에서 육지·바다를 모두 스캔하고 대기를 관찰해 줘.','물의 양과 가열 세기를 각각 같게 맞추고 예상을 골라 줘.','네 가지 지형을 모두 촬영해 줘.','A보다 나중 시각을 B에 저장해. 물 높이가 서로 달라야 비교할 수 있어.','세 생물 모두 보이는 특징을 골라 도감에 기록해 줘.'];feedback(hints[n-1]);return;}save();navigate(`s${n}b`);return;

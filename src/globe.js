@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { sites } from './data.js';
 let mapsPromise;
 export function surfaceVector(lon,lat){const p=(lon+180)/180*Math.PI,t=(90-lat)/180*Math.PI;return new THREE.Vector3(-Math.cos(p)*Math.sin(t),Math.cos(t),Math.sin(p)*Math.sin(t));}
@@ -14,41 +15,220 @@ async function maps(){
   }).catch(e=>{mapsPromise=null;throw e;});
   return mapsPromise;
 }
-export async function mountGlobe(el,{flat=false,atmosphere=false,selected='asia',onReady=()=>{}}={}){
-  const data=await maps();if(!el.isConnected)return {dispose(){}};
-  let renderer,scene,camera,sphere,marker,ring,raf=0,stopped=false,drag=null,cleanup=()=>{};
-  const q=new THREE.Quaternion();let point=sites.find(s=>s.id===selected)||sites[0];
-  q.setFromUnitVectors(surfaceVector(point.lon,point.lat),new THREE.Vector3(0,0,1));
-  const canvas=document.createElement('canvas');canvas.setAttribute('aria-label','지구 관찰 화면');el.replaceChildren(canvas);
-  let isFlat=flat;
-  if(!flat){try{
-    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(el.clientWidth,el.clientHeight);scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(36,el.clientWidth/el.clientHeight,.1,100);camera.position.z=3.6;
-    const texture=new THREE.CanvasTexture(data.surface);texture.colorSpace=THREE.SRGBColorSpace;
-    sphere=new THREE.Mesh(new THREE.SphereGeometry(1,64,40),new THREE.MeshStandardMaterial({map:texture,roughness:.85}));scene.add(sphere);
-    const ambient=new THREE.AmbientLight('#eaf9ff',2);scene.add(ambient);const sun=new THREE.DirectionalLight('#fff5dc',2.3);sun.position.set(-3,3,5);scene.add(sun);
-    marker=new THREE.Mesh(new THREE.SphereGeometry(.028,12,8),new THREE.MeshBasicMaterial({color:'#ffdf86'}));sphere.add(marker);
-    ring=new THREE.Mesh(new THREE.SphereGeometry(1.07,48,32),new THREE.MeshBasicMaterial({color:'#7adfeb',transparent:true,opacity:atmosphere?.2:.055,side:THREE.BackSide}));scene.add(ring);
-    cleanup=()=>{sphere.geometry.dispose();sphere.material.map.dispose();sphere.material.dispose();marker.geometry.dispose();marker.material.dispose();ring.geometry.dispose();ring.material.dispose();renderer.dispose();};
-  }catch{renderer?.dispose();renderer=null;isFlat=true;}}
-  let fallbackCtx,buffer;
-  if(isFlat){canvas.width=320;canvas.height=320;canvas.style.width='100%';canvas.style.height='100%';canvas.style.objectFit='contain';fallbackCtx=canvas.getContext('2d');if(!fallbackCtx){const next=document.createElement('canvas');next.width=next.height=320;canvas.replaceWith(next);fallbackCtx=next.getContext('2d');}buffer=fallbackCtx.createImageData(320,320);}
-  function drawFlat(){
-    const inverse=q.clone().invert();buffer.data.fill(0);
-    for(let y=0;y<320;y++)for(let x=0;x<320;x++){const nx=(x-160)/139,ny=(160-y)/139,r=nx*nx+ny*ny;if(r>1)continue;const nz=Math.sqrt(1-r),v=new THREE.Vector3(nx,ny,nz).applyQuaternion(inverse),phi=Math.atan2(v.z,-v.x),u=(phi<0?phi+Math.PI*2:phi)/(Math.PI*2),vv=Math.acos(Math.max(-1,Math.min(1,v.y)))/Math.PI;const source=(Math.min(1023,Math.floor(vv*1024))*2048+Math.min(2047,Math.floor(u*2048)))*4,idx=(y*320+x)*4,light=.65+.35*Math.max(0,nz*.8-ny*.2-nx*.2);for(let c=0;c<3;c++)buffer.data[idx+c]=data.pixels[source+c]*light;buffer.data[idx+3]=255;}
-    fallbackCtx.putImageData(buffer,0,0);fallbackCtx.strokeStyle=atmosphere?'#a5f1f4':'#4fb1cb';fallbackCtx.lineWidth=atmosphere?8:2;fallbackCtx.beginPath();fallbackCtx.arc(160,160,144,0,Math.PI*2);fallbackCtx.stroke();const p=surfaceVector(point.lon,point.lat).applyQuaternion(q);if(p.z>0){fallbackCtx.fillStyle='#ffdf86';fallbackCtx.beginPath();fallbackCtx.arc(160+p.x*139,160-p.y*139,5,0,Math.PI*2);fallbackCtx.fill();}
+const korea = { lon:127.8, lat:36.5 };
+const globeScale = .46;
+const fallbackSize = 320;
+const fallbackRadius = fallbackSize * globeScale;
+const modelUrl = new URL(`${import.meta.env.BASE_URL}assets/models/earth-globe.glb`,document.baseURI).href;
+
+function disposeSurface(mesh){
+  if(!mesh)return;
+  mesh.geometry.dispose();
+  for(const key of ['map','normalMap','roughnessMap','metalnessMap'])mesh.material[key]?.dispose();
+  mesh.material.dispose();
+}
+async function earthSurface(){
+  const {scene}=await new GLTFLoader().loadAsync(modelUrl);
+  let mesh;
+  scene.traverse(object=>{if(object.isMesh)mesh=object;});
+  return mesh;
+}
+
+export async function mountGlobe(el,{flat=false,atmosphere=false,onReady=()=>{},onExplore=()=>{},onLayout=()=>{}}={}){
+  const data=await maps();
+  if(!el.isConnected)return {dispose(){}};
+  let renderer,scene,camera,sphere,ring,fallbackCtx,buffer,raf=0,stopped=false,drag=null,modelSource;
+  const rotation=new THREE.Quaternion();
+  const surfacePoint=new THREE.Vector3();
+  const dragRotation=new THREE.Quaternion();
+  const dragAngles=new THREE.Euler();
+  const markers=[...el.parentElement.querySelectorAll('.earth-pin')].map(button=>{
+    const site=sites.find(p=>p.id===button.dataset.value);
+    return {button,vector:surfaceVector(site.lon,site.lat)};
+  });
+  const canvas=document.createElement('canvas');
+  canvas.setAttribute('aria-hidden','true');
+  el.replaceChildren(canvas);
+
+  function startFlat(){
+    const flatCanvas=document.createElement('canvas');
+    flatCanvas.width=flatCanvas.height=fallbackSize;
+    flatCanvas.className='globe-flat-canvas';
+    flatCanvas.setAttribute('aria-hidden','true');
+    fallbackCtx=flatCanvas.getContext('2d');
+    if(!fallbackCtx)throw new Error('2D 지구 화면을 시작할 수 없어.');
+    buffer=fallbackCtx.createImageData(fallbackSize,fallbackSize);
+    el.replaceChildren(flatCanvas);
   }
-  function draw(){if(stopped)return;if(renderer){sphere.quaternion.copy(q);marker.position.copy(surfaceVector(point.lon,point.lat).multiplyScalar(1.015));renderer.render(scene,camera);}else drawFlat();}
-  function focus(id){point=sites.find(p=>p.id===id)||point;q.setFromUnitVectors(surfaceVector(point.lon,point.lat),new THREE.Vector3(0,0,1));draw();}
-  function rotate(dir){q.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),dir*.35));draw();}
-  const down=e=>{drag=[e.clientX,e.clientY];el.setPointerCapture(e.pointerId);};
-  const move=e=>{if(!drag)return;const dx=e.clientX-drag[0],dy=e.clientY-drag[1];drag=[e.clientX,e.clientY];q.premultiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(dy*.006,dx*.006,0)));cancelAnimationFrame(raf);raf=requestAnimationFrame(draw);};
-  const up=()=>{drag=null;};
-  // 화면의 회전 버튼 대신 지구 자체에서 왼쪽·오른쪽 화살표 키로 돌린다(키보드 접근 유지).
-  const key=e=>{const dir={ArrowLeft:-1,ArrowRight:1}[e.key];if(!dir)return;e.preventDefault();rotate(dir);};
-  const lost=()=>{if(stopped)return;onReady('3D 연결이 중단됐어. 설정에서 2D 지구 대체를 켜 줘.');};
-  el.addEventListener('pointerdown',down);el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('keydown',key);canvas.addEventListener('webglcontextlost',lost);
-  const observer=new ResizeObserver(()=>{if(renderer){renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();}draw();});observer.observe(el);
+  if(!flat){try{
+    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+    scene=new THREE.Scene();
+    camera=new THREE.OrthographicCamera(-1,1,1,-1,.1,20);
+    camera.position.z=4;
+    sphere=await earthSurface().catch(()=>null);
+    if(!el.isConnected){freeWebGL();return {dispose(){}};}
+    modelSource=sphere?'meshy':'map';
+    if(!sphere){
+      const texture=new THREE.CanvasTexture(data.surface);
+      texture.colorSpace=THREE.SRGBColorSpace;
+      sphere=new THREE.Mesh(new THREE.SphereGeometry(1,64,40),new THREE.MeshStandardMaterial({map:texture,roughness:.85}));
+    }
+    scene.add(sphere,new THREE.AmbientLight('#eaf9ff',2));
+    const sun=new THREE.DirectionalLight('#fff5dc',2.3);
+    sun.position.set(-3,3,5);
+    scene.add(sun);
+    ring=new THREE.Mesh(new THREE.SphereGeometry(1.07,48,32),new THREE.MeshBasicMaterial({color:'#7adfeb',transparent:true,opacity:.065,side:THREE.BackSide}));
+    scene.add(ring);
+  }catch{freeWebGL();}}
+  if(!renderer)startFlat();
+
+  function drawFlat(){
+    const inverse=rotation.clone().invert(),middle=fallbackSize/2;
+    buffer.data.fill(0);
+    for(let y=0;y<fallbackSize;y++)for(let x=0;x<fallbackSize;x++){
+      const nx=(x-middle)/fallbackRadius,ny=(middle-y)/fallbackRadius,r=nx*nx+ny*ny;
+      if(r>1)continue;
+      const nz=Math.sqrt(1-r),v=surfacePoint.set(nx,ny,nz).applyQuaternion(inverse),phi=Math.atan2(v.z,-v.x);
+      const u=(phi<0?phi+Math.PI*2:phi)/(Math.PI*2),vv=Math.acos(Math.max(-1,Math.min(1,v.y)))/Math.PI;
+      const source=(Math.min(1023,Math.floor(vv*1024))*2048+Math.min(2047,Math.floor(u*2048)))*4;
+      const idx=(y*fallbackSize+x)*4,light=.65+.35*Math.max(0,nz*.8+ny*.2-nx*.2);
+      for(let c=0;c<3;c++)buffer.data[idx+c]=data.pixels[source+c]*light;
+      buffer.data[idx+3]=255;
+    }
+    fallbackCtx.putImageData(buffer,0,0);
+    fallbackCtx.strokeStyle=atmosphere?'#a5f1f4':'#4fb1cb';
+    fallbackCtx.lineWidth=atmosphere?7:1.5;
+    fallbackCtx.beginPath();
+    fallbackCtx.arc(middle,middle,fallbackRadius+(atmosphere?4:0),0,Math.PI*2);
+    fallbackCtx.stroke();
+  }
+  function draw(){
+    if(stopped)return;
+    const width=el.clientWidth,height=el.clientHeight,radius=Math.min(width,height)*globeScale;
+    if(!radius)return;
+    if(renderer){
+      sphere.quaternion.copy(rotation);
+      ring.material.opacity=atmosphere?.48:.065;
+      renderer.render(scene,camera);
+    }else drawFlat();
+    for(const {button,vector} of markers){
+      surfacePoint.copy(vector).applyQuaternion(rotation);
+      const visible=surfacePoint.z>.15;
+      if(!visible&&document.activeElement===button)el.focus({preventScroll:true});
+      button.hidden=!visible;
+      if(!visible)continue;
+      button.style.left=`${width/2+surfacePoint.x*radius}px`;
+      button.style.top=`${height/2-surfacePoint.y*radius}px`;
+    }
+    onLayout();
+  }
+  function face({lon,lat}){
+    const front=surfaceVector(lon,lat);
+    const up=surfaceVector(lon,lat+1).addScaledVector(front,-Math.cos(Math.PI/180)).normalize();
+    const right=new THREE.Vector3().crossVectors(up,front);
+    rotation.setFromRotationMatrix(new THREE.Matrix4().makeBasis(right,up,front).transpose());
+  }
+  function focus(id){
+    const site=sites.find(p=>p.id===id);
+    if(!site)return;
+    face(site);
+    draw();
+  }
+  function home(){
+    face(korea);
+    draw();
+  }
+  function resize(){
+    const width=el.clientWidth,height=el.clientHeight,radius=Math.min(width,height)*globeScale;
+    if(!radius)return;
+    if(renderer){
+      renderer.setSize(width,height);
+      camera.right=width/2/radius;
+      camera.left=-camera.right;
+      camera.top=height/2/radius;
+      camera.bottom=-camera.top;
+      camera.updateProjectionMatrix();
+    }
+    draw();
+  }
+  function turn(x,y){
+    rotation.premultiply(dragRotation.setFromEuler(dragAngles.set(x,y,0))).normalize();
+    cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(draw);
+  }
+  function down(e){
+    if(drag||!e.isPrimary||e.button!==0)return;
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,moved:false};
+    el.setPointerCapture(e.pointerId);
+  }
+  function move(e){
+    if(drag?.id!==e.pointerId)return;
+    const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(!drag.moved){
+      if(Math.hypot(dx,dy)<5)return;
+      drag.moved=true;
+      onExplore();
+    }
+    drag.x=e.clientX;drag.y=e.clientY;
+    turn(dy*.006,dx*.006);
+  }
+  function up(e){if(drag?.id===e.pointerId)drag=null;}
+  function key(e){
+    const direction={ArrowLeft:[0,-.35],ArrowRight:[0,.35],ArrowUp:[-.35,0],ArrowDown:[.35,0]}[e.key];
+    if(!direction)return;
+    e.preventDefault();
+    onExplore();
+    turn(...direction);
+  }
+  function freeWebGL(){
+    if(!renderer)return;
+    disposeSurface(sphere);
+    ring?.geometry.dispose();
+    ring?.material.dispose();
+    renderer.dispose();
+    renderer=null;
+  }
+  function lost(e){
+    e.preventDefault();
+    if(stopped)return;
+    freeWebGL();
+    startFlat();
+    draw();
+    onReady('2D 대체 관찰','flat');
+  }
+  el.addEventListener('pointerdown',down);
+  el.addEventListener('pointermove',move);
+  el.addEventListener('pointerup',up);
+  el.addEventListener('pointercancel',up);
+  el.addEventListener('lostpointercapture',up);
+  el.addEventListener('keydown',key);
+  // Marker focus also accepts arrows. Enter and Space still activate the focused button normally.
+  const layer=markers[0]?.button.parentElement;
+  layer?.addEventListener('keydown',key);
+  canvas.addEventListener('webglcontextlost',lost);
+  const observer=new ResizeObserver(resize);
+  observer.observe(el);
   const validated=sites.every(p=>{const x=Math.floor((p.lon+180)/360*2048),y=Math.floor((90-p.lat)/180*1024);return (data.mask[(y*2048+x)*4]===255)===(p.type==='육지');});
-  draw();onReady(isFlat?'2D 대체 관찰':'3D 지구 · 드래그 회전');
-  return {focus,rotate,validated,dispose(){stopped=true;cancelAnimationFrame(raf);observer.disconnect();el.removeEventListener('pointerdown',down);el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);el.removeEventListener('keydown',key);canvas.removeEventListener('webglcontextlost',lost);cleanup();}};
+  face(korea);
+  resize();
+  onReady(renderer?'3D 지구':'2D 대체 관찰',renderer?modelSource:'flat');
+  return {
+    focus,home,validated,
+    setAtmosphere(){atmosphere=true;draw();},
+    dispose(){
+      stopped=true;
+      cancelAnimationFrame(raf);
+      observer.disconnect();
+      el.removeEventListener('pointerdown',down);
+      el.removeEventListener('pointermove',move);
+      el.removeEventListener('pointerup',up);
+      el.removeEventListener('pointercancel',up);
+      el.removeEventListener('lostpointercapture',up);
+      el.removeEventListener('keydown',key);
+      layer?.removeEventListener('keydown',key);
+      canvas.removeEventListener('webglcontextlost',lost);
+      freeWebGL();
+    }
+  };
 }

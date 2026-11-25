@@ -1,6 +1,7 @@
 // Exercise the deployed bundle through learner controls without injecting progress.
 // GAME_URL, QA_OUTPUT, BROWSER_PATH and PLAYWRIGHT_RUNNER can point to an existing QA setup.
 import assert from 'node:assert/strict';
+import { revealGlobePin } from './globe-browser-controls.mjs';
 import { createRequire } from 'node:module';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -121,7 +122,7 @@ try {
   assert.equal(await page.locator('[data-action="next"]').isDisabled(),true);
   assert.equal(await page.locator('[data-action="next"]').getAttribute('aria-describedby'),'hint');
   await page.waitForFunction(() => document.querySelector('#globe-mode')?.textContent !== '준비 중');
-  for (const id of ['asia', 'pacific', 'africa']) await click('site', id);
+  for (const id of ['asia', 'pacific', 'africa']) await (await revealGlobePin(page,id)).click();
   await click('atmosphere');
   assert.equal(await page.locator('[data-action="next"]').isEnabled(),true);
   assert.match(await page.locator('#hint').innerText(),/관찰 완료/);

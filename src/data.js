@@ -40,12 +40,12 @@ export const chapters = [
     id: 5, standard: '4과06-03', objective: '갯벌 생물의 생김새와 사는 모습을 관찰하고 보전의 필요성을 설명한다.', title: '갯벌 탐사구역', short: '갯벌의 생명', icon: '♧', color: '#f2b2a6', asset: 'mudflat', evidence: '생태 도감과 보호 근거', reward: '갯벌 생태 안내판 완성! 이제 다섯 기록을 연결해 보자.', goal: '작은 흔적에서 생물을 찾아, 갯벌을 지켜야 하는 까닭을 알려 줘.', steps: ['작은 흔적에서 생명을 찾아', '관찰한 증거로 갯벌을 지켜'] },
 ];
 export const sites = [
-  { id: 'asia', name: '아시아 안쪽', lon: 105, lat: 45, type: '육지' },
-  { id: 'pacific', name: '태평양 한가운데', lon: -145, lat: 5, type: '바다' },
-  { id: 'africa', name: '아프리카 안쪽', lon: 20, lat: 10, type: '육지' },
-  { id: 'atlantic', name: '대서양 한가운데', lon: -35, lat: 10, type: '바다' },
-  { id: 'australia', name: '오스트레일리아 안쪽', lon: 135, lat: -25, type: '육지' },
-  { id: 'indian', name: '인도양 한가운데', lon: 80, lat: -25, type: '바다' },
+  { id: 'asia', name: '아시아 안쪽', lon: 105, lat: 45, type: '육지', picture: '산과 평지가 펼쳐진 아시아 대륙 안쪽의 그림', detail: '산과 평지 사이로 땅이 넓게 이어져요.' },
+  { id: 'pacific', name: '태평양 한가운데', lon: -145, lat: 5, type: '바다', picture: '수평선까지 이어지는 태평양의 푸른 물 그림', detail: '눈에 들어오는 곳마다 푸른 물이 이어져요.' },
+  { id: 'africa', name: '아프리카 안쪽', lon: 20, lat: 10, type: '육지', picture: '풀과 나무가 드문드문 자라는 아프리카 평원의 그림', detail: '넓은 평원에 풀과 나무가 자라요.' },
+  { id: 'atlantic', name: '대서양 한가운데', lon: -35, lat: 10, type: '바다', picture: '수평선까지 파도가 이어지는 대서양 그림', detail: '아메리카와 아프리카 사이예요. 두 대륙에서 멀리 떨어진 곳에 물이 넓게 펼쳐져요.' },
+  { id: 'australia', name: '오스트레일리아 안쪽', lon: 135, lat: -25, type: '육지', picture: '붉은 땅과 낮은 바위 언덕이 펼쳐진 오스트레일리아 그림', detail: '붉은 땅과 낮은 바위 언덕을 볼 수 있어요.' },
+  { id: 'indian', name: '인도양 한가운데', lon: 80, lat: -25, type: '바다', picture: '끝없이 넓게 펼쳐진 인도양의 물 그림', detail: '아시아 남쪽이에요. 수평선까지 바닷물이 넓게 펼쳐져 있어요.' },
 ];
 export const terrains = [
   { id: 'sand', name: '모래사장', x: 72, y: 82, feature: '고운 모래가 넓게 쌓여 있어', detail: '알갱이가 작은 모래가 펼쳐진 곳이야.', position: '75% 95%' },

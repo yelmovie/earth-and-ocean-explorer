@@ -57,7 +57,9 @@ test('three varied globe observations plus atmosphere unlock comparison without 
   state.drafts[1].atmosphere = true;
   state.drafts[1].samples = ['asia', 'africa', 'australia'];
   assert.equal(activityReady(state), false);
-  assert.match(stageGuide(state)[0], /땅과 물/);
+  assert.match(stageGuide(state)[0], /바다의 \+/);
+  state.drafts[1].samples = ['pacific', 'atlantic', 'indian'];
+  assert.match(stageGuide(state)[0], /육지의 \+/);
 });
 
 test('lab readiness accepts both predictions and never writes preparation or an answer', () => {

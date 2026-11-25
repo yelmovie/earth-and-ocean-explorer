@@ -72,7 +72,8 @@ test('lab readiness accepts both predictions and never writes preparation or an 
   assert.equal(activityReady(state), true);
   state.drafts[2].prediction = '';
   assert.equal(activityReady(state), false);
-  assert.match(stageGuide(state)[0], /직접 예상/);
+  assert.match(stageGuide(state)[0], /예상/);
+  assert.equal(stageGuide(state)[1], '[data-field="prediction"]');
   state.drafts[2].prediction = 'same';
   state.drafts[2].sea = 60;
   assert.equal(activityReady(state), false);
@@ -83,7 +84,7 @@ test('all five observation and explanation gates expose their completed action',
     assert.equal(activityReady(observed(n)), true, `chapter ${n} observation`);
     const state = explained(n), before = JSON.stringify(state);
     assert.equal(activityReady(state), true, `chapter ${n} explanation`);
-    assert.match(stageGuide(state)[0], /설명 확인/);
+    assert.equal(stageGuide(state)[1], '.mission-footer > .primary');
     assert.equal(JSON.stringify(state), before, 'guidance is derived and does not save progress');
   }
 });

@@ -26,7 +26,7 @@ export function mountInteractions(app,ctx){
 
  },true);
  function preview(el){const field=el.dataset.field;if(field==='time'){
-   const t=+el.value;app.querySelector('.tide-live').innerHTML=tideScene(t);app.querySelector('.timeline output').textContent=timeLabel(t);app.querySelector('.tide-work .panel-label').textContent=`${timeLabel(t)} · 같은 해안의 관측 모형`;
+   const t=+el.value;app.querySelector('.tide-live').innerHTML=tideScene(t);app.querySelector('.timeline output').textContent=timeLabel(t);
    for(const slot of ['a','b']){const button=app.querySelector(`[data-action="tide-save"][data-value="${slot}"]`);if(button){button.disabled=d[slot]===t;button.textContent=button.disabled?'✓ 이 시각 저장됨':`이 순간을 ${slot.toUpperCase()}에 담기`;}}
   }else if(['fresh','sea'].includes(field)){const index=field==='fresh'?0:1,beaker=app.querySelectorAll('.beaker')[index];beaker?.querySelector('.water')?.style.setProperty('height',`${el.value}%`);if(beaker)beaker.querySelector('.beaker-mark').textContent=`${el.value} mL`;}
   const output=el.closest('.range-field')?.querySelector('output');if(output)output.textContent=['heatFresh','heatSea'].includes(field)?(+el.value===1?'약하게':'세게'):`${el.value} mL`;

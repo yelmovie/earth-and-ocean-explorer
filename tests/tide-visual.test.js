@@ -39,7 +39,8 @@ test('tide states are distinct from the incoming and outgoing processes and offi
  assert.match(tideScene(0),/data-tide-state="물이 가장 낮은 상태"/);
  assert.match(tideScene(3),/data-tide-state="물이 가장 높은 상태"/);
  const s=freshState(),html=learning(s,4,'b');
- assert.match(html,/밀물은 물이 들어오며 높아지는 과정.*썰물은 빠지며 낮아지는 과정/);
+ assert.doesNotMatch(html,/밀물은 물이 들어오며 높아지는 과정|썰물은 빠지며 낮아지는 과정/);
+ assert.match(html,/같은 기둥의 눈금에 물이 닿는 위치/);
  assert.match(html,/1. 물 높이의 상태 비교/);
  assert.match(learning(s,4,'a'),/해당 장소·날짜의 국립해양조사원 공식 물때/);
 });

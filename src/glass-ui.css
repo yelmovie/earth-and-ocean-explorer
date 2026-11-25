@@ -33,7 +33,8 @@ body dialog::backdrop{background:var(--scrim)}
  #app #main .learning .challenge-option{padding:5px 7px}
 }
 #app .photo-restoration{background:var(--glass-read);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow)}
-@media(max-height:620px){#app .photo-restoration{width:280px}#app .photo-restoration summary{font-size:17px;white-space:nowrap;padding:8px;min-height:48px}}
+#app .photo-restoration:not([open]){width:max-content}
+#app .photo-restoration summary{gap:var(--space-2);padding:var(--space-2) var(--space-3);font-size:18px}
 @media(max-height:620px) and (min-width:700px){
  #app:is(.route-s2c,.route-s2d) #main .learning .challenge-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
  #app #main .learning .challenge-observation .beaker-vessel{min-height:54px;height:54px}
@@ -85,7 +86,7 @@ body dialog::backdrop{background:var(--scrim)}
 /* Pulse only the next-destination arrow. The label and tap target stay still. */
 @media (prefers-reduced-motion: no-preference) {
   .map-next-cue:not(:disabled):not([aria-disabled="true"]) > :is(svg:last-child, .map-direction-cue) {
-    animation: map-direction-pulse 1.45s ease-in-out 4;
+    animation: map-direction-pulse .9s ease-in-out 2;
   }
 }
 @keyframes map-direction-pulse {
@@ -97,13 +98,13 @@ body dialog::backdrop{background:var(--scrim)}
 .hub-page .hub-resident[hidden]{display:none}
 .hub-page .hub-next:disabled{opacity:.85;cursor:wait}
 
-/* Map corner controls shared across the science maps. */
+/* Map controls stay in the corners so paths and buildings stay visible. */
 #app .hub-page {
-  --map-edge: 16px;
-  --map-key: 52px;
-  --map-key-gap: 7px;
-  --map-action-height: 60px;
-  --map-action-type: 20px;
+  --map-edge: var(--space-4);
+  --map-key: var(--touch-min);
+  --map-key-gap: var(--space-1);
+  --map-action-height: 56px;
+  --map-action-type: clamp(18px, 1.35vw, 22px);
   --map-left: calc(var(--map-edge) + env(safe-area-inset-left, 0px));
   --map-right: calc(var(--map-edge) + env(safe-area-inset-right, 0px));
   --map-bottom: calc(var(--map-edge) + env(safe-area-inset-bottom, 0px));
@@ -111,23 +112,22 @@ body dialog::backdrop{background:var(--scrim)}
   --map-pad-height: calc(2 * var(--map-key) + var(--map-key-gap));
 }
 @media (max-width: 760px), (max-height: 560px) {
-  #app .hub-page { --map-key: 44px; --map-key-gap: 4px; --map-action-height: 52px; --map-action-type: 17px; }
-}
-@media (min-width: 1500px) and (min-height: 850px) {
-  #app .hub-page { --map-key: 64px; --map-key-gap: 10px; --map-action-type: 22px; }
+  #app .hub-page { --map-edge: var(--space-3); --map-action-height: var(--touch-min); }
 }
 #app .hub-page .hub-dpad {
+  position: absolute;
+  left: var(--map-left);
+  bottom: var(--map-bottom);
+  z-index: 4;
+  display: grid;
   grid-template-columns: repeat(3, var(--map-key));
   grid-template-rows: repeat(2, var(--map-key));
   gap: var(--map-key-gap);
-  padding: 0;
-  border: 0;
-  background: none;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  filter: none;
 }
+#app .hub-page [data-hub-direction="up"] { grid-area: 1 / 2; }
+#app .hub-page [data-hub-direction="left"] { grid-area: 2 / 1; }
+#app .hub-page [data-hub-direction="down"] { grid-area: 2 / 2; }
+#app .hub-page [data-hub-direction="right"] { grid-area: 2 / 3; }
 #app .hub-page .hub-dpad button {
   display: grid;
   place-items: center;
@@ -137,24 +137,22 @@ body dialog::backdrop{background:var(--scrim)}
   min-width: var(--map-key);
   min-height: var(--map-key);
   padding: 0;
-  border: 2px solid #6a5636;
-  border-radius: 14px;
-  background: #fff6dc;
-  color: #233e33;
-  box-shadow: 0 3px 0 #3f4b39, 0 5px 12px #172a2340;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  font: 800 clamp(23px, calc(var(--map-key) / 2), 30px)/1 system-ui, sans-serif;
+  border: 1px solid var(--glass-line);
+  border-radius: var(--radius-medium);
+  background: var(--glass-face);
+  color: var(--ink);
+  box-shadow: var(--shadow-small);
+  touch-action: none;
+  user-select: none;
   transition: none; /* Preserve contrast at the instant a direction is pressed. */
 }
 #app .hub-page .hub-dpad button > svg { width: 24px; height: 24px; stroke-width: 2.6; }
 #app .hub-page .hub-dpad button:is(:active,.is-held,.held,[data-map-held]) {
   transform: translateY(2px);
-  background: #245b46;
+  background: var(--teal);
   color: var(--white);
-  border-color: #143f30;
-  box-shadow: inset 0 2px 4px #15382a80;
-  filter: none;
+  border-color: var(--teal);
+  box-shadow: none;
   outline: none;
 }
 #app .hub-page .hub-dpad button:focus-visible, #app .hub-page .hub-next:focus-visible {
@@ -171,32 +169,32 @@ body dialog::backdrop{background:var(--scrim)}
   height: auto;
   gap: 8px;
   padding: 8px 18px;
-  border: 2px solid #8c6a24;
-  border-radius: 16px;
-  background: linear-gradient(#ffe391,#f4c95f);
-  color: #463813;
-  box-shadow: 0 4px 0 #8c6a24, 0 8px 20px #39291438;
+  border: 1px solid var(--star-gold-deep);
+  border-radius: var(--radius-medium);
+  background: linear-gradient(var(--sun-cream),var(--star-gold));
+  color: #4b3409;
+  box-shadow: 0 4px 12px #39291438;
   font-size: var(--map-action-type);
+  font-weight: 800;
   line-height: 1.25;
   text-align: center;
   white-space: normal;
-  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 #app .hub-page .hub-next > svg { flex: none; width: 22px; height: 22px; margin: 0; }
 @media (hover: hover) and (pointer: fine) {
-  #app .hub-page .hub-next:hover:not(:disabled) { background: linear-gradient(#ffeba9,#f9d473); }
+  #app .hub-page .hub-next:hover:not(:disabled) { background: linear-gradient(var(--sun-cream),var(--gold)); }
 }
-#app .hub-page .hub-next:active:not(:disabled) { box-shadow: 0 1px 0 #8c6a24; }
-#app .hub-page .hub-next:disabled { opacity: .85; background: linear-gradient(#ffe391,#f4c95f); color: #463813; cursor: wait; }
+#app .hub-page .hub-next:active:not(:disabled) { box-shadow: var(--shadow-small); }
+#app .hub-page .hub-next:disabled { opacity: .85; cursor: wait; }
 @media (max-width: 480px) {
-  #app .hub-page .hub-next { gap: 4px; padding-inline: 8px; font-size: 15px; }
+  #app .hub-page .hub-next { gap: var(--space-1); padding-inline: var(--space-2); }
   #app .hub-page .hub-next > svg { width: 18px; height: 18px; }
 }
 
-#app .hub-page .hub-dpad { left: var(--map-left); bottom: var(--map-bottom); }
 #app .hub-page .hub-next-stack {
   position: absolute; z-index: 6; right: var(--map-right); bottom: var(--map-bottom);
-  display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2);
   max-width: min(46vw, 480px); pointer-events: none;
 }
 #app .hub-page .hub-next { position: relative; inset: auto; max-width: 100%; pointer-events: auto; }
@@ -204,10 +202,10 @@ body dialog::backdrop{background:var(--scrim)}
 #app .hub-page .hub-view-tools .icon-button {
   display: grid; place-items: center; width: var(--map-key); min-width: var(--map-key);
   height: var(--map-key); min-height: var(--map-key); padding: 0;
-  border: 2px solid var(--sand); background: #fff6dc; color: #233e33;
-  box-shadow: 0 3px 0 #3f4b39, 0 5px 12px #172a2340;
+  border: 1px solid var(--glass-line); background: var(--glass-face); color: var(--ink);
+  box-shadow: var(--shadow-small);
 }
-#app .hub-page .hub-view-tools .icon-button[aria-pressed="true"] { background: #245b46; border-color: #143f30; color: var(--white); }
+#app .hub-page .hub-view-tools .icon-button[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: var(--white); }
 @media (max-width: 640px) {
   #app .hub-page .hub-next-stack {
     max-width: calc(100% - var(--map-left) - var(--map-right) - var(--map-pad-width) - 12px);

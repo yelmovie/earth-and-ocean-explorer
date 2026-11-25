@@ -8,7 +8,7 @@ const playback = { route: '', playing: false, speed: 1, heating: false, progress
 let activeHeat;
 export function activityControls(route) {
   if (!playable.has(route)) return '';
-  return `<div class="activity-playback" aria-label="자동 관찰 도구"><button type="button" data-autoplay aria-pressed="false">${icon('play')}<span>자동재생</span></button><label><span class="sr-only">재생 속도</span><select data-playback-speed aria-label="재생 속도">${[0.5,1,2,3].map(speed=>`<option value="${speed}" ${speed===playback.speed?'selected':''}>${speed}배속</option>`).join('')}</select></label></div>`;
+  return `<div class="activity-playback" aria-label="자동 관찰 도구"><button type="button" data-autoplay aria-label="자동재생" title="자동재생" aria-pressed="false">${icon('play')}<span>자동재생</span></button><label><span class="sr-only">재생 속도</span><select data-playback-speed aria-label="재생 속도">${[0.5,1,2,3].map(speed=>`<option value="${speed}" ${speed===playback.speed?'selected':''}>${speed}배속</option>`).join('')}</select></label></div>`;
 }
 export function startActivityHeating() { activeHeat?.(); }
 
@@ -37,8 +37,8 @@ export function stageGuide(state) {
   const route=state.route,n=Number(route[1]),d=state.drafts[n];
   if(!d)return null;
   const choice=field=>`[data-field="${field}"]`;
-  if(activityReady(state))return [route.endsWith('a')?'관찰 완료! 다음 · 비교하기를 눌러요.':'선택을 마쳤어요. 설명 확인 · 다음을 눌러요.','.mission-footer > .primary'];
-  if(route.endsWith('b')&&!aReady(state,n))return ['앞의 관찰을 먼저 마쳐요. 위의 1. 관찰을 눌러요.',`[data-action="go"][data-value="s${n}a"]`];
+  if(activityReady(state))return [route.endsWith('a')?'관찰을 마쳤어요.':'선택을 마쳤어요.','.mission-footer > .primary'];
+  if(route.endsWith('b')&&!aReady(state,n))return ['먼저 관찰을 마쳐요.',`[data-action="go"][data-value="s${n}a"]`];
   if(route==='s4b'&&!tideIntervalDirection(d.a,d.b))return ['1. 관찰에서 물이 한 방향으로 변하는 두 순간을 다시 골라요.','[data-action="go"][data-value="s4a"]'];
   if(route==='s1a') {
     const kinds=observedKinds(d);
@@ -48,16 +48,16 @@ export function stageGuide(state) {
     return ['대기 관찰을 눌러 지구를 둘러싼 공기를 살펴봐요.','[data-action="atmosphere"]'];
   }
   if(route==='s1b') {
-    if(d.samples.some(id=>!d.classifications[id]))return ['강조된 표본을 살펴보고 육지 또는 바다를 눌러요.','[data-sample].selected'];
+    if(d.samples.some(id=>!d.classifications[id]))return ['강조된 표본을 육지 또는 바다로 나눠요.','.sample-bins'];
     if(!d.conclusion)return ['전체 면적 그림과 표본을 비교해 설명을 골라요.',choice('conclusion')];
   }
   if(route==='s2a') {
     if(d.fresh!==d.sea)return ['두 물의 양을 같게 맞춰요.',choice('sea')];
     if(d.heatFresh!==d.heatSea)return ['두 가열 세기도 같게 맞춰요.',choice('heatSea')];
-    if(!d.prediction)return ['조건을 맞췄어요. 가열 뒤의 결과를 직접 예상해요.',choice('prediction')];
+    if(!d.prediction)return ['가열하면 무엇이 남을지 예상해요.',choice('prediction')];
   }
   if(route==='s2b') {
-    if(!d.heated)return ['자동재생 또는 가열하기를 눌러 물의 변화를 관찰해요.','[data-action="heat"]'];
+    if(!d.heated)return ['가열하면서 두 그릇을 살펴봐요.','[data-action="heat"]'];
     if(!d.seenBefore)return ['가열 전을 눌러 처음 모습을 확인해요.','[data-action="experiment-view"][data-value="before"]'];
     if(!d.seenAfter)return ['가열 후를 눌러 남은 흔적을 확인해요.','[data-action="experiment-view"][data-value="after"]'];
     if(!d.residue)return ['두 그릇의 바닥을 비교하고 관찰한 결과를 골라요.',choice('residue')];
@@ -65,7 +65,7 @@ export function stageGuide(state) {
   }
   if(route==='s3a'){
     const next=terrains.find(t=>!d.photos.includes(t.id));
-    if(next)return ['남은 ＋를 눌러 촬영해요.',`[data-action="target"][data-value="${next.id}"]`];
+    if(next)return ['카메라 표시를 눌러 촬영해요.',`[data-action="target"][data-value="${next.id}"]`];
   }
   if(route==='s3b') {
     const next=terrains.find(t=>!d.pins[t.id]||d.features[t.id]!==t.feature);
@@ -73,8 +73,8 @@ export function stageGuide(state) {
     if(!d.compare)return ['동굴과 구멍 난 바위의 차이를 골라요.',choice('compare')];
   }
   if(route==='s4a'){
-    if(d.a===null)return ['지금 시각을 A에 담아요. 다음에 시간을 움직여요.','[data-action="tide-save"][data-value="a"]'];
-    if(tideIntervalDirection(d.a,d.time))return ['이 순간을 B에 담기를 눌러 두 기록을 완성해요.','[data-action="tide-save"][data-value="b"]'];
+    if(d.a===null)return ['지금 보이는 물 높이를 기록해요.','[data-action="tide-save"][data-value="a"]'];
+    if(tideIntervalDirection(d.a,d.time))return ['물 높이가 다른 순간을 찾았어요.','[data-action="tide-save"][data-value="b"]'];
     if(d.a===6)return ['시간을 앞으로 돌려 A를 다시 담아요. B는 더 나중 시각이어야 해요.',choice('time')];
     return ['시간을 움직여 A보다 나중의 다른 물 높이를 골라요.',choice('time')];
   }
@@ -89,8 +89,8 @@ export function stageGuide(state) {
     if(next)return ['남은 흔적을 눌러 확대해요.',`[data-action="creature"][data-value="${next.id}"]`];
   }
   if(route==='s5b') {
-    if(!d.value)return ['관찰한 생물들의 집인 갯벌의 가치를 골라요.',choice('value')];
-    if(!d.action)return ['생물의 집을 지킬 보호 약속을 골라요.',choice('action')];
+    if(!d.value)return ['도감을 보고 갯벌을 설명하는 보기를 골라요.',choice('value')];
+    if(!d.action)return ['갯벌을 조사할 때 지킬 약속을 골라요.',choice('action')];
   }
   return ['관찰 자료를 살펴보고 아직 고르지 않은 곳을 채워요.','.activity'];
 }
@@ -120,11 +120,17 @@ export function mountActivityFlow(app,ctx) {
       if(route.endsWith('b'))advance.textContent='설명 확인 · 다음 →';
     }
     const el=app.querySelector(target);
-    // Choice groups receive an outline as a whole, never an answer hint.
+    // Outline the choice group, regardless of which answer the learner selects.
     (el?.closest('.choices')||el)?.classList.add('next-target');
   }
   function sync() {
-    if(button){button.setAttribute('aria-pressed',String(playback.playing));button.innerHTML=`${icon(playback.playing?'pause':'play')}<span>${playback.playing?'직접 해보기':playback.heating?'이어 보기':'자동재생'}</span>`;}
+    if(button){
+      const label=playback.playing?'직접 해보기':playback.heating?'이어 보기':'자동재생';
+      button.setAttribute('aria-pressed',String(playback.playing));
+      button.setAttribute('aria-label',label);
+      button.title=label;
+      button.innerHTML=`${icon(playback.playing?'pause':'play')}<span>${label}</span>`;
+    }
     app.classList.toggle('activity-playing',playback.playing);
     if(playback.heating) {
       const visual=app.querySelector('#experiment-visual');visual?.classList.add('playback-heating');
@@ -178,7 +184,6 @@ export function mountActivityFlow(app,ctx) {
       const t=Math.min(3,d.time+1);d.time=t;
       const input=app.querySelector('[data-field="time"]');if(input)input.value=t;
       app.querySelector('.tide-live').innerHTML=tideScene(t);app.querySelector('.timeline output').textContent=timeLabel(t);
-      app.querySelector('.tide-work .panel-label').textContent=`${timeLabel(t)} · 같은 해안의 관측 모형`;
       if(t===3){recordTideObservation(state,'b',3);playback.playing=false;playback.phase=0;save();render();return;}save();
     } else if(route==='s4b') {
       const positions=[0,25,50,75,100,75,50],value=positions[playback.phase++];

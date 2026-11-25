@@ -123,6 +123,8 @@
   transition: transform var(--motion-fast) ease-out;
 }
 
+#app .earth-pin.behind-earth-card { visibility: hidden; }
+
 #app :is(.earth-pin.next-target,.earth-pin[aria-expanded="true"]) span {
   color: var(--earth-field);
   background: var(--earth-light);
@@ -322,6 +324,14 @@
   }
   #app .earth-hud { top: var(--space-2); }
   #app .earth-tools { bottom: var(--space-2); }
+
+  #app.route-s1a #main .learning #site-detail.earth-popover {
+    grid-template-columns: 76px minmax(0, 1fr);
+    --earth-popover-width: 350px;
+    align-items: center;
+  }
+  #app .earth-popover-head { grid-column: 1 / -1; }
+  #app .earth-popover .earth-picture { min-height: 72px; aspect-ratio: 1; }
 
   #app.route-s1a #main .learning .mission-footer:has(.activity-playback) {
     grid-template-columns: auto auto minmax(0,1fr);

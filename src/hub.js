@@ -137,7 +137,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
   const quietSteps=()=>{if(stepAt>-Infinity){stepAt=-Infinity;footstepStop?.();}};
   let width=960,height=540,scale=1,zoom=1,view={x:480,y:270},camera={x:0,y:0},lastView=null,guideOpen=false;
   // Dragging frees the camera; walking again hands it back to Buri.
-  const touches=new Map(),controls='.hub-dpad,.hub-next-stack,.hub-final';
+  const touches=new Map(),controls='.hub-dpad,.hub-next-stack,.photo-restoration,.expedition-launch,.hub-art-status,.hub-companion,.hub-resident';
   let hand=false,free=null,beforeOverview=null,grab=null,pinch=null,glide=null,dragged=false,overview=false,wasMoving=false,guide=[],guideAt=0;
   const handButton=document.querySelector('[data-hub-hand]'),overviewButton=document.querySelector('[data-hub-overview]');
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -156,8 +156,9 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
   const sleepers=[],residents=hubResidents.map(resident=>{const image=new Image();image.decoding='async';image.src=illustration(resident.id);return{...resident,image,cue:wrap.querySelector(`[data-hub-resident="${resident.id}"]`)};});
   const fallback=document.createElement('canvas');fallback.width=960;fallback.height=540;fallbackTerrain(fallback.getContext('2d'));
   const previousCompletion=seenCompleted.get(s),newlyCompleted=previousCompletion?s.completed.filter(id=>!previousCompletion.has(id)):[];seenCompleted.set(s,new Set(s.completed));let startedAt=0;
-  const labels=[...wrap.querySelectorAll('[data-hub-stage]')],arrival=wrap.querySelector('#arrival'),companion=wrap.querySelector('[data-hub-guide]'),quest=wrap.querySelector('.hub-quest');
-  const enabled=i=>canAccess(s,`s${i+1}a`),next=chapters.find(ch=>!s.completed.includes(ch.id)),nextButton=wrap.querySelector('.hub-next[data-action=travel]');
+  const labels=[...wrap.querySelectorAll('[data-hub-stage]')],arrival=wrap.querySelector('#arrival'),companion=wrap.querySelector('[data-hub-guide]');
+  const enabled=i=>canAccess(s,`s${i+1}a`),next=chapters.find(ch=>!s.completed.includes(ch.id));
+  const nextButton=wrap.querySelector('.hub-next[data-action=travel]'),nextText=nextButton?.querySelector('span');
   function listen(el,type,fn,options){el?.addEventListener(type,fn,options);listeners.push(()=>el?.removeEventListener(type,fn,options));}
   function message(text,persist=false){if(!arrival)return;clearTimeout(arrivalTimer);arrival.textContent=text;arrival.classList.add('is-visible');arrivalTimer=setTimeout(()=>{if(!guideOpen)arrival.classList.remove('is-visible');},persist?9500:5200);}
   function paused(){return !artReady()||document.hidden||!!document.querySelector('dialog[open]')||!!canvas.closest('[inert]');}
@@ -174,7 +175,13 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
     art:{left:import.meta.env.BASE_URL+'assets/map-encounter/map-villain-poses-left.webp',frames:6,nativeFacing:1},palette:'#44cfea',reach:82,contact:23,
     blocked:()=>stopped||entered||overview||hand||target!==null||guideOpen||paused(),reduced:()=>reduced,tone:encounterTone,say:encounterSay,finaleHold:encounterHold});
   function clearInput(){input.clear();pads.clear();padPointers.clear();wrap.querySelectorAll('.is-held').forEach(button=>button.classList.remove('is-held'));previous=0;}
-  function syncNext(){if(nextButton){nextButton.disabled=target!==null;nextButton.setAttribute('aria-busy',String(target!==null));}}
+  function syncNext(){
+    if(!nextButton)return;
+    const moving=target!==null;
+    nextButton.disabled=moving;
+    nextButton.setAttribute('aria-busy',String(moving));
+    nextText.textContent=moving?'이동 중…':next.title;
+  }
   function cancelTravel(){const guided=target!==null;path=[];target=null;manualIntent=false;if(guided)syncNext();}
   function travel(i){
     if(!Number.isInteger(i)||i<0||i>=hubDoors.length||entered||target===i)return;
@@ -212,10 +219,10 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
   function worldToScreen(p){return{x:p.x*scale-camera.x,y:p.y*scale-camera.y};}
   function overlays(){
     const placedLabels=[];
+    const photo=wrap.querySelector('.photo-restoration')?.getBoundingClientRect();
     labels.forEach(label=>{const id=Number(label.dataset.hubStage),door=hubDoors[id-1];if(!door)return;const point=worldToScreen({x:door.buildingX,y:door.buildingY-61});const center=worldToScreen({x:door.x,y:door.y-30}),offscreen=center.x<0||center.x>width||center.y<0||center.y>height;
       // `top` is the bottom edge because CSS translates the label up 100%.
       // Reserve the complete label height below the floating common controls.
-      const photo=wrap.querySelector('.photo-restoration')?.getBoundingClientRect();
       const labelWidth=label.offsetWidth||160,labelHeight=label.offsetHeight||52;
       let x=Math.max(labelWidth/2+16,Math.min(width-labelWidth/2-16,point.x));
       const labelFloorAt=cx=>{
@@ -224,7 +231,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
       };
       const labelFloor=labelFloorAt(x);
       let y=Math.max(labelFloor,Math.min(height-147,point.y));
-      if(!offscreen||id===next?.id){y=separateHubLabel({x,y,width:labelWidth,height:labelHeight,minY:labelFloor,maxY:Math.max(labelFloor,height-147)},placedLabels);
+      if(!offscreen||label===document.activeElement){y=separateHubLabel({x,y,width:labelWidth,height:labelHeight,minY:labelFloor,maxY:Math.max(labelFloor,height-147)},placedLabels);
         const collides=(cx,cy)=>placedLabels.some(p=>cx-labelWidth/2<p.x+p.width/2+8&&cx+labelWidth/2+8>p.x-p.width/2&&cy-labelHeight<p.y+8&&cy+8>p.y-p.height);
         if(collides(x,y)){
           for(const cx of [x-labelWidth-10,x+labelWidth+10,width/2]){
@@ -238,7 +245,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
           }
         }
         placedLabels.push({x,y,width:labelWidth,height:labelHeight});}
-      label.style.left=`${x}px`;label.style.top=`${y}px`;label.classList.toggle('is-offscreen',offscreen);if(offscreen)label.style.setProperty('--edge-angle',`${Math.atan2(center.y-height/2,center.x-width/2)}rad`);label.classList.toggle('is-current',id===next?.id);label.classList.toggle('is-done',s.completed.includes(id));label.classList.toggle('is-locked',!enabled(id-1));label.setAttribute('aria-label',`${chapters[id-1].title}. ${s.completed.includes(id)?'복구 완료':enabled(id-1)?'이동하기':'잠김. 이동해서 여는 방법 듣기'}`);
+      label.style.left=`${x}px`;label.style.top=`${y}px`;label.classList.toggle('is-offscreen',offscreen);
     });
     if(companion){const p=worldToScreen(friend);companion.style.left=`${Math.max(30,Math.min(width-30,p.x))}px`;companion.style.top=`${Math.max(84,Math.min(height-20,p.y-46*scale))}px`;}
     for(const resident of residents){if(!resident.cue)continue;const p=worldToScreen({x:resident.x,y:resident.y-resident.height-3});resident.cue.style.left=`${p.x}px`;resident.cue.style.top=`${p.y}px`;resident.cue.hidden=overview||target!==null||hubDistance(pos,resident)>54||p.x<30||p.x>width-30||p.y<84||p.y>height-20;}
@@ -292,7 +299,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
     if(!reduced)gulls(c,t);
     if(s.completed.length===5){for(const [dx,dy,rx] of [[-30,0,12],[0,-7,21],[30,0,12]]){const x=hubMap.spawn.x+dx,y=hubMap.spawn.y+dy;ellipse(c,x,y,rx,6,'#ffe7a569');poly(c,[[x-3,y],[x,y-10],[x+3,y],[x,y+4]],'#fff1a0');}}
     if(newlyCompleted.length&&!reduced&&elapsed<3600){for(const id of newlyCompleted){const door=hubDoors[id-1];c.strokeStyle=`rgba(255,242,163,${Math.max(0,1-elapsed/3600)})`;c.lineWidth=2;c.beginPath();c.ellipse(door.x,door.y,20+elapsed/80,10+elapsed/200,0,0,Math.PI*2);c.stroke();}}
-    const fog=Math.max(0,.1*(1-s.completed.length/5));if(fog)rect(c,0,0,960,540,`rgba(30,68,87,${fog})`);overlays();
+    overlays();
   }
   const keydown=e=>{if(e.defaultPrevented||paused()||e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,select,textarea,[contenteditable]:not([contenteditable="false"])'))return;if(input.press(e.key,e.code)){e.preventDefault();guideOpen=false;if(!e.repeat)nudge();}else if((e.code==='Enter'||e.code==='Space')&&e.target===canvas){e.preventDefault();const i=hubDoors.findIndex(door=>hubDistance(pos,door)<35);if(i>=0)enter(i);else message('건물 이름을 누르면 부리와 수달 모아가 함께 걸어가요.');}};
   const suspend=()=>{clearInput();cancelTravel();cancelGesture();glide=null;};
@@ -340,7 +347,7 @@ export function mountHub(canvas,s,onArrive,onPosition,{encounterTone,encounterSa
     press:d=>{padPointers.set(-1,d);syncPads();path=[];nudge();canvas.focus({preventScroll:true});},release:()=>{padPointers.delete(-1);syncPads();},
     tap:d=>{padPointers.set(-1,d);syncPads();nudge();padPointers.delete(-1);syncPads();}
   });listeners.push(directionPad.destroy);
-  listen(companion,'click',()=>{cancelTravel();guideOpen=true;message(next?`다음은 ${next.title}${(next.title.charCodeAt(next.title.length-1)-0xac00)%28?'이에요':'예요'}. 건물 이름을 누르면 함께 걸어가요! 방향키나 WASD로도 걸을 수 있어요.`:'다섯 장소가 다시 빛나요! 최종 보고서에서 우리가 찾은 기록을 연결해요.',true);});
+  listen(companion,'click',()=>{cancelTravel();guideOpen=true;message(next?'건물이나 오른쪽 아래 버튼을 누르면 함께 걸어가요.':'최종 보고서에서 우리가 찾은 기록을 연결해요.',true);});
   const modalObserver=new MutationObserver(()=>{if(artReady()&&paused()){clearInput();cancelTravel();}});modalObserver.observe(document.body,{subtree:true,attributes:true,attributeFilter:['open','inert']});
   const observer=new ResizeObserver(size);observer.observe(wrap);size();raf=requestAnimationFrame(render);
   return{travel,dispose(){stopped=true;quietSteps();encounters.destroy();cancelAnimationFrame(raf);clearTimeout(arrivalTimer);clearInput();observer.disconnect();modalObserver.disconnect();listeners.forEach(remove=>remove());buriSprite.onload=buriSprite.onerror=moa.onload=moa.onerror=null;artStatus.remove();}};

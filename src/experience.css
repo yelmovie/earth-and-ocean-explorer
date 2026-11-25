@@ -326,35 +326,37 @@ body dialog.chapter-reward{width:min(640px,calc(100vw - 40px))}
 #app.route-home>.topbar .nav-group:first-child{visibility:hidden}
 #app.route-home>.topbar .icon-button{background:#fffdf3e6;border:2px solid var(--white-70);box-shadow:0 4px 12px #06293a33;color:#174355}
 #app.route-home>#main{padding:0;margin:0;max-width:none}
-#app .title-screen{position:fixed;inset:0;overflow:hidden;isolation:isolate;background:#0b4257;font-family:var(--font-body)}
-#app .title-bg{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:58% 55%;transform-origin:62% 60%;animation:title-drift 26s ease-in-out infinite alternate}
-/* 첫 화면: 1번 「우당탕 힘 실험실」 양식 — 가운데 위 로고, 아래 가운데 버튼 두 개, 오른쪽 아래 캐릭터(2026-11-22). 로고 원본은 960px라 그보다 키우지 않는다. */
-#app .title-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#062b3c66 0%,#062b3c00 30%),linear-gradient(0deg,#052738b3 0%,#0527380a 34%)}
-#app .title-logo-art{position:absolute;left:50%;top:clamp(36px,6vh,72px);display:block;width:min(74vw,960px,calc((100dvh - 190px) * 1.62));height:auto;transform:translateX(-50%);filter:drop-shadow(0 12px 18px #021c2a8c);pointer-events:none;user-select:none;animation:title-logo-in .7s cubic-bezier(.2,.8,.2,1) both}
-#app .title-actions{position:absolute;left:50%;bottom:clamp(28px,7vh,72px);z-index:1;display:flex;align-items:center;justify-content:center;gap:clamp(14px,1.6vw,22px);transform:translateX(-50%);white-space:nowrap}
-#app .title-start,#app .title-continue{display:inline-flex;align-items:center;justify-content:center;min-width:clamp(180px,17vw,230px);min-height:68px;border-radius:20px;font-family:var(--font-heading);font-size:clamp(22px,1.8vw,28px);letter-spacing:.01em;transition:transform var(--motion-fast),box-shadow var(--motion-fast),filter var(--motion-fast)}
-#app .title-start{gap:16px;padding:0 12px 0 30px;border:2px solid #fff5cf;background:linear-gradient(var(--sun-cream),var(--star-gold));color:#4b3409;box-shadow:0 6px 0 var(--star-gold-deep),0 14px 30px #031c2a73}
-#app .title-start i{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#fff6d8;color:#8b5a10;box-shadow:inset 0 -2px 0 #e7c77d}
-#app .title-start svg{width:26px;height:26px}
-@media (hover:hover) and (pointer:fine){#app .title-start:hover{transform:translateY(-2px);filter:brightness(1.04);background:linear-gradient(var(--sun-cream),var(--star-gold))}}
-#app .title-start:active{transform:translateY(5px);box-shadow:0 1px 0 var(--star-gold-deep),0 6px 14px #031c2a59}
-#app .title-start:focus-visible,#app .title-continue:focus-visible{outline:4px solid var(--white);outline-offset:4px}
-#app .title-continue{padding:0 28px;border:2px solid #ffffff8c;background:#06344a8c;backdrop-filter:blur(6px);color:var(--white);box-shadow:0 10px 24px #031c2a59}
-@media (hover:hover) and (pointer:fine){#app .title-continue:not(:disabled):hover{background:#06344ab8;border-color:var(--white)}}
-#app .title-continue:not(:disabled):active{transform:translateY(2px)}
-#app .title-continue:disabled{opacity:.55;cursor:default;box-shadow:none}
+#app .title-screen{position:fixed;inset:0;overflow:hidden;isolation:isolate;background:#0b4257;font-family:var(--font-body);--title-actions-bottom:clamp(64px,9dvh,100px)}
+#app .title-bg,#app .title-shade{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#app .title-bg{z-index:-2;object-fit:cover;object-position:58% 55%}
+#app .title-shade{z-index:-1;background:linear-gradient(180deg,#062b3c2e,transparent 31%),linear-gradient(0deg,#05273859,transparent 29%)}
+#app .title-brand{position:absolute;inset:clamp(20px,5dvh,60px) auto auto 50%;width:min(56vw,700px,calc((100dvh - 176px) * 1.57));margin:0;transform:translateX(-50%);pointer-events:none;user-select:none}
+#app .title-logo-art{display:block;width:100%;height:auto;filter:drop-shadow(0 6px 12px #021c2a66)}
+#app .title-actions{position:absolute;left:50%;bottom:var(--title-actions-bottom);z-index:1;display:grid;justify-items:center;transform:translateX(-50%);white-space:nowrap}
+#app :is(.title-primary,.title-restart){display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);font-family:var(--font-heading);transition:background var(--motion-fast),transform var(--motion-fast)}
+#app .title-primary{min-width:clamp(175px,17vw,220px);min-height:clamp(52px,8dvh,68px);padding:var(--space-2) var(--space-5);border:1px solid var(--star-gold-deep);border-radius:var(--radius-medium);background:linear-gradient(var(--sun-cream),var(--star-gold));color:#4b3409;box-shadow:0 6px 18px #031c2a59;font-size:clamp(22px,2vw,28px)}
+#app .title-primary svg{width:24px;height:24px}
+#app .title-restart{position:absolute;inset-block-start:calc(100% + var(--space-1));min-height:var(--touch-min);padding:4px var(--space-3);border:1px solid var(--white-40);border-radius:var(--radius-medium);background:#123c4de6;color:var(--white);font-size:18px}
+#app .title-restart svg{width:18px;height:18px}
+@media (hover:hover) and (pointer:fine){
+  #app .title-primary:hover{transform:translateY(-2px);background:linear-gradient(var(--sun-cream),var(--gold))}
+  #app .title-restart:hover{background:var(--navy)}
+}
+#app :is(.title-primary,.title-restart):active{transform:translateY(2px)}
+#app :is(.title-primary,.title-restart):focus-visible{outline:3px solid var(--white);outline-offset:3px}
 #app .title-friends{position:absolute;right:clamp(8px,1.6vw,56px);bottom:clamp(8px,3vh,36px);display:flex;align-items:flex-end;gap:0;pointer-events:none}
 #app .title-friends .character{filter:drop-shadow(0 14px 10px #2a1a0a59)}
-#app .title-friends .buri{width:auto;height:clamp(140px,min(40vh,20vw),420px);animation:title-bob 3.4s ease-in-out infinite}
-#app .title-friends .jjang{width:auto;height:clamp(84px,min(23vh,11.5vw),250px);margin-left:-3vw;animation:title-bob 3.4s ease-in-out -1.7s infinite}
-@keyframes title-drift{from{transform:scale(1.02)}to{transform:scale(1.08) translate(-1%,-.6%)}}
-@keyframes title-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes title-logo-in{from{opacity:0;transform:translate(-50%,18px)}to{opacity:1;transform:translate(-50%,0)}}
-@media(max-height:560px){#app .title-start,#app .title-continue{min-height:54px;min-width:160px;font-size:20px;border-radius:16px}#app .title-start i{width:38px;height:38px}#app .title-actions{bottom:clamp(14px,4vh,28px)}#app .title-logo-art{top:clamp(10px,3vh,24px);width:min(74vw,960px,calc((100dvh - 110px) * 1.62))}}
-@media(orientation:portrait){#app .title-logo-art{top:clamp(70px,10vh,110px);width:min(92vw,620px)}#app .title-friends{right:50%;transform:translateX(50%);bottom:calc(clamp(28px,7vh,72px) + 110px)}#app .title-actions{flex-direction:column;width:min(320px,calc(100vw - 40px))}#app .title-actions>button{width:100%}}
-@media(prefers-reduced-motion:reduce){#app .title-bg,#app .title-logo-art,#app .title-friends .character{animation:none}}
+#app .title-friends .buri{width:auto;height:clamp(140px,min(40dvh,20vw),420px)}
+#app .title-friends .jjang{width:auto;height:clamp(84px,min(23dvh,11.5vw),250px);margin-left:-3vw}
+@media(orientation:portrait){
+  #app .title-screen{--title-actions-bottom:clamp(88px,11dvh,112px)}
+  #app .title-brand{top:clamp(66px,11dvh,110px);width:min(90vw,630px)}
+  #app .title-friends{right:50%;transform:translateX(50%);bottom:calc(var(--title-actions-bottom) + 84px)}
+}
+@media(prefers-reduced-motion:reduce){#app :is(.title-primary,.title-restart){transition:none}}
 /* Credit line: quiet, bottom-right of the title only, never in the way of a tap. The title screen is already inset by the safe area. */
 #app .title-credit{position:absolute;right:clamp(16px,2.4vw,32px);bottom:clamp(8px,1.5vh,14px);margin:0;padding:3px 9px;border-radius:999px;background:#062b3cb3;color:#f3fbff;font-size:clamp(10px,.9vw,13px);font-weight:700;line-height:1.3;white-space:nowrap;text-shadow:0 1px 2px #031c2a;pointer-events:none;user-select:none}
+@media(orientation:portrait){#app .title-credit{right:auto;left:50%;transform:translateX(-50%)}}
 
 /* Teacher preview controls: arrows on the left, quick stage skip on the right. */
 #app.has-teacher-nav>#main{padding-bottom:112px}

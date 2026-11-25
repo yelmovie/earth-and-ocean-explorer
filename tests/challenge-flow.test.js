@@ -48,7 +48,9 @@ test('automatic card selection supports a wrong answer, correction and a single 
  task.items.slice(1).forEach(item=>run.send('challenge-bin',item.answer));
  assert.ok(!run.state.research[1].solved.includes(task.id));
  assert.equal(run.state.revised,1);
- assert.match(challengeScreen(run.state,1,'c'),/<details class="moa-hint" open[ >]/);
+ const review=challengeScreen(run.state,1,'c');
+ assert.match(review,/challenge-guidance[^>]*>카드를 다시 눌러요/);
+ assert.doesNotMatch(review,/<details class="moa-hint" open[ >]/);
  const saved=run.calls.saved,rendered=run.calls.rendered;
  run.send('challenge-drop','land',{itemId:'a'});
  assert.equal(run.calls.saved,saved+1);

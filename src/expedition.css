@@ -1,28 +1,37 @@
 .expedition-launch {
   position: absolute;
-  bottom: 110px;
+  bottom: var(--map-bottom, 16px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 9;
-  min-height: 48px;
-  border-radius: 20px;
-  padding: 12px 24px;
-  background: rgba(235,255,251,.96);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  border-radius: var(--radius-medium);
+  padding: var(--space-2) var(--space-3);
+  background: var(--glass-read);
   color: var(--ink);
-  border: 2px solid #5ca1a7;
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--shadow-small);
+  font-size: 18px;
   font-weight: 800;
 }
+.expedition-launch > svg { width: 20px; height: 20px; }
 .expedition-launch:is(:hover,:active):not(:disabled) { transform: translateX(-50%); }
+@media (max-width: 760px) {
+  .expedition-launch { bottom: calc(var(--map-bottom, 16px) + var(--map-pad-height, 100px) + var(--space-2)); }
+}
 .ocean-expedition {
-  --ocean-padding: 24px;
-  width: min(1120px,96vw);
-  max-height: calc(100dvh - 24px);
+  --ocean-padding: var(--space-4);
+  width: min(1050px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
   overflow: auto;
   overscroll-behavior: contain;
   scroll-padding-block-start: 72px;
-  border-radius: 20px;
-  border: 1px solid #87aaa9;
-  background: #edf8f4;
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--glass-line);
+  background: var(--glass-read);
   color: var(--ink);
   padding: var(--ocean-padding);
   font-family: inherit;
@@ -35,8 +44,7 @@
   align-items: center;
   gap: 16px;
 }
-.ocean-expedition h2 { margin: 0; font-size: clamp(22px,2vw,30px); }
-.ocean-expedition header { position: sticky; top: calc(-1 * var(--ocean-padding)); z-index: 4; padding-block: 8px; background: #edf8f4; }
+.ocean-expedition header { position: sticky; top: calc(-1 * var(--ocean-padding)); z-index: 4; padding-block: var(--space-2); background: var(--paper); }
 .ocean-expedition button,
 .ocean-expedition select {
   font: inherit;
@@ -50,45 +58,39 @@
 }
 .ocean-expedition [data-close] { flex: 0 0 48px; padding: 8px; }
 .ocean-expedition [data-close] .ui-icon { display: block; margin: auto; }
-.ocean-brief {
-  display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(240px,.8fr);
-  align-items: center;
-  gap: 24px;
-  margin: 16px 0;
-}
-.ocean-brief p { margin: 0; }
-.ocean-brief label { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-.ocean-brief select { width: 100%; min-width: 0; font-size: 16px; }
-.ocean-workspace { display: grid; grid-template-columns: minmax(0,1.65fr) minmax(280px,1fr); gap: 24px; }
+.ocean-expedition header select { min-width: 0; max-width: 100%; font-size: clamp(18px, 1.6vw, 23px); font-weight: 800; }
+.ocean-workspace { display: grid; grid-template-columns: minmax(0,1.8fr) minmax(280px,1fr); gap: var(--space-4); }
 .ocean-field {
   position: relative;
   min-height: 360px;
   background-size: cover;
   background-position: center;
-  border: 2px solid #8fb5b2;
-  border-radius: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-medium);
   overflow: hidden;
 }
 .ocean-expedition .ocean-point {
   position: absolute;
   transform: translate(-50%,-100%);
   z-index: 2;
-  width: 160px;
-  min-height: 56px;
+  width: clamp(132px, 13vw, 160px);
+  min-height: var(--touch-min);
   display: grid;
-  grid-template-columns: 28px minmax(0,1fr);
+  grid-template-columns: 20px minmax(0,1fr);
   align-items: center;
   gap: 8px;
   padding: 8px;
-  background: var(--paper);
-  border: 2px solid #447d81;
-  box-shadow: 0 4px 8px #103e4e24;
+  background: var(--glass-read);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--shadow-small);
 }
 .ocean-expedition .ocean-point:is(:hover,:active):not(:disabled) { transform: translate(-50%,-100%); }
-.ocean-point b { display: grid; place-items: center; font-size: 22px; }
-.ocean-point span { font-size: 16px; line-height: 1.4; word-break: keep-all; overflow-wrap: anywhere; }
-.ocean-expedition .ocean-point.found { background: #e3f3d9; border-color: #437244; }
+.ocean-point b { display: grid; place-items: center; }
+.ocean-point b svg { width: 20px; height: 20px; }
+.ocean-point span { font-size: 18px; line-height: 1.3; word-break: keep-all; overflow-wrap: anywhere; }
+.ocean-expedition .ocean-point.in-range { border-color: var(--teal); box-shadow: 0 0 0 2px var(--mint); }
+.ocean-expedition .ocean-point.found { background: var(--mint-pale); border-color: var(--sage); }
+.ocean-expedition .ocean-point.found svg { color: var(--color-success); }
 .ocean-probe {
   position: absolute;
   transform: translateX(-50%);
@@ -106,27 +108,27 @@
 }
 .ocean-probe img { width: 44px; height: 44px; object-fit: contain; }
 .ocean-console { min-width: 0; }
-.ocean-controls { display: grid; gap: 16px; }
+.ocean-goal { margin: 0 0 var(--space-3); font-size: 20px; }
+.ocean-controls { display: grid; gap: var(--space-3); }
 .ocean-controls fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
-.ocean-controls legend { font-weight: 800; margin-bottom: 8px; padding: 0; }
+.ocean-controls legend { font-size: 18px; font-weight: 800; margin-bottom: var(--space-1); padding: 0; }
 .ocean-pad,
 .ocean-tools { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
 .ocean-pad button,
-.ocean-tools button { padding: 8px 4px; font-size: 16px; white-space: nowrap; }
+.ocean-tools button { padding: var(--space-1); font-size: 18px; line-height: 1.15; word-break: keep-all; }
+.ocean-pad button { display: grid; place-items: center; }
+.ocean-pad svg { width: 24px; height: 24px; }
+.ocean-pad [data-move="0,-1"] svg { rotate: -90deg; }
+.ocean-pad [data-move="-1,0"] svg { rotate: 180deg; }
+.ocean-pad [data-move="0,1"] svg { rotate: 90deg; }
 .ocean-expedition button[aria-pressed=true] { background: var(--teal); color: white; border-color: var(--teal); box-shadow: inset 0 0 0 2px #fff9; }
-.ocean-message { background: var(--paper); padding: 12px; border-radius: 12px; margin: 16px 0; min-height: 4em; }
-.ocean-log { display: flex; gap: 8px; flex-wrap: wrap; font-size: 16px; }
-.ocean-log span { display: inline-flex; align-items: center; gap: 4px; }
-.ocean-log .ui-icon { width: 20px; height: 20px; flex: 0 0 20px; }
-.ocean-expedition footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #b9d0c8; }
-.ocean-expedition footer > div { min-width: 0; }
-.ocean-expedition footer strong { margin-right: 12px; }
-.ocean-expedition footer span,
-.ocean-expedition footer small { font-size: 16px; }
-.ocean-expedition footer small { display: block; margin-top: 4px; color: var(--muted); }
+.ocean-message { padding-block-start: var(--space-2); border-block-start: 1px solid var(--line); margin: var(--space-3) 0 0; font-size: 20px; }
+.ocean-expedition footer { margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px solid var(--line); font-size: 18px; }
+.ocean-expedition footer strong { margin-inline-start: var(--space-1); font-variant-numeric: tabular-nums; }
 .ocean-expedition [data-research] { flex-shrink: 0; background: var(--teal); color: white; border-color: var(--teal); }
-.ocean-expedition button:disabled { opacity: .55; }
-.ocean-tide { margin: 12px 0; font-size: 16px; }
+.ocean-expedition [data-research] svg { width: 20px; height: 20px; vertical-align: middle; }
+.ocean-expedition [data-research]:disabled { background: none; border-color: transparent; box-shadow: none; color: var(--muted); opacity: 1; }
+.ocean-tide { margin: var(--space-3) 0; font-size: 18px; }
 .ocean-tide > div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 .ocean-tide figure { margin: 0; min-width: 0; }
 .ocean-tide figcaption { text-align: center; margin-top: 4px; }
@@ -136,34 +138,22 @@
 .ocean-tide-water { position: absolute; bottom: 0; left: 0; right: 0; height: 20px; background: #2181a1b8; border-top: 3px solid white; }
 .ocean-tide-scene.later .ocean-tide-water { height: 52px; }
 @media (min-width:1600px) {
-  .ocean-expedition { width: min(1320px,92vw); font-size: 22px; }
+  .ocean-expedition { width: 1140px; }
   .ocean-field { min-height: 420px; }
-  .ocean-point span,.ocean-brief select,.ocean-pad button,.ocean-tools button,.ocean-log,.ocean-expedition footer span,.ocean-expedition footer small,.ocean-tide { font-size: 18px; }
-  .ocean-expedition .ocean-point { width: 184px; }
 }
 @media (max-width:900px) {
-  .ocean-expedition { --ocean-padding: 16px; }
-  .ocean-brief { grid-template-columns: 1fr; gap: 12px; }
-  .ocean-brief label { max-width: 520px; }
-  .ocean-workspace { gap: 16px; grid-template-columns: minmax(0,1fr) minmax(264px,.85fr); }
-  .ocean-expedition .ocean-point { width: 144px; }
-  .ocean-point span { font-size: 14px; }
+  .ocean-workspace { grid-template-columns: minmax(0,1fr) minmax(264px,.85fr); }
   .ocean-expedition footer { flex-wrap: wrap; }
 }
 @media (max-width:650px) {
-  .expedition-launch { bottom: 156px; max-width: calc(100% - 32px); width: max-content; padding: 8px 16px; font-size: 16px; }
-  .ocean-expedition { --ocean-padding: 12px; width: calc(100vw - 16px); max-height: calc(100dvh - 16px); }
+  .ocean-expedition { --ocean-padding: var(--space-3); width: calc(100vw - 16px); max-height: calc(100dvh - 16px); }
   .ocean-workspace { grid-template-columns: 1fr; }
   .ocean-field { min-height: 320px; }
-  .ocean-expedition .ocean-point { width: 144px; }
-  .ocean-point span { font-size: 16px; }
   .ocean-expedition [data-research] { width: 100%; }
 }
 @media (max-height:650px) and (min-width:651px) {
-  .ocean-expedition { --ocean-padding: 12px; padding-inline: 16px; }
-  .ocean-brief { grid-template-columns: minmax(0,1fr) minmax(240px,.8fr); margin: 8px 0; }
-  .ocean-brief label { font-size: 16px; }
+  .ocean-expedition { --ocean-padding: var(--space-3); padding-inline: var(--space-4); }
   .ocean-field { min-height: 280px; }
-  .ocean-controls { gap: 8px; }
-  .ocean-message { margin: 8px 0; }
+  .ocean-controls { gap: var(--space-2); }
+  .ocean-message { margin-block: var(--space-2) 0; }
 }

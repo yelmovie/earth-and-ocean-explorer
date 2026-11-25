@@ -1,0 +1,440 @@
+/* Learning instruments sit on the original field illustrations. */
+#app:has(.learning) {
+  background: linear-gradient(rgb(14 48 58 / 20%), rgb(14 48 58 / 32%)), var(--scene) center / cover;
+}
+
+#app:has(.learning) > .topbar {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+#app #main .learning {
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4) var(--space-3);
+}
+
+#app #main .learning .page-heading {
+  gap: var(--space-2) var(--space-4);
+}
+
+#app #main .learning .page-heading > div:first-child {
+  width: fit-content;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-medium);
+  background: var(--paper);
+  box-shadow: var(--shadow-small);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+#app #main .learning .page-heading h1 {
+  font-weight: 800;
+}
+
+#app #main .learning .page-heading .stage-location {
+  margin: 0 0 var(--space-1);
+  color: var(--teal);
+  font-size: var(--label-size);
+  line-height: 1.15;
+  font-weight: 800;
+}
+
+#app #main .learning .step-tabs {
+  gap: var(--space-1);
+}
+
+#app #main .learning .step-tabs button {
+  font-size: max(18px,var(--label-size));
+}
+
+#app #main .learning .step-tabs button:not(.active) {
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: none;
+}
+
+#app #main .learning .step-tabs button:disabled {
+  opacity: .82;
+}
+
+#app #main .learning :is(.activity,.challenge-layout) {
+  gap: var(--space-3);
+}
+
+#app #main .learning .mission-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: 0 !important;
+  border: 0;
+  background: transparent;
+  box-shadow: none !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+#app #main .learning .mission-footer :is(.activity-guide,.challenge-feedback) {
+  flex: 0 1 auto;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-small);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: max(18px,var(--label-size));
+}
+
+#app #main .learning .mission-footer .challenge-feedback:empty {
+  display: none;
+}
+
+#app #main .learning .mission-footer .activity-playback {
+  margin-inline-start: auto;
+}
+
+#app #main .learning .mission-footer .activity-playback button {
+  background: var(--paper);
+  font-size: max(18px,var(--label-size));
+}
+
+#app #main .learning .mission-footer .activity-playback button[aria-pressed="true"] {
+  background: var(--teal);
+}
+
+#app #main .learning .mission-footer > .primary:disabled {
+  display: none;
+}
+
+#app #main .learning .companion-tools {
+  order: -1;
+}
+
+#app #main .learning .moa-hint > summary {
+  width: var(--touch-min);
+  justify-content: center;
+  background: var(--mint-pale);
+  border-radius: var(--radius-small);
+}
+
+#app #main .learning .moa-hint .moa-bubble {
+  position: absolute;
+  inset: auto auto calc(100% + var(--space-2)) 0;
+  width: min(380px,calc(100vw - var(--space-6)));
+  max-height: 48dvh;
+  overflow: auto;
+  background: var(--paper);
+}
+
+#app #main .learning .hint-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin-block-start: var(--space-2);
+  font-size: var(--label-size);
+}
+
+#app #main .learning .hint-terms mark {
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-small);
+  background: var(--mint-pale);
+  color: var(--ink);
+}
+
+#app #main .learning :is(.work-panel,.challenge-board) {
+  background: var(--paper);
+  border: 0;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-small);
+}
+
+#app #main .learning .challenge-observation {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-medium);
+  background: transparent;
+  box-shadow: none;
+}
+
+#app #main .learning .challenge-observation .challenge-scene {
+  position: relative;
+  border: 0;
+  border-radius: var(--radius-medium);
+  background: transparent;
+  box-shadow: none;
+}
+
+#app #main .learning .challenge-scene img {
+  position: absolute;
+  inset: 0;
+  object-fit: contain;
+}
+
+#app #main .learning .visual-caption {
+  padding: var(--space-1) var(--space-2);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-small);
+  font-size: var(--label-size);
+}
+
+#app #main .learning .challenge-board-heading {
+  justify-content: flex-end;
+}
+
+#app #main .learning .challenge-progress button {
+  width: auto;
+  min-width: var(--touch-min);
+  padding-inline: var(--space-2);
+  justify-content: center;
+  font-size: var(--label-size);
+}
+
+#app #main .learning .challenge-option {
+  font-size: var(--reading-size);
+}
+
+#app #main .learning .challenge-option > .ui-icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--teal);
+}
+
+#app #main .learning .challenge-board .challenge-why-card {
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: var(--mint-pale);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+#app #main .learning .sample-bins button .ui-icon,
+#app #main .learning :is(.hotspot,.trace,.pin-help) .ui-icon {
+  width: 24px;
+  height: 24px;
+}
+
+#app #main .learning :is(.choices,.sample-bins).next-target {
+  outline-color: var(--teal);
+  outline-offset: var(--space-1);
+  border-radius: var(--radius-small);
+}
+
+#app #main .learning .coast-view .hotspot {
+  display: grid;
+  place-items: center;
+  color: var(--white);
+}
+
+#app #main .learning .coast-view .hotspot.next-target {
+  background: var(--sun-cream);
+  color: var(--ink);
+}
+
+#app #main .learning .pan-control label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+#app #main .learning .pan-control .ui-icon {
+  flex: none;
+}
+
+#app #main .learning :is(.coast-journal,.coast-feature-panel,.creature-notebook) {
+  align-self: start;
+  height: auto;
+}
+
+#app #main .learning .coast-feature-panel[data-awaiting-pin] {
+  visibility: hidden;
+}
+
+#app #main .learning .coast-journal .photo-slots {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+}
+
+#app #main .learning .coast-journal .photo-slots > span {
+  display: grid;
+  justify-items: center;
+  grid-template-rows: minmax(24px,1fr) auto;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  min-height: var(--touch-min);
+  padding: var(--space-1);
+  background-color: var(--mint-pale);
+  background-size: cover;
+  background-position: center;
+}
+
+#app #main .learning .coast-journal .photo-slots .filled {
+  min-height: clamp(64px,12dvh,124px);
+}
+
+#app #main .learning .coast-journal .photo-slots :is(.ui-icon,b) {
+  padding: var(--space-1);
+  border-radius: var(--radius-small);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: var(--label-size);
+  text-align: center;
+}
+
+#app #main .learning .coast-journal .photo-slots .ui-icon {
+  width: 26px;
+  height: 26px;
+}
+
+#app #main .learning .pin-help {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+}
+
+#app #main .learning .photo-card {
+  border-radius: var(--radius-medium);
+  background: var(--paper);
+}
+
+#app #main .learning .creature-notebook .creature-features {
+  flex: none;
+}
+
+#app #main .learning .creature-header .specimen {
+  width: clamp(72px,12dvh,128px);
+  height: clamp(72px,12dvh,128px);
+}
+
+#app.route-s1a #main .learning .earth-observation[data-mode="globe"] #globe-mode {
+  display: none;
+}
+
+#app.route-s1a #main .learning .earth-progress {
+  margin-inline-start: auto;
+}
+
+#app.route-s4b #main .learning [data-tide-state] {
+  display: none;
+}
+
+@media (min-width: 900px) and (min-height: 621px) {
+  #app:is(.route-s3a,.route-s5a) #main .learning .activity {
+    grid-template-columns: minmax(0,2.1fr) minmax(270px,1fr);
+  }
+
+  #app #main .learning .challenge-layout:has(.challenge-scene) {
+    grid-template-columns: minmax(0,1.18fr) minmax(310px,1fr);
+  }
+}
+
+@media (min-width: 700px) and (max-height: 620px) {
+  #app #main .learning .page-heading > div:first-child {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  #app #main .learning.challenge-page .page-heading p.stage-location,
+  #app #main .learning .page-heading p.stage-location {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  #app #main .learning .challenge-option {
+    font-size: var(--label-size);
+  }
+
+  #app #main .learning .coast-journal .photo-slots .filled {
+    min-height: var(--touch-min);
+  }
+
+  #app #main .learning.challenge-page .mission-footer {
+    margin-left: calc(2 * var(--touch-min) + var(--space-5));
+  }
+
+  #app #main .learning .creature-notebook {
+    align-self: stretch;
+    height: 100%;
+  }
+
+  #app #main .learning .creature-features .choice {
+    padding: var(--space-1) var(--space-2);
+  }
+}
+
+@media (max-width: 699px) {
+  #app #main .learning {
+    padding-inline: var(--space-2);
+  }
+
+  #app #main .learning .page-heading .stage-location {
+    font-size: var(--label-size);
+  }
+
+  #app #main .learning .mission-footer {
+    flex-wrap: wrap;
+  }
+
+  #app #main .learning .mission-footer .activity-playback button {
+    width: var(--touch-min);
+    justify-content: center;
+  }
+
+  #app #main .learning .mission-footer .activity-playback button > span {
+    display: none;
+  }
+
+  #app #main .learning .mission-footer :is(.activity-guide,.challenge-feedback) {
+    flex: 1;
+  }
+
+  #app #main .learning .mission-footer > .primary:not(:disabled) {
+    flex: none;
+    margin-inline-start: auto;
+  }
+
+  #app #main .learning .challenge-observation .challenge-creatures {
+    flex: 0 1 auto;
+    width: 100%;
+    gap: var(--space-1);
+  }
+
+  #app #main .learning .challenge-observation {
+    overflow: hidden;
+  }
+
+  #app #main .learning .challenge-observation .challenge-creatures figure > div {
+    max-height: 62px;
+  }
+
+  #app #main .learning .challenge-observation:has(.challenge-creatures) .visual-caption {
+    display: none;
+  }
+
+  #app #main .learning .photo-card > b,
+  #app #main .learning .mini-progress {
+    font-size: max(18px,var(--label-size));
+  }
+
+  #app.route-s3a #main .learning .activity {
+    grid-template-rows: minmax(0,1fr) auto;
+  }
+
+  #app #main .learning .coast-journal .photo-slots .filled {
+    min-height: 64px;
+  }
+}
+
+#app #main .learning .coast-journal .photo-slots .current-photo {
+  outline: 2px solid var(--teal);
+  outline-offset: -2px;
+}

@@ -125,7 +125,7 @@ try {
   for (const id of ['asia', 'pacific', 'africa']) await (await revealGlobePin(page,id)).click();
   await click('atmosphere');
   assert.equal(await page.locator('[data-action="next"]').isEnabled(),true);
-  assert.match(await page.locator('#hint').innerText(),/관찰 완료/);
+  assert.match(await page.locator('[data-action="next"]').getAttribute('class'),/is-ready/);
   assert.equal((await saved()).drafts[1].samples.length,3);
   report.guidance.threeGlobeSamples=true;
   await click('next');

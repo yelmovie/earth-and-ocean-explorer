@@ -17,6 +17,8 @@ import './flow-polish.css';
 import './reward-cards.css';
 import './certificate.css';
 import './earth-observation.css';
+import './learning-scene.css';
+import './final-journey.css';
 // 저사양 기기(메모리 4GB 이하 또는 코어 4개 이하)는 넓은 면의 흐림(backdrop-filter)을 끄고 불투명 면을 쓴다(glass-ui.css `.lite-glass`).
 if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add('lite-glass');
 const loadConcepts = () => import('./concepts.js');
@@ -185,11 +187,9 @@ async function render(){
   cleanupInteractions=mountInteractions(app,context());
   cleanupActivityFlow=mountActivityFlow(app,context());
   syncLinkGuidance();
-  const taskProgress=app.querySelector('.challenge-progress');
-  if(taskProgress)app.querySelector('.challenge-board-heading')?.replaceChildren(taskProgress);
   document.querySelector('h1')?.setAttribute('tabindex','-1');
   if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});
-  if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-intro','ending-buri','ending-jjang']:[];if(!userActed){pendingEntry=entry.length?{route:r,ids:[...entry]}:null;entry.length=0;}else pendingEntry=null;const opened=r==='hub'&&newlyOpenedPlaces().length>0;if(opened)audioPlayer.opened();if(entry.length){if(opened)setTimeout(()=>{if(state.route===r)speak(entry);},300);else speak(entry);}}
+  if(r!==voiceRoute){voiceRoute=r;const next=chapters.find(c=>!state.completed.includes(c.id));const entry=r==='home'?['title-bubble']:r==='hub'?(state.completed.length?(next?[`goal-${next.id}`]:[]):['hub-first','goal-1']):r==='ending'&&!state.settings.unlockAll&&allLinked(state)?['ending-jjang']:[];if(!userActed){pendingEntry=entry.length?{route:r,ids:[...entry]}:null;entry.length=0;}else pendingEntry=null;const opened=r==='hub'&&newlyOpenedPlaces().length>0;if(opened)audioPlayer.opened();if(entry.length){if(opened)setTimeout(()=>{if(state.route===r)speak(entry);},300);else speak(entry);}}
   if(r==='hub'){
     const wrap=app.querySelector('.map-wrap'),next=chapters.find(c=>!state.completed.includes(c.id)&&canAccess(state,`s${c.id}a`));
     const status=document.createElement('section');status.className='hub-load-status';status.setAttribute('role','status');
@@ -256,6 +256,9 @@ function placeEarthCard(stage){
   if(anchor.hidden)return;
   const margin=12,stageRect=stage.getBoundingClientRect(),pin=anchor.getBoundingClientRect();
   const x=pin.left-stageRect.left+pin.width/2,y=pin.top-stageRect.top+pin.height/2;
+  const toolsTop=stage.querySelector('.earth-tools').getBoundingClientRect().top-stageRect.top;
+  const cardBottom=toolsTop-margin;
+  card.style.maxHeight=`${Math.max(0,cardBottom-margin)}px`;
   const width=card.offsetWidth,height=card.offsetHeight;
   const stageWidth=stage.clientWidth,stageHeight=stage.clientHeight;
   const leftEdge=(stageWidth-Math.min(stageWidth,stageHeight)*.92)/2;
@@ -270,11 +273,17 @@ function placeEarthCard(stage){
     }else{
       left=rightSide?x+pin.width/2+margin:x-pin.width/2-width-margin;
     }
-    const bottomInset=local.earthCard==='atmosphere'?64:margin;
-    top=Math.min(y-height/2,stageHeight-height-bottomInset);
+    top=y-height/2;
   }
   card.style.left=`${Math.max(margin,Math.min(stageWidth-width-margin,left))}px`;
-  card.style.top=`${Math.max(margin,Math.min(stageHeight-height-margin,top))}px`;
+  card.style.top=`${Math.max(margin,Math.min(cardBottom-height,top))}px`;
+  const bounds=card.getBoundingClientRect();
+  for(const marker of stage.querySelectorAll('.earth-pin')){
+    const rect=marker.getBoundingClientRect();
+    const centerX=rect.left+rect.width/2,centerY=rect.top+rect.height/2;
+    const covered=!marker.hidden&&centerX>=bounds.left&&centerX<=bounds.right&&centerY>=bounds.top&&centerY<=bounds.bottom;
+    marker.classList.toggle('behind-earth-card',covered);
+  }
 }
 const atmosphereCard={
   id:'atmosphere',name:'지구를 둘러싼 대기',picture:'육지와 바다 위로 공기층이 이어지는 그림',
@@ -303,6 +312,7 @@ function closeEarthCard(restoreFocus=false){
   local.earthCard=null;
   trigger.setAttribute('aria-expanded','false');
   card.hidden=true;
+  stage.querySelectorAll('.behind-earth-card').forEach(marker=>marker.classList.remove('behind-earth-card'));
   if(moveFocus)(trigger.hidden?stage.querySelector('#globe'):trigger).focus({preventScroll:true});
 }
 function observeSite(id,keyboard){
@@ -433,9 +443,22 @@ document.addEventListener('keydown',e=>{
   if(!t||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||document.querySelector('dialog[open]')||e.target.closest?.('input,select,textarea,[contenteditable="true"],[role="slider"],canvas'))return;
   e.preventDefault();if(t[dir]){tone();navigate(t[dir]);}
 });
-// 오답 뒤 저절로 열린 도움말은 오답 소리(retry)를 끊지 않도록 조용히 열고, 학생이 직접 열 때만 hint 소리를 낸다.
-const autoHints=new WeakSet();
-document.addEventListener('toggle',e=>{if(!e.target.matches?.('.moa-hint'))return;const m=/^s([1-5])([abcd])$/.exec(state.route),ids=[];if(m){const first=m[2]<'c'?`hint-${m[1]}${m[2]}`:voiceIdOf(e.target.querySelector('.moa-bubble p')?.textContent||'');if(first)ids.push(first);if(state.completed.includes(+m[1]))ids.push(`concept-summary-${m[1]}`);}const id=ids[0];if(!e.target.open){if(id&&lastVoice?.[0]===id)voice.stop();return;}if(e.target.hasAttribute('data-auto-open')&&!autoHints.has(e.target)){autoHints.add(e.target);return;}sound('hint');if(ids.length)speak(ids);},true);
+document.addEventListener('toggle', event => {
+  const details = event.target;
+  if (!details.matches?.('.moa-hint')) return;
+  const route = /^s([1-5])([abcd])$/.exec(state.route);
+  if (!route) return;
+  const chapter = Number(route[1]);
+  const text = details.querySelector('.moa-bubble p')?.textContent || '';
+  const clue = state.route === 's1a' ? 'hint-1a' : voiceIdOf(text);
+  const ids = [clue, state.completed.includes(chapter) ? `concept-summary-${chapter}` : null].filter(Boolean);
+  if (!details.open) {
+    if (ids.includes(lastVoice?.[0])) voice.stop();
+    return;
+  }
+  sound('hint');
+  if (ids.length) speak(ids);
+}, true);
 // 탐사 지도: 모아 안내·주민 말풍선 글과 같은 대사를 읽는다(지도 코드가 띄운 글을 그대로 찾아 읽음).
 document.addEventListener('click',e=>{
   const trigger=e.target.closest?.('[data-hub-guide],[data-hub-resident]');

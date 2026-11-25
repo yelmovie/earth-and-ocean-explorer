@@ -36,7 +36,8 @@ export const expeditions = [
 export function mountExpedition(host, state, save, navigate, sound) {
   const start = document.createElement('button');
   start.className = 'expedition-launch';
-  start.textContent = '탐사정 출항 · 직접 조사';
+  start.setAttribute('aria-label', '탐사정 출항 · 직접 조사');
+  start.innerHTML = `${icon('compass')} 탐사정`;
   host.append(start);
   let dialog;
 
@@ -59,28 +60,28 @@ export function mountExpedition(host, state, save, navigate, sound) {
       const focusedLabel = dialog.contains(document.activeElement) ? document.activeElement.getAttribute('aria-label') : null;
       const scrollTop = dialog.scrollTop;
       const { expedition, record } = make();
+      const inRange = expedition.nodes.some(node => nearby(record, node));
       const tideComparison = stage === 4 && record.found.includes(0) && record.found.includes(1)
         ? `<section class="ocean-tide" aria-label="같은 기둥의 물 높이 비교 모형"><strong>같은 기둥, 달라진 물 높이</strong><div>${['첫 기록', '나중 기록'].map((label, index) => `<figure><div class="ocean-tide-scene ${index ? 'later' : ''}" aria-hidden="true"><i class="ocean-tide-pole"></i><i class="ocean-tide-water"></i></div><figcaption>${label}</figcaption></figure>`).join('')}</div><p>물이 계속 들어와 높아지는 밀물의 관측 모형이야.</p></section>`
         : '';
       dialog.innerHTML = `
-        <header><h2>${expedition.title}</h2><button data-close aria-label="탐사 닫기">${icon('close')}</button></header>
-        <div class="ocean-brief"><p>${expedition.goal}</p><label>탐사 구역 <select aria-label="탐사 구역">${expeditions.map((item, index) => `<option value="${index + 1}" ${index + 1 === stage ? 'selected' : ''} ${index > state.completed.length && !state.settings.unlockAll ? 'disabled' : ''}>${index + 1}. ${item.title}</option>`).join('')}</select></label></div>
+        <header><select aria-label="탐사 구역">${expeditions.map((item, index) => `<option value="${index + 1}" ${index + 1 === stage ? 'selected' : ''} ${index > state.completed.length && !state.settings.unlockAll ? 'disabled' : ''}>${item.title}</option>`).join('')}</select><button data-close aria-label="탐사 닫기" autofocus>${icon('close')}</button></header>
         <div class="ocean-workspace">
           <div class="ocean-field" style="background-image:url('${asset(expedition.bg)}')" aria-label="교육용 탐사 지도">
-            ${expedition.nodes.map((node, index) => `<button class="ocean-point ${record.found.includes(index) ? 'found' : ''}" data-point="${index}" aria-label="${node.name}" style="left:${8 + node.x * 16}%;top:${8 + node.y * 16}%"><b>${record.found.includes(index) ? icon('check') : index + 1}</b><span>${node.name}</span></button>`).join('')}
+            ${expedition.nodes.map((node, index) => `<button class="ocean-point${record.found.includes(index) ? ' found' : nearby(record, node) ? ' in-range' : ''}" data-point="${index}" aria-label="${node.name}" style="left:${8 + node.x * 16}%;top:${8 + node.y * 16}%"><b>${icon(record.found.includes(index) ? 'check' : 'compass')}</b><span>${node.name}</span></button>`).join('')}
             <div class="ocean-probe" style="left:${8 + record.x * 16}%;top:clamp(0px,${8 + record.y * 16}%,calc(100% - 52px))" aria-label="탐사정 위치"><img src="${asset('illustrations/buri-map')}" alt="부리 탐사대장"></div>
           </div>
           <div class="ocean-console">
+            <p class="ocean-goal">${expedition.goal}</p>
             <div class="ocean-controls">
-              <fieldset><legend>1. 가까이 이동</legend><div class="ocean-pad">${[[0, -1, '위'], [-1, 0, '왼쪽'], [0, 1, '아래'], [1, 0, '오른쪽']].map(([x, y, label]) => `<button data-move="${x},${y}" aria-label="탐사정 ${label}">${label}</button>`).join('')}</div></fieldset>
-              <fieldset><legend>2. 도구 선택</legend><div class="ocean-tools">${[['camera', '사진'], ['sample', '표본'], ['gauge', '물 높이'], ['lens', '관찰경']].map(([id, label]) => `<button data-tool="${id}" aria-label="${label} 도구" aria-pressed="${tool === id}">${label}</button>`).join('')}</div></fieldset>
+              <fieldset><legend>이동</legend><div class="ocean-pad">${[[0, -1, '위'], [-1, 0, '왼쪽'], [0, 1, '아래'], [1, 0, '오른쪽']].map(([x, y, label]) => `<button data-move="${x},${y}" aria-label="탐사정 ${label}">${icon('arrow')}</button>`).join('')}</div></fieldset>
+              <fieldset><legend>조사 도구</legend><div class="ocean-tools">${[['camera', '사진'], ['sample', '표본'], ['gauge', '물 높이'], ['lens', '관찰경']].map(([id, label]) => `<button data-tool="${id}" aria-label="${label} 도구" aria-pressed="${tool === id}">${label}</button>`).join('')}</div></fieldset>
             </div>
-            <p class="ocean-message" role="status">${message || '방향 버튼이나 방향키로 이동해. 도구를 고른 뒤 관측점을 눌러 봐.'}</p>
+            <p class="ocean-message" role="status">${message || (inRange ? '도구를 고르고 가까운 관측점을 눌러 봐.' : '화살표로 관측점에 가까이 가 봐.')}</p>
             ${tideComparison}
-            <div class="ocean-log" aria-label="모은 조사 기록">${record.found.map(index => `<span>${icon('check')}${expedition.nodes[index].name}</span>`).join('')}</div>
           </div>
         </div>
-        <footer><div><strong>조사 ${record.found.length}/3</strong><span>${record.found.length < 3 ? `기록 ${3 - record.found.length}개를 더 모으면 탐구할 수 있어.` : '세 기록을 모두 모았어. 탐구를 이어 가자.'}</span><small>지도 위치와 이동은 기록을 모으기 위한 교육용 모형</small></div><button data-research ${record.found.length < 3 ? 'disabled' : ''}>자료를 가지고 탐구하기</button></footer>`;
+        <footer><span>조사 기록 <strong>${record.found.length}/3</strong></span><button data-research ${record.found.length < 3 ? 'disabled' : ''}>이 기록으로 탐구하기 ${icon('arrow')}</button></footer>`;
 
       dialog.querySelector('[data-close]').onclick = () => dialog.close();
       dialog.querySelector('select').onchange = event => {
@@ -106,11 +107,11 @@ export function mountExpedition(host, state, save, navigate, sound) {
           }
           if (tool !== expedition.tool) {
             const messages = {
-              2: '같은 양의 물 표본이 필요해. 표본 도구를 골라 봐.',
-              4: '기준물에 닿은 물 높이를 관측할 도구를 골라 봐.',
-              5: '생물의 집을 건드리지 않고 자세히 관찰할 도구를 골라 봐.',
+              2: '같은 양의 물을 담으려면 어떤 도구가 필요할까?',
+              4: '기둥에 물이 닿은 높이를 어떻게 잴 수 있을까?',
+              5: '흔적을 건드리지 않고 자세히 보려면 어떻게 할까?',
             };
-            draw(messages[stage] || '지형과 모습을 기록할 도구를 골라 봐.');
+            draw(messages[stage] || '지금 보이는 모습을 그대로 남길 방법을 생각해 봐.');
             sound('click');
             return;
           }

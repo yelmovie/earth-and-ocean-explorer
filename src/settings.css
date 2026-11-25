@@ -53,3 +53,78 @@
 /* 결과·기록 카드는 화면의 절반 이하: 뒤 보고서가 보이고, 긴 기록은 카드 안에서 스크롤한다. */
 body dialog.settings-modal.record-modal{width:min(760px,calc(100vw - 40px));height:auto;max-height:64dvh}
 @media(max-width:600px){.settings-modal{width:calc(100vw - 20px);height:94dvh;max-height:94dvh;border-radius:18px}.settings-modal .modal-head{padding:16px 18px}.settings-modal .modal-head h2{font-size:25px}.settings-modal .settings-body{padding:0 16px 18px}.settings-modal .settings-body summary{padding:14px;font-size:17px}.settings-details-content{padding:14px}.settings-modal .settings-body p,.settings-modal .settings-body li,.settings-app-line span{font-size:17px}.settings-modal .settings-body .settings-app-line{display:block}.settings-app-line b{display:block;margin-bottom:3px}.modal-footer{padding:14px 16px;gap:10px}.modal-footer button{font-size:15px}.modal-footer .primary{min-width:85px}.settings-replays button{font-size:17px}.story-dialog,.record-modal{height:auto}}
+
+/* Keep the scene visible around its tools and earned badge. */
+html dialog.settings-panel[data-science-settings] {
+  width: min(760px, calc(100vw - 28px));
+  max-height: 84dvh;
+  padding: var(--space-3) var(--space-4);
+  background: var(--paper);
+  backdrop-filter: none;
+}
+
+html dialog.settings-panel[data-science-settings] .modal-head {
+  padding: 0 var(--space-1) var(--space-2);
+  background: transparent;
+}
+
+html dialog.settings-panel[data-science-settings] :is(.sound-row, .volume-label, summary, .ai-voice-tag) {
+  font-size: max(18px,var(--label-size));
+}
+
+html dialog.settings-panel[data-science-settings] .science-settings-footer button {
+  min-height: var(--touch-min);
+}
+
+body dialog.chapter-reward {
+  width: min(520px,calc(100vw - 28px));
+  max-height: 86dvh;
+  background: var(--paper);
+  border-radius: var(--radius-medium);
+  backdrop-filter: none;
+}
+
+body dialog.chapter-reward .modal-head {
+  justify-content: flex-end;
+  padding: var(--space-2);
+  background: transparent;
+  border: 0;
+}
+
+body dialog.chapter-reward .settings-body {
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+body dialog.chapter-reward .settings-body p {
+  margin: 0 0 var(--space-3);
+  font-size: var(--reading-size);
+  line-height: 1.4;
+}
+
+body dialog.chapter-reward .modal-footer {
+  flex-wrap: nowrap;
+  padding: var(--space-2) var(--space-3);
+}
+
+body dialog.chapter-reward .modal-footer > button {
+  width: auto;
+  min-height: var(--touch-min);
+  font-size: var(--label-size);
+}
+
+@media (max-width: 600px) {
+  html dialog.settings-panel[data-science-settings] {
+    max-height: 90dvh;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  html dialog.settings-panel[data-science-settings] .science-settings-footer {
+    flex-wrap: wrap;
+  }
+
+  html dialog.settings-panel[data-science-settings] .settings-record-count {
+    order: -1;
+    flex: 0 0 100%;
+    margin: 0;
+  }
+}

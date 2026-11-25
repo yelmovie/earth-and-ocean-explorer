@@ -87,5 +87,5 @@ test('a viewed coast photo with the wrong feature is not counted as correctly cl
  assert.match(html,/본 사진 4 \/ 4 · 정확히 분류 0 \/ 4/);
  assert.doesNotMatch(html,/photo-card [^"]*is-done/);
  assert.match(html,/모래사장 사진의 특징은/);
- assert.match(html,/class="chip-redo">다시 고르기/);
+ assert.match(html,/aria-label="모래사장 특징 다시 고르기"/);
 });
